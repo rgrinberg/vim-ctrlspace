@@ -36,10 +36,6 @@ function! s:isValidFilePath(path) abort
     endif
 endfunction
 
-function! ctrlspace#files#Files() abort
-    return s:Cache.get_files()
-endfunction
-
 function! ctrlspace#files#ClearAll() abort
     call s:Cache.clear_all()
 endfunction
