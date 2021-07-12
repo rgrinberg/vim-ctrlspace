@@ -39,11 +39,10 @@ endfunction
 " script local helper used for globbing in both cache systems
 
 function! s:glob_project_files() abort
-    let files = empty(s:glob_cmd) ?
-          \ globpath('.', '**') : ctrlspace#util#system(s:glob_cmd)
-    return map(split(files, '\n'), { _, fname -> fnamemodify(fname, ":.")})
+  let files = empty(s:glob_cmd) ?
+        \ globpath('.', '**') : ctrlspace#util#system(s:glob_cmd)
+  return map(split(files, '\n'), { _, fname -> fnamemodify(fname, ":.")})
 endfunction
-
 
 " detect available system glob command and set
 
