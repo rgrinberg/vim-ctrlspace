@@ -15,13 +15,14 @@ function! ctrlspace#engine#Content() abort
     endif
 
     let items = s:contentSource()
+    let absoluteMax = 500
 
     if empty(s:modes.Search.Data.Letters)
-        if len(items) > 500
-            let items = items[0:499]
+        if len(items) > absoluteMax
+            let items = items[0:absoluteMax - 1]
         endif
     else
-        let max = s:modes.Search.Enabled ? ctrlspace#window#MaxHeight() : 500
+        let max = s:modes.Search.Enabled ? ctrlspace#window#MaxHeight() : absoluteMax
         let items = v:lua.ctrlspace_filter(items, join(s:modes.Search.Data.Letters, ''), max)
     endif
 
