@@ -6,6 +6,8 @@ if has("win32")
     call add(s:resonators, '\')
 endif
 
+call luaeval('require("ctrlspace")')
+
 " returns [patterns, indices, size, text]
 function! ctrlspace#engine#Content() abort
     if s:config.EnableFilesCache && s:modes.File.Enabled
@@ -14,22 +16,13 @@ function! ctrlspace#engine#Content() abort
 
     let items = s:contentSource()
 
-    if !empty(s:modes.Search.Data.Letters)
-        let items = s:computeLowestNoises(items)
-        call sort(items, function("ctrlspace#engine#CompareByNoiseAndText"))
-    else
+    if empty(s:modes.Search.Data.Letters)
         if len(items) > 500
             let items = items[0:499]
         endif
-    endif
-
-    " trim the list in search mode
-    if s:modes.Search.Enabled
-        let maxHeight = ctrlspace#window#MaxHeight()
-
-        if len(items) > maxHeight
-            let items = items[-maxHeight : -1]
-        endif
+    else
+        let max = s:modes.Search.Enabled ? ctrlspace#window#MaxHeight() : 500
+        let items = v:lua.ctrlspace_filter(items, join(s:modes.Search.Data.Letters, ''), max)
     endif
 
     return s:prepareContent(items)
