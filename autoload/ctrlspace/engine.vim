@@ -21,12 +21,6 @@ function! ctrlspace#engine#Content() abort
         if len(items) > 500
             let items = items[0:499]
         endif
-
-        if s:modes.Tab.Enabled
-            call sort(items, function("ctrlspace#engine#CompareByIndex"))
-        else
-            call sort(items, function("ctrlspace#engine#CompareByText"))
-        endif
     endif
 
     " trim the list in search mode
