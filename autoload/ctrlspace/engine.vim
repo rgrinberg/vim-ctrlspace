@@ -10,10 +10,6 @@ call luaeval('require("ctrlspace")')
 
 " returns [patterns, indices, size, text]
 function! ctrlspace#engine#Content() abort
-    if s:config.EnableFilesCache && s:modes.File.Enabled
-        return s:contentFromFileEngine()
-    endif
-
     let items = s:contentSource()
     let absoluteMax = 500
 
@@ -27,23 +23,6 @@ function! ctrlspace#engine#Content() abort
     endif
 
     return s:prepareContent(items)
-endfunction
-
-function! s:contentFromFileEngine() abort
-    call ctrlspace#files#CollectFiles()
-
-    let context = '{"Query":"' . join(s:modes.Search.Data.Letters, "") . '","Columns":' . &columns .
-                \ ',"Limit":' . (s:modes.Search.Enabled ? ctrlspace#window#MaxHeight() : 0) .
-                \ ',"Source":"' . escape(fnamemodify(ctrlspace#util#FilesCache(), ":p"), '\"') .
-                \ '","Dots":"' . s:config.Symbols.Dots . '","DotsSize":' . ctrlspace#context#SymbolSizes().Dots . '}'
-
-    let results  = split(ctrlspace#util#system(s:config.FileEngine, context), "\n")
-    let patterns = eval(results[0])
-    let indices  = eval(results[1])
-    let size     = str2nr(results[2])
-    let text     = join(results[3:], "\n")
-
-    return [patterns, indices, size, text]
 endfunction
 
 function! ctrlspace#engine#CompareByText(a, b) abort
