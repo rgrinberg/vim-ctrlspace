@@ -111,7 +111,7 @@ function! s:contentSource() abort
     if clv.Name ==# "Buffer"
         return s:bufferListContent(clv)
     elseif clv.Name ==# "File"
-        return s:fileListContent(clv)
+        return ctrlspace#files#CollectFiles()
     elseif clv.Name ==# "Tab"
         return s:tabContent(clv)
     elseif clv.Name ==# "Workspace"
@@ -193,11 +193,6 @@ function! s:tabContent(clv) abort
     endfor
 
     return content
-endfunction
-
-function! s:fileListContent(clv) abort
-    call ctrlspace#files#CollectFiles()
-    return deepcopy(ctrlspace#files#Items())
 endfunction
 
 function! s:bufferListContent(clv) abort
