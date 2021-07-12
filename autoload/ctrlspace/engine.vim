@@ -23,13 +23,10 @@ function! ctrlspace#engine#Content() abort
         endif
     endif
 
-    " trim the list in search mode
-    if s:modes.Search.Enabled
-        let maxHeight = ctrlspace#window#MaxHeight()
+    let maxHeight = ctrlspace#window#MaxHeight()
 
-        if len(items) > maxHeight
-            let items = items[-maxHeight : -1]
-        endif
+    if len(items) > maxHeight
+        let items = items[-maxHeight : -1]
     endif
 
     return s:prepareContent(items)
