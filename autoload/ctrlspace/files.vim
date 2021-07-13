@@ -1,6 +1,6 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
-let s:Cache = ctrlspace#cache#Init()
+let s:files = v:null
 
 function! s:file_obj_init() abort
     let s:File = {}
@@ -16,7 +16,7 @@ endfunction
 
 function! s:get_selected_file(...) abort
     let idx = ctrlspace#window#SelectedIndex()
-    let file = s:Cache.get_files()[idx]
+    let file = ctrlspace#files#CollectFiles()[idx].text
     return a:0 == 0 ? file : fnamemodify(file, a:1)
 endfunction
 
@@ -37,7 +37,7 @@ function! s:isValidFilePath(path) abort
 endfunction
 
 function! ctrlspace#files#ClearAll() abort
-    call s:Cache.clear_all()
+  let s:files = v:null
 endfunction
 
 function! ctrlspace#files#SelectedFileName() abort
@@ -76,12 +76,17 @@ endfunction
 let [s:glob_cmd, s:glob_bin] = s:set_globber()
 
 function! ctrlspace#files#CollectFiles() abort
+    if type(s:files) != type(v:null)
+      return s:files
+    endif
+    
     let files = empty(s:glob_cmd) ?
                 \ globpath('.', '**') : ctrlspace#util#system(s:glob_cmd)
-    return map(split(files, '\n'), { index, fname ->
+    let s:files = map(split(files, '\n'), { index, fname ->
                 \ { "text": fnamemodify(fname, ":."),
                 \   "index": index,
                 \   "indicators" : "" }})
+    return s:files
 endfunction
 
 function! ctrlspace#files#LoadFile(...) abort
@@ -127,7 +132,7 @@ function! ctrlspace#files#LoadManyFiles(...) abort
 endfunction
 
 function! ctrlspace#files#RefreshFiles() abort
-    call s:Cache.refresh()
+    let s:files = v:null
     call ctrlspace#window#Kill(0, 0)
     call ctrlspace#window#Toggle(1)
 endfunction
@@ -164,7 +169,7 @@ function! ctrlspace#files#ZoomFile() abort
 
     call ctrlspace#window#Kill(0, 0)
     call ctrlspace#window#GoToStartWindow()
-    call s:loadFileOrBuffer(fnamemodify(s:Cache.files[nr], ":p"))
+    call s:loadFileOrBuffer(fnamemodify(ctrlspace#files#CollectFiles()[nr].text, ":p"))
 
     silent! exe "normal! zb"
 
@@ -389,33 +394,7 @@ function! s:loadFileOrBuffer(file) abort
 endfunction
 
 function! s:updateFileList(path, newPath) abort
-    if empty(s:Cache.files)
-        call s:Cache.load()
-
-        if empty(s:Cache.files)
-            return
-        else
-            call s:Cache.map_files2items()
-        endif
-    endif
-
-    let newPath = empty(a:newPath) ? "" : fnamemodify(a:newPath, ":.")
-
-    if !empty(a:path)
-        let idx = index(s:Cache.files, a:path)
-
-        if idx >= 0
-            call remove(s:Cache.files, idx)
-            call remove(s:Cache.items, idx)
-        endif
-    endif
-
-    if !empty(newPath)
-        call add(s:Cache.files, newPath)
-        call add(s:Cache.items, { "index": len(s:Cache.items), "text": newPath, "indicators": "" })
-    endif
-
-    call s:Cache.save()
+  s:files = v:null
 endfunction
 
 function! s:ensurePath(file) abort

@@ -11,6 +11,11 @@ function! ctrlspace#window#MaxHeight() abort
     endif
 endfunction
 
+function! ctrlspace#window#run() abort
+    call ctrlspace#files#ClearAll()
+    call ctrlspace#window#Toggle(0)
+endfunction
+
 function! ctrlspace#window#Toggle(internal) abort
     if !a:internal
         call s:resetWindow()
