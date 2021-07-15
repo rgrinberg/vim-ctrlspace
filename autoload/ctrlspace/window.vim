@@ -68,7 +68,7 @@ function! ctrlspace#window#Toggle(internal) abort
         return
     endif
 
-    let [b:patterns, b:indices, b:size, b:text] = ctrlspace#engine#Content()
+    let [b:items, b:indices, b:size, b:text] = ctrlspace#engine#Content()
 
     " set up window height
     if b:size > s:config.Height
@@ -85,12 +85,6 @@ function! ctrlspace#window#Toggle(internal) abort
 
     call s:displayContent()
     call ctrlspace#util#SetStatusline()
-
-    " display search patterns
-    for pattern in b:patterns
-        " escape ~ sign because of E874: (NFA) Could not pop the stack !
-        call matchadd("CtrlSpaceSearch", "\\c" .substitute(pattern, '\~', '\\~', "g"))
-    endfor
 
     call s:setActiveLine()
 
@@ -235,8 +229,6 @@ function! ctrlspace#window#MoveSelectionBar(where) abort
         call s:goto(b:lastline)
     endif
 
-    " exchange the first char (>) with a space
-    call setline(line("."), " " . strpart(getline(line(".")), 1))
 
     " go where the user want's us to go
     if a:where == "up"
@@ -273,8 +265,6 @@ function! ctrlspace#window#MoveSelectionBar(where) abort
         call s:goto(a:where)
     endif
 
-    " and mark this line with a >
-    call setline(line("."), ">" . strpart(getline(line(".")), 1))
 
     " remember this line, in case the mouse is clicked
     " (which automatically moves the cursor there)
@@ -433,15 +423,6 @@ function! s:setUpBuffer() abort
         au BufLeave <buffer> call ctrlspace#window#Kill(0, 1)
     augroup END
 
-    " set up syntax highlighting
-    if has("syntax")
-        syn clear
-        syn match CtrlSpaceNormal /  .*/
-        syn match CtrlSpaceSelected /> .*/hs=s+1
-    endif
-
-    call clearmatches()
-
     if !s:config.UseMouseAndArrowsInTerm && !has("gui_running")
         " Block unnecessary escape sequences!
         noremap <silent><buffer><esc>[ :call ctrlspace#keys#MarkKeyEscSequence()<CR>
@@ -576,6 +557,17 @@ function! s:displayContent() abort
 
     if b:size > 0
         silent! put! =b:text
+
+        let lineNumber = 0
+        for item in b:items
+            if has_key(item, "positions")
+                for highlightLetter in item.positions
+                    call nvim_buf_add_highlight(0, -1, "CtrlSpaceSearch", lineNumber, highlightLetter + 1, highlightLetter + 2)
+                endfor
+            endif
+            let lineNumber = lineNumber + 1
+        endfor
+
         normal! GkJ
         call s:fillBufferSpace()
         call s:modes.Nop.Disable()

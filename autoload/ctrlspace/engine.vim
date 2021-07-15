@@ -339,7 +339,6 @@ function! s:prepareContent(items) abort
     endif
 
     let content  = ""
-    let patterns = {}
     let indices  = []
 
     for item in a:items
@@ -359,12 +358,8 @@ function! s:prepareContent(items) abort
 
         let content .= "  " . line . "\n"
 
-        if has_key(item, "pattern")
-            let patterns[item.pattern] = 1
-        endif
-
         call add(indices, item.index)
     endfor
 
-    return [keys(patterns), indices, len(a:items), content]
+    return [a:items, indices, len(a:items), content]
 endfunction

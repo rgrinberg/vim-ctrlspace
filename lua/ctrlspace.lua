@@ -27,10 +27,7 @@ function _G.ctrlspace_filter(candidates, query, max)
   local top = {}
   for i=start, #results do
     local r = results[i]
-    local positions = fzy.positions(query, r.text)
-    local start = positions[1]
-    local stop = positions[#positions]
-    r.pattern = string.sub(r.text, start, stop)
+    r.positions = fzy.positions(query, r.text)
     table.insert(top, r)
   end
   return top
