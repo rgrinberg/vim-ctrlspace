@@ -1,10 +1,5 @@
 let s:config     = ctrlspace#context#Configuration()
 let s:modes      = ctrlspace#modes#Modes()
-let s:resonators = ['.', '/', '_', '-', ' ']
-
-if has("win32")
-    call add(s:resonators, '\')
-endif
 
 call luaeval('require("ctrlspace")')
 
@@ -23,86 +18,6 @@ function! ctrlspace#engine#Content() abort
     endif
 
     return s:prepareContent(items)
-endfunction
-
-function! ctrlspace#engine#CompareByText(a, b) abort
-    let lhs = fnamemodify(a:a.text, ':p')
-    let rhs = fnamemodify(a:b.text, ':p')
-    if lhs < rhs
-        return -1
-    elseif lhs > rhs
-        return 1
-    else
-        return 0
-    endif
-endfunction
-
-function! ctrlspace#engine#CompareByIndex(a, b) abort
-    if a:a.index < a:b.index
-        return -1
-    elseif a:a.index > a:b.index
-        return 1
-    else
-        return 0
-    endif
-endfunction
-
-function! ctrlspace#engine#CompareByNoiseAndText(a, b) abort
-    if a:a.noise < a:b.noise
-        return 1
-    elseif a:a.noise > a:b.noise
-        return -1
-    elseif a:a.smallnoise < a:b.smallnoise
-        return 1
-    elseif a:a.smallnoise > a:b.smallnoise
-        return -1
-    elseif strlen(a:a.text) < strlen(a:b.text)
-        return 1
-    elseif strlen(a:a.text) > strlen(a:b.text)
-        return -1
-    elseif a:a.text < a:b.text
-        return -1
-    elseif a:a.text > a:b.text
-        return 1
-    else
-        return 0
-    endif
-endfunction
-
-function! s:computeLowestNoises(source) abort
-    let results       = []
-    let noises        = []
-    let resultsCount  = 0
-
-    for index in range(len(a:source))
-        let item = a:source[index]
-        let [noise, smallnoise, pattern] = s:findLowestSearchNoise(item.text)
-
-        if noise == -1
-            continue
-        else
-            let item.noise      = noise
-            let item.smallnoise = smallnoise
-            let item.pattern    = pattern
-
-            if resultsCount < 200
-                let resultsCount += 1
-                call add(results, item)
-                call add(noises, noise)
-            else
-                let maxIndex = index(noises, max(noises))
-
-                if noises[maxIndex] > noise
-                    call remove(noises, maxIndex)
-                    call insert(noises, noise, maxIndex)
-                    call remove(results, maxIndex)
-                    call insert(results, item, maxIndex)
-                endif
-            endif
-        endif
-    endfor
-
-    return results
 endfunction
 
 function! s:contentSource() abort
@@ -242,89 +157,6 @@ function! s:bufferEntry(bufnr) abort
     else
         return {}
     endif
-endfunction
-
-function! s:findSubsequence(text, offset) abort
-    let positions     = []
-    let noise         = 0
-    let currentOffset = a:offset
-
-    for letter in s:modes.Search.Data.Letters
-        let matchedPosition = match(a:text, "\\V\\c" . escape(letter, '\'), currentOffset)
-
-        if matchedPosition == -1
-            return [-1, []]
-        else
-            if !empty(positions)
-                let noise += abs(matchedPosition - positions[-1]) - 1
-            endif
-            call add(positions, matchedPosition)
-            let currentOffset = matchedPosition + 1
-        endif
-    endfor
-
-    return [noise, positions]
-endfunction
-
-function! s:findLowestSearchNoise(text) abort
-    let noise         = -1
-    let smallnoise    = 0
-    let matchedString = ""
-    let ltrLen        = len(s:modes.Search.Data.Letters)
-    let textLen       = strlen(a:text)
-
-    if ltrLen == 1
-        let noise = match(a:text, "\\V\\c" . escape(s:modes.Search.Data.Letters[0], '\'))
-
-        if noise > -1
-            let matchedString = s:modes.Search.Data.Letters[0]
-        endif
-    else
-        let offset    = 0
-        let positions = []
-
-        while ltrLen <= textLen - offset
-            let subseq = s:findSubsequence(a:text, offset)
-
-            if subseq[0] == -1
-                break
-            elseif (noise == -1) || (subseq[0] < noise)
-                let [noise, positions] = subseq
-                let offset = positions[0] + 1
-            else
-                let offset += 1
-            endif
-        endwhile
-
-        if noise > -1
-            let matchedString = a:text[positions[0]:positions[-1]]
-            let smallnoise = 0
-
-            if positions[0] != 0
-                let smallnoise += 1
-
-                if index(s:resonators, a:text[positions[0] - 1]) == -1
-                    let smallnoise += 1
-                endif
-            endif
-
-            if positions[-1] != textLen - 1
-                let smallnoise += 1
-
-                if index(s:resonators, a:text[positions[-1] + 1]) == -1
-                    let smallnoise += 1
-                endif
-            endif
-        endif
-    endif
-
-    let pattern = ""
-
-    if (noise > -1) && !empty(matchedString)
-        let pattern = matchedString
-    endif
-
-    return [noise, smallnoise, pattern]
 endfunction
 
 function! s:prepareContent(items) abort
