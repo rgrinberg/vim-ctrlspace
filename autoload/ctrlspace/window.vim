@@ -575,10 +575,6 @@ function! s:displayContent() abort
             let emptyListMessage = strpart(emptyListMessage, 0, &columns - 2 - sizes.Dots) . s:config.Symbols.Dots
         endif
 
-        while strwidth(emptyListMessage) < &columns
-            let emptyListMessage .= ' '
-        endwhile
-
         silent! put! =emptyListMessage
         normal! GkJ
 

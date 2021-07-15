@@ -280,10 +280,6 @@ function! s:puts(str) abort
         let str = strpart(str, 0, &columns - 2 - s:sizes.Dots) . s:config.Symbols.Dots
     endif
 
-    while strwidth(str) < &columns
-        let str .= " "
-    endwhile
-
     call add(s:textBuffer, str)
 endfunction
 

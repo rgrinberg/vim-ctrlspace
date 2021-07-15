@@ -184,10 +184,6 @@ function! s:prepareContent(items) abort
             let line .= " " . item.indicators
         endif
 
-        while strwidth(line) < &columns
-            let line .= " "
-        endwhile
-
         let content .= "  " . line . "\n"
 
         call add(indices, item.index)
