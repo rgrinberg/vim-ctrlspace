@@ -69,7 +69,7 @@ endfunction
 
 function! ctrlspace#buffers#LoadBuffer(...) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     let commands = len(a:000)
 
@@ -88,7 +88,7 @@ function! ctrlspace#buffers#LoadManyBuffers(...) abort
     let nr    = ctrlspace#window#SelectedIndex()
     let curln = line(".")
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#GoToStartWindow()
 
     let commands = len(a:000)
@@ -120,7 +120,7 @@ function! ctrlspace#buffers#ZoomBuffer(nr, ...) abort
 
     let nr = a:nr ? a:nr : ctrlspace#window#SelectedIndex()
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#GoToStartWindow()
 
     silent! exe ":b " . nr
@@ -182,7 +182,7 @@ function! ctrlspace#buffers#DeleteBuffer() abort
             if ctrlspace#window#SelectedIndex() == nr
                 if bufexists(nr) && (!empty(getbufvar(nr, "&buftype")) || filereadable(bufname(nr)) || modified)
                     let curln = line(".")
-                    call ctrlspace#window#Kill(0, 0)
+                    call ctrlspace#window#Kill(0)
                     silent! exe selBufWin . "wincmd w"
                     enew
                 else
@@ -196,7 +196,7 @@ function! ctrlspace#buffers#DeleteBuffer() abort
         endif
     else
         let curln = line(".")
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
     endif
 
     let curtab = tabpagenr()
@@ -251,7 +251,7 @@ function! ctrlspace#buffers#DetachBuffer() abort
                 if ctrlspace#window#SelectedIndex() == nr
                     if bufexists(nr) && (!empty(getbufvar(nr, "&buftype")) || filereadable(bufname(nr)))
                         let curln = line(".")
-                        call ctrlspace#window#Kill(0, 0)
+                        call ctrlspace#window#Kill(0)
                         silent! exe selBufWin . "wincmd w"
                         enew
                     else
@@ -265,7 +265,7 @@ function! ctrlspace#buffers#DetachBuffer() abort
             endif
         else
             let curln = line(".")
-            call ctrlspace#window#Kill(0, 0)
+            call ctrlspace#window#Kill(0)
         endif
         call remove(t:CtrlSpaceList, nr)
         call ctrlspace#window#Toggle(1)
@@ -330,7 +330,7 @@ function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
     endfor
 
     if (targetTab > 0) && (targetBuf > 0)
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
         silent! exe "normal! " . targetTab . "gt"
         call ctrlspace#window#Toggle(0)
         for i in range(b:size)
@@ -362,7 +362,7 @@ function! ctrlspace#buffers#DeleteHiddenNonameBuffers(internal) abort
     endfor
 
     if !a:internal
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
     endif
 
     let removed = s:keepBuffersForKeys(keep)
@@ -386,7 +386,7 @@ function! ctrlspace#buffers#DeleteForeignBuffers(internal) abort
     endfor
 
     if !a:internal
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
     endif
 
     call s:keepBuffersForKeys(buffers)
@@ -418,7 +418,7 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
         let map[nr] = len(map) + 1
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     silent! exe "normal! " . a:tab . "gt"
 

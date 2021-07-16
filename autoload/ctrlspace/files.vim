@@ -92,7 +92,7 @@ endfunction
 function! ctrlspace#files#LoadFile(...) abort
     let file = s:File.abs_fpath()
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     let commands = len(a:000)
 
@@ -111,7 +111,7 @@ function! ctrlspace#files#LoadManyFiles(...) abort
     let file = s:File.abs_fpath()
     let curln = line(".")
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#GoToStartWindow()
 
     let commands = len(a:000)
@@ -133,7 +133,7 @@ endfunction
 
 function! ctrlspace#files#RefreshFiles() abort
     let s:files = v:null
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 endfunction
 
@@ -151,7 +151,7 @@ function! ctrlspace#files#RemoveFile() abort
     call s:updateFileList(path, "")
     call delete(resolve(expand(path)))
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 endfunction
 
@@ -167,7 +167,7 @@ function! ctrlspace#files#ZoomFile() abort
     let nr = ctrlspace#window#SelectedIndex()
     let curln = line(".")
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#GoToStartWindow()
     call s:loadFileOrBuffer(fnamemodify(ctrlspace#files#CollectFiles()[nr].text, ":p"))
 
@@ -200,7 +200,7 @@ function! ctrlspace#files#CopyFileOrBuffer() abort
 
     if bufOnly
         call ctrlspace#buffers#ZoomBuffer(str2nr(nr), ['normal! G""ygg'])
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
         silent! exe "e " . fnameescape(newFile)
         silent! exe 'normal! ""pgg"_dd'
     else
@@ -211,7 +211,7 @@ function! ctrlspace#files#CopyFileOrBuffer() abort
 
         call s:updateFileList("", newFile)
 
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
 
         if !s:modes.File.Enabled
             silent! exe "e " . fnameescape(newFile)
@@ -294,7 +294,7 @@ function! ctrlspace#files#RenameFileOrBuffer() abort
         call s:updateFileList(path, newFile)
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     call ctrlspace#window#Toggle(1)
 endfunction
 
@@ -320,7 +320,7 @@ function! ctrlspace#files#GoToDirectory(back) abort
         return
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     let cwd = ctrlspace#util#NormalizeDirectory(fnamemodify(getcwd(), ":p:h"))
 
@@ -337,7 +337,7 @@ function! ctrlspace#files#GoToDirectory(back) abort
     call ctrlspace#ui#DelayedMsg("CWD is now: " . directory)
 
     call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
 
     call s:modes.Buffer.SetData("SubMode", oldBufferSubMode)
 
@@ -351,7 +351,7 @@ function! ctrlspace#files#ExploreDirectory() abort
         return
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "e " . fnameescape(path)
 endfunction
 
@@ -370,7 +370,7 @@ function! ctrlspace#files#EditFile() abort
     let newFile = expand(newFile)
 
     if isdirectory(newFile)
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
         enew
         return
     endif
@@ -381,7 +381,7 @@ function! ctrlspace#files#EditFile() abort
 
     let newFile = fnamemodify(newFile, ":p")
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "e " . fnameescape(newFile)
 endfunction
 

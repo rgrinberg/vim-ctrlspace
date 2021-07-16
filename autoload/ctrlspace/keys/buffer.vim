@@ -71,7 +71,7 @@ function! ctrlspace#keys#buffer#GoToWindowAndBack(k) abort
         call ctrlspace#window#Toggle(0)
 
         if subMode !=# "single"
-            call ctrlspace#window#Kill(0, 0)
+            call ctrlspace#window#Kill(0)
             call s:modes.Buffer.SetData("SubMode", subMode)
             call ctrlspace#window#Toggle(1)
         endif
@@ -85,7 +85,7 @@ function! ctrlspace#keys#buffer#VisibleMode(k) abort
         call s:modes.Buffer.SetData("SubMode", "visible")
     endif
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 endfunction
 
@@ -93,9 +93,9 @@ function! ctrlspace#keys#buffer#ZoomMode(k) abort
     if !s:modes.Zoom.Enabled
         call ctrlspace#buffers#ZoomBuffer(0)
     else
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
         call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         if s:modes.Zoom.Data.Mode ==# "File"
             call s:modes.File.Enable()
         else
@@ -178,7 +178,7 @@ function! ctrlspace#keys#buffer#RemoveTabLabel(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#SwitchTab(k) abort
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     let dir = {'[': 'BWD', ']': 'FWD'}[a:k]
     call ctrlspace#changebuftab#Execute("SwitchTabInBufMode", dir)
     call ctrlspace#window#Toggle(0)
@@ -260,7 +260,7 @@ function! ctrlspace#keys#buffer#NewWorkspace(k) abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     if saveWorkspaceBefore
         call ctrlspace#workspaces#SaveWorkspace("")
@@ -282,6 +282,6 @@ function! s:toggleAllMode() abort
         call s:modes.Search.SetData("NewSearchPerformed", 1)
     endif
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 endfunction

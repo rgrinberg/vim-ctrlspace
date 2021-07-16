@@ -48,7 +48,7 @@ function! ctrlspace#tabs#CloseTab() abort
         endif
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     tabclose
 
@@ -72,7 +72,7 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     tabnew
 
@@ -83,7 +83,7 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
     endfor
 
     call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
     return 1
@@ -109,7 +109,7 @@ function! ctrlspace#tabs#CollectForeignBuffers() abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     tabnew
 
@@ -120,7 +120,7 @@ function! ctrlspace#tabs#CollectForeignBuffers() abort
     endfor
 
     call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
     return 1

@@ -37,9 +37,9 @@ function! ctrlspace#keys#file#ZoomMode(k) abort
     if !s:modes.Zoom.Enabled
         call ctrlspace#files#ZoomFile()
     else
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
         call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         if s:modes.Zoom.Data.Mode ==# "File"
             call s:modes.File.Enable()
         else

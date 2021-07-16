@@ -17,14 +17,14 @@ endfunction
 
 function! ctrlspace#keys#tab#GoToTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
 
     if a:k ==# "CR"
         call ctrlspace#window#Toggle(0)
     elseif a:k ==# "Space"
         call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call s:modes.Tab.Enable()
         call ctrlspace#window#Toggle(1)
     endif
@@ -32,29 +32,29 @@ endfunction
 
 function! ctrlspace#keys#tab#CloseTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
     call ctrlspace#window#Toggle(0)
     call ctrlspace#tabs#CloseTab()
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
 
 function! ctrlspace#keys#tab#AddTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
     silent! exe "tabnew"
     call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
 
 function! ctrlspace#keys#tab#CopyTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
 
     let sourceLabel = exists("t:CtrlSpaceLabel") ? t:CtrlSpaceLabel : ""
@@ -68,12 +68,12 @@ function! ctrlspace#keys#tab#CopyTab(k) abort
     let t:CtrlSpaceList = sourceList
 
     call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     call ctrlspace#window#Toggle(0)
     call ctrlspace#buffers#CloseBuffer()
     call ctrlspace#jumps#Jump("previous")
     call ctrlspace#buffers#LoadBuffer()
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
@@ -88,7 +88,7 @@ function! ctrlspace#keys#tab#NewTabLabel(k) abort
     let l = line(".")
 
     if ctrlspace#tabs#NewTabLabel(ctrlspace#window#SelectedIndex())
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
         call ctrlspace#window#MoveSelectionBar(l)
     endif
@@ -98,7 +98,7 @@ function! ctrlspace#keys#tab#RemoveTabLabel(k) abort
     let l = line(".")
 
     if ctrlspace#tabs#RemoveTabLabel(ctrlspace#window#SelectedIndex())
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
         redraw!
 
@@ -120,11 +120,11 @@ endfunction
 
 function! ctrlspace#keys#tab#MoveTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
     call ctrlspace#keys#tab#MoveHelper(a:k)
     call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
@@ -142,7 +142,7 @@ function! ctrlspace#keys#tab#NewWorkspace(k) abort
         return
     endif
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction

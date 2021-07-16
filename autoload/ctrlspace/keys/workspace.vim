@@ -36,7 +36,7 @@ function! ctrlspace#keys#workspace#LoadOrSave(k) abort
         call ctrlspace#ui#DelayedMsg()
     elseif a:k ==# "Space"
         call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call s:modes.Workspace.Enable()
         call ctrlspace#window#Toggle(1)
         call ctrlspace#ui#DelayedMsg()
@@ -53,14 +53,14 @@ function! ctrlspace#keys#workspace#NewWorkspace(k) abort
         return
     endif
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes.Workspace.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
 
 function! ctrlspace#keys#workspace#ToggleSubmode(k) abort
     call s:modes.Workspace.SetData("LastBrowsed", line("."))
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
 
     if s:modes.Workspace.Data.SubMode ==# "load"
         call s:modes.Workspace.SetData("SubMode", "save")
@@ -78,7 +78,7 @@ function! s:saveWorkspace(name) abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     return ctrlspace#workspaces#SaveWorkspace(name)
 endfunction
 
@@ -108,7 +108,7 @@ function! s:loadWorkspace(bang, name) abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     if saveWorkspaceBefore && !ctrlspace#workspaces#SaveWorkspace("")
         return 0
@@ -121,7 +121,7 @@ function! s:loadWorkspace(bang, name) abort
     if a:bang
         call ctrlspace#window#Toggle(0)
         call s:modes.Workspace.Enable()
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
     endif
 

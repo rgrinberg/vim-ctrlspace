@@ -184,7 +184,7 @@ function! ctrlspace#help#OpenInNewWindow() abort
         call add(s:textBuffer, info.key . " | " . info.description)
     endfor
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     call ctrlspace#help#CloseExternalWindow()
 
     if winnr("$") > 1

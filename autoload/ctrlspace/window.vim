@@ -26,10 +26,10 @@ function! ctrlspace#window#Toggle(internal) abort
 
     if bufexists(pbuf)
         if bufwinnr(pbuf) != -1
-            call ctrlspace#window#Kill(pbuf, 1)
+            call ctrlspace#window#Kill(1)
             return
         else
-            call ctrlspace#window#Kill(pbuf, 0)
+            call ctrlspace#window#Kill(0)
             if !a:internal
                 let t:CtrlSpaceStartWindow = winnr()
                 let t:CtrlSpaceWinrestcmd  = winrestcmd()
@@ -132,10 +132,10 @@ function! ctrlspace#window#GoToStartWindow() abort
     endif
 endfunction
 
-function! ctrlspace#window#Kill(pluginBuffer, final) abort
+function! ctrlspace#window#Kill(final) abort
     " added workaround for strange Vim behavior when, when kill starts with some delay
     " (in a wrong buffer). This happens in some Nop modes (in a File List view).
-    if (exists("s:killingNow") && s:killingNow) || (!a:pluginBuffer && &ft != "ctrlspace")
+    if (exists("s:killingNow") && s:killingNow) || &ft != "ctrlspace"
         return
     endif
 
@@ -158,11 +158,7 @@ function! ctrlspace#window#Kill(pluginBuffer, final) abort
         set nossl
     endif
 
-    if a:pluginBuffer
-        silent! exe ':' . a:pluginBuffer . 'bwipeout'
-    else
-        bwipeout
-    endif
+    bwipeout
 
     if a:final
         call ctrlspace#util#HandleVimSettings("stop")
@@ -200,7 +196,7 @@ function! ctrlspace#window#QuitVim() abort
         return
     endif
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
     qa!
 endfunction
 
@@ -312,7 +308,7 @@ function! ctrlspace#window#GoToWindow() abort
     let nr = ctrlspace#window#SelectedIndex()
 
     if bufwinnr(nr) != -1
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
         silent! exe bufwinnr(nr) . "wincmd w"
         return 1
     endif
@@ -415,7 +411,7 @@ function! s:setUpBuffer() abort
 
     augroup CtrlSpaceLeave
         au!
-        au BufLeave <buffer> call ctrlspace#window#Kill(0, 1)
+        au BufLeave <buffer> call ctrlspace#window#Kill(1)
     augroup END
 
     if !s:config.UseMouseAndArrowsInTerm && !has("gui_running")

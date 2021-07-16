@@ -5,7 +5,7 @@ let s:updateSearchResults = 0
 function! ctrlspace#search#UpdateSearchResults() abort
     if s:updateSearchResults
         let s:updateSearchResults = 0
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
     endif
 endfunction
@@ -17,7 +17,7 @@ function! ctrlspace#search#ClearSearchMode() abort
     call s:modes.Search.SetData("HistoryIndex", -1)
     call s:modes.Search.RemoveData("LastSearchedDirectory")
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 endfunction
 
@@ -153,7 +153,7 @@ function! ctrlspace#search#RestoreSearchLetters(direction) abort
 
     call s:modes.Search.SetData("HistoryIndex", historyIndex)
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 endfunction
 

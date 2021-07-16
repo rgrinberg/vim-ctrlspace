@@ -76,7 +76,7 @@ function! ctrlspace#keys#common#RestoreNextSearch(k) abort
 endfunction
 
 function! ctrlspace#keys#common#ToggleHelp(k) abort
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
 
     if s:modes.Help.Enabled
         call s:modes.Help.Disable()
@@ -194,7 +194,7 @@ function! ctrlspace#keys#common#HalfScrollUp(k) abort
 endfunction
 
 function! ctrlspace#keys#common#Close(k) abort
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 endfunction
 
 function! ctrlspace#keys#common#Quit(k) abort
@@ -228,7 +228,7 @@ function! s:toggleListView(k, mode) abort
 
     let s:lastListView = ctrlspace#modes#CurrentListView().Name
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call s:modes[a:mode].Enable()
     call ctrlspace#window#Toggle(1)
 
@@ -318,7 +318,7 @@ function! s:saveFirstWorkspace() abort
 
     let lv = ctrlspace#modes#CurrentListView()
 
-    call ctrlspace#window#Kill(0, 1)
+    call ctrlspace#window#Kill(1)
 
     let ok = ctrlspace#workspaces#SaveWorkspace(name)
 
@@ -330,7 +330,7 @@ function! s:saveFirstWorkspace() abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call lv.Enable()
     call ctrlspace#window#Toggle(1)
     call ctrlspace#ui#DelayedMsg()

@@ -120,7 +120,7 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     endif
 
     call ctrlspace#workspaces#SetWorkspaceNames()
-    call ctrlspace#window#Kill(0, 0)
+    call ctrlspace#window#Kill(0)
     call ctrlspace#window#Toggle(1)
 
     call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been renamed to '" . newName . "'.")
@@ -164,9 +164,9 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
     call ctrlspace#workspaces#SetWorkspaceNames()
 
     if empty(s:workspaces)
-        call ctrlspace#window#Kill(0, 1)
+        call ctrlspace#window#Kill(1)
     else
-        call ctrlspace#window#Kill(0, 0)
+        call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
     endif
 
