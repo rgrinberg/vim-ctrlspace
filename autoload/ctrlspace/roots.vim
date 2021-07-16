@@ -159,21 +159,24 @@ function! ctrlspace#roots#FindProjectRoot() abort
 endfunction
 
 function! ctrlspace#roots#ProjectRootFound() abort
-    if empty(s:currentProjectRoot)
-        let s:currentProjectRoot = ctrlspace#roots#FindProjectRoot()
-
-        if empty(s:currentProjectRoot)
-            let projectRoot = ctrlspace#ui#GetInput("No project root found. Set the project root: ", fnamemodify(".", ":p:h"), "dir")
-
-            if !empty(projectRoot) && isdirectory(projectRoot)
-                call ctrlspace#files#ClearAll() " clear current files - force reload
-                call s:addProjectRoot(projectRoot)
-                let s:currentProjectRoot = projectRoot
-            else
-                call ctrlspace#ui#Msg("Cannot continue with the project root not set.")
-                return 0
-            endif
-        endif
+    if !empty(s:currentProjectRoot)
+        return 1
     endif
-    return 1
+
+    let s:currentProjectRoot = ctrlspace#roots#FindProjectRoot()
+    if !empty(s:currentProjectRoot)
+        return 1
+    endif
+
+    let projectRoot = ctrlspace#ui#GetInput("No project root found. Set the project root: ", fnamemodify(".", ":p:h"), "dir")
+
+    if !empty(projectRoot) && isdirectory(projectRoot)
+        call ctrlspace#files#ClearAll() " clear current files - force reload
+        call s:addProjectRoot(projectRoot)
+        let s:currentProjectRoot = projectRoot
+        return 1
+    else
+        call ctrlspace#ui#Msg("Cannot continue with the project root not set.")
+        return 0
+    endif
 endfunction
