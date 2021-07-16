@@ -89,10 +89,7 @@ function! ctrlspace#search#InsertSearchText(text) abort
         call s:modes.Search.SetData("HistoryIndex", 0)
         let s:updateSearchResults = 1
         call ctrlspace#search#UpdateSearchResults()
-        return 1
     endif
-
-    return 0
 endfunction
 
 function! ctrlspace#search#SearchHistoryIndex() abort
@@ -183,7 +180,7 @@ function! ctrlspace#search#SearchParentDirectoryCycle() abort
     let candidate = s:getSelectedDirectory()
 
     if empty(candidate)
-        return 0
+        return
     endif
 
     if !s:modes.Search.HasData("LastSearchedDirectory") || s:modes.Search.Data.LastSearchedDirectory !=# candidate
@@ -193,5 +190,4 @@ function! ctrlspace#search#SearchParentDirectoryCycle() abort
     endif
 
     call ctrlspace#search#InsertSearchText(s:modes.Search.Data.LastSearchedDirectory)
-    return 1
 endfunction
