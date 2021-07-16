@@ -192,26 +192,27 @@ function! ctrlspace#api#TabTitle(tabnr, bufnr, bufname) abort
     let bufnr   = a:bufnr
     let title   = ctrlspace#util#Gettabvar(a:tabnr, "CtrlSpaceLabel")
 
-    if empty(title)
-        if getbufvar(bufnr, "&ft") == "ctrlspace"
-            if s:modes.Zoom.Enabled
-                if s:modes.Zoom.Data.Buffer
-                    let bufnr = s:modes.Zoom.Data.Buffer
-                endif
-            else
-                let bufnr = winbufnr(t:CtrlSpaceStartWindow)
-            endif
-
-            let bufname = bufname(bufnr)
-        endif
-
-        if empty(bufname)
-            let title = "[" . bufnr . "*No Name]"
-        else
-            let title = "[" . substitute(fnamemodify(bufname, ':t'), '%', '%%', 'g') . "]"
-        endif
+    if !empty(title)
+        return title
     endif
 
+    if getbufvar(bufnr, "&ft") == "ctrlspace"
+        if s:modes.Zoom.Enabled
+            if s:modes.Zoom.Data.Buffer
+                let bufnr = s:modes.Zoom.Data.Buffer
+            endif
+        else
+            let bufnr = winbufnr(t:CtrlSpaceStartWindow)
+        endif
+
+        let bufname = bufname(bufnr)
+    endif
+
+    if empty(bufname)
+        let title = "[" . bufnr . "*No Name]"
+    else
+        let title = "[" . substitute(fnamemodify(bufname, ':t'), '%', '%%', 'g') . "]"
+    endif
     return title
 endfunction
 
