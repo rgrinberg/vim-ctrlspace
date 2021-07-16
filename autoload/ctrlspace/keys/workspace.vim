@@ -35,8 +35,6 @@ function! ctrlspace#keys#workspace#LoadOrSave(k) abort
         call ctrlspace#window#Toggle(0)
         call ctrlspace#ui#DelayedMsg()
     elseif a:k ==# "Space"
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
         call s:modes.Workspace.Enable()
         call ctrlspace#window#Toggle(1)
         call ctrlspace#ui#DelayedMsg()
@@ -119,7 +117,6 @@ function! s:loadWorkspace(bang, name) abort
     endif
 
     if a:bang
-        call ctrlspace#window#Toggle(0)
         call s:modes.Workspace.Enable()
         call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)

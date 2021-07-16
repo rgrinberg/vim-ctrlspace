@@ -90,9 +90,6 @@ endfunction
 
 function! ctrlspace#bookmarks#AddFirstBookmark() abort
     if ctrlspace#bookmarks#AddNewBookmark()
-        call ctrlspace#window#Kill(1)
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
         call s:modes.Bookmark.Enable()
         call ctrlspace#window#Toggle(1)
     endif

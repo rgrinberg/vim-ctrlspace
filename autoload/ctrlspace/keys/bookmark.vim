@@ -18,9 +18,8 @@ function! ctrlspace#keys#bookmark#GoToBookmark(k) abort
     if a:k ==# "CR"
         call ctrlspace#window#Toggle(0)
     elseif a:k ==# "Space"
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
         call s:modes.Bookmark.Enable()
+        call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
     endif
 
@@ -42,9 +41,6 @@ function! ctrlspace#keys#bookmark#Edit(k) abort
     let nr = ctrlspace#window#SelectedIndex()
 
     if ctrlspace#bookmarks#ChangeBookmarkDirectory(nr)
-        call ctrlspace#window#Kill(1)
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
         call s:modes.Bookmark.Enable()
         call ctrlspace#window#Toggle(1)
         call ctrlspace#window#MoveSelectionBar(curline)
@@ -60,9 +56,6 @@ function! ctrlspace#keys#bookmark#Add(k) abort
     endif
 
     if result
-        call ctrlspace#window#Kill(1)
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
         call s:modes.Bookmark.Enable()
         call ctrlspace#window#Toggle(1)
         call ctrlspace#ui#DelayedMsg()
@@ -72,9 +65,6 @@ endfunction
 function! ctrlspace#keys#bookmark#Delete(k) abort
     let nr = ctrlspace#window#SelectedIndex()
     call ctrlspace#bookmarks#RemoveBookmark(nr)
-    call ctrlspace#window#Kill(1)
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0)
     call s:modes.Bookmark.Enable()
     call ctrlspace#window#Toggle(1)
     call ctrlspace#ui#DelayedMsg()

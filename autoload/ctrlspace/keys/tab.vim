@@ -23,8 +23,6 @@ function! ctrlspace#keys#tab#GoToTab(k) abort
     if a:k ==# "CR"
         call ctrlspace#window#Toggle(0)
     elseif a:k ==# "Space"
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
         call s:modes.Tab.Enable()
         call ctrlspace#window#Toggle(1)
     endif
@@ -34,9 +32,7 @@ function! ctrlspace#keys#tab#CloseTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
     call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
-    call ctrlspace#window#Toggle(0)
     call ctrlspace#tabs#CloseTab()
-    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
@@ -46,8 +42,6 @@ function! ctrlspace#keys#tab#AddTab(k) abort
     call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
     silent! exe "tabnew"
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction
@@ -67,9 +61,6 @@ function! ctrlspace#keys#tab#CopyTab(k) abort
 
     let t:CtrlSpaceList = sourceList
 
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(1)
-    call ctrlspace#window#Toggle(0)
     call ctrlspace#buffers#CloseBuffer()
     call ctrlspace#jumps#Jump("previous")
     call ctrlspace#buffers#LoadBuffer()
@@ -123,8 +114,6 @@ function! ctrlspace#keys#tab#MoveTab(k) abort
     call ctrlspace#window#Kill(1)
     silent! exe "normal! " . nr . "gt"
     call ctrlspace#keys#tab#MoveHelper(a:k)
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
 endfunction

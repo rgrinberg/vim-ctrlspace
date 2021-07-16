@@ -82,8 +82,6 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
         silent! exe ":b " . b
     endfor
 
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
     return 1
@@ -119,8 +117,6 @@ function! ctrlspace#tabs#CollectForeignBuffers() abort
         silent! exe ":b " . fb
     endfor
 
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
     return 1
