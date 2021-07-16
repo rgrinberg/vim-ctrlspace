@@ -68,7 +68,6 @@ let s:configuration = {
                     \ "CacheDir":                  expand($HOME),
                     \ "ProjectRootMarkers":        [".git", ".hg", ".svn", ".bzr", "_darcs", "CVS"],
                     \ "UseUnicode":                1,
-                    \ "IgnoredFiles":              '\v(tmp|temp)[\/]',
                     \ "SearchTiming":              200,
                     \ "FileEngine":                "auto",
                     \ }

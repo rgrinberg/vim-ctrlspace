@@ -75,7 +75,6 @@ Table of Contents                                            *ctrlspace-toc*
    7.17 g:CtrlSpaceProjectRootMarkers        |g:CtrlSpaceProjectRootMarkers|
    7.18 g:CtrlSpaceUseUnicode                        |g:CtrlSpaceUseUnicode|
    7.19 g:CtrlSpaceSymbols                              |g:CtrlSpaceSymbols|
-   7.20 g:CtrlSpaceIgnoredFiles                    |g:CtrlSpaceIgnoredFiles|
    7.21 g:CtrlSpaceStatuslineFunction        |g:CtrlSpaceStatuslineFunction|
    7.22 g:CtrlSpaceSearchTiming                    |g:CtrlSpaceSearchTiming|
    7.23 g:CtrlSpaceFileEngine                        |g:CtrlSpaceFileEngine|
@@ -1108,21 +1107,6 @@ You can define your own symbols like in this example: >
 Default value: >
 
     let g:CtrlSpaceSymbols = {}
-<
-                                                             |ctrlspace-toc|
---------------------------------------------------------------------------
-
-7.20 *g:CtrlSpaceIgnoredFiles*
-
-The expression used to ignore some files during file collecting. It is
-used in addition to the `wildignore` option in Vim (see |wildignore|).
-The `wildignore` option won't work with a custom glob command
-(|g:CtrlSpaceGlobCommand|). The glob command may ignore some files
-itself (for example: `Ag` command obeys `.gitignore` file).
-
-Default value: >
-
-    let g:CtrlSpaceIgnoredFiles = '\v(tmp|temp)[\/]'
 <
                                                              |ctrlspace-toc|
 --------------------------------------------------------------------------
