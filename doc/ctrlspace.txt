@@ -77,7 +77,6 @@ Table of Contents                                            *ctrlspace-toc*
    7.19 g:CtrlSpaceSymbols                              |g:CtrlSpaceSymbols|
    7.21 g:CtrlSpaceStatuslineFunction        |g:CtrlSpaceStatuslineFunction|
    7.22 g:CtrlSpaceSearchTiming                    |g:CtrlSpaceSearchTiming|
-   7.23 g:CtrlSpaceFileEngine                        |g:CtrlSpaceFileEngine|
    7.24 g:CtrlSpaceSortHelp                            |g:CtrlSpaceSortHelp|
  8. API                                                      |ctrlspace-api|
    8.1 Commands                                         |ctrlspace-commands|
@@ -227,17 +226,6 @@ If you feel brave enough turn off tabline: >
 Tabline in Vim has very limited capabilities and as Vim-CtrlSpace makes
 use of tabs intensively, tabline would just get in your way. Tab List
 (<l>) makes tabline obsolete ;).
-
-                                                             |ctrlspace-toc|
---------------------------------------------------------------------------
-
-3.2.1 Go Engine                                        *ctrlspace-go-engine*
-
-The plugin provides engine compiled for popular operating systems and
-architectures. By default it will attempt to detect your os and
-architecture. To see if auto detection was successful press <?>.
-
-To find more about file engines check |g:CtrlSpaceFileEngine|.
 
                                                              |ctrlspace-toc|
 --------------------------------------------------------------------------
@@ -1131,64 +1119,6 @@ smooth search input behavior.
 Default value: >
 
     let g:CtrlSpaceSearchTiming = 200
-<
-                                                             |ctrlspace-toc|
---------------------------------------------------------------------------
-
-7.23 *g:CtrlSpaceFileEngine*
-
-The plugin provides fuzzy search engine written in Go and compiled for
-several architectures:
-
- * `file_engine_darwin_386`
- * `file_engine_darwin_amd64`
- * `file_engine_freebsd_386`
- * `file_engine_freebsd_amd64`
- * `file_engine_freebsd_arm`
- * `file_engine_linux_386`
- * `file_engine_linux_amd64`
- * `file_engine_linux_arm`
- * `file_engine_linux_mips`
- * `file_engine_linux_mips64`
- * `file_engine_linux_mips64le`
- * `file_engine_linux_mipsle`
- * `file_engine_linux_s390x`
- * `file_engine_netbsd_386`
- * `file_engine_netbsd_amd64`
- * `file_engine_netbsd_arm`
- * `file_engine_openbsd_386`
- * `file_engine_openbsd_amd64`
- * `file_engine_windows_386.exe`
- * `file_engine_windows_amd64.exe`
-
-The engine protocol is relatively simple and it's possible to implement an
-engine in any technology (see |ctrlspace-engine-specs|). The engine
-must be provided as an executable file in the `bin` directory in the plugin
-folder.
-
-To enable your custom engine provide the executable name as a string to
-|g:CtrlSpaceFileEngine| variable. You can also force plugin to use
-a certain implementation of your choice. For example, a Go version
-for Mac OS X could look like: >
-
-    let g:CtrlSpaceFileEngine = "file_engine_darwin_amd64"
-<
-Another way of enabling a Go implementation is file engine auto detection.
-Plugin can try to infer matching os and architecture and use proper Go
-binary. To enable it provide a string `"auto"` (or leave default value): >
-
-    let g:CtrlSpaceFileEngine = "auto"
-<
-To make sure a correct file engine is in use check the Help View (<?>).
-
-To disable external file engines and stick to pure Vim implementation,
-just provide an empty string: >
-
-    let g:CtrlSpaceFileEngine = ""
-<
-Default value: >
-
-    let g:CtrlSpaceFileEngine = "auto"
 <
                                                              |ctrlspace-toc|
 --------------------------------------------------------------------------

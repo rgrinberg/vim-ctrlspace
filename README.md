@@ -184,61 +184,6 @@ let g:CtrlSpaceSaveWorkspaceOnExit = 1
 
 # Advanced Settings
 
-## Go Engine
-
-The plugin provides engine compiled for popular operating systems and
-architectures. By default it will attempt to detect your OS and
-architecture. To see if auto detection was successful press `<?>`.
-
-To speed up the startup of Vim, replace it by a custom simpler one that
-restricts to those architectures most probably used by you, and does not
-involve system calls. For example, if you use
-[vim-plug](https://github.com/junegunn/vim-plug), then by adding to your
-`vimrc`:
-
-```vim
-if has('win32')
-    let s:vimfiles = '~/vimfiles'
-    let s:os   = 'windows'
-else
-    let s:vimfiles = '~/.vim'
-    if has('mac') || has('gui_macvim')
-        let s:os = 'darwin'
-    else
-    " elseif has('gui_gtk2') || has('gui_gtk3')
-        let s:os = 'linux'
-    endif
-endif
-
-let g:CtrlSpaceFileEngine = s:vimfiles . '/plugged/vim-ctrlspace' . '/bin/file_engine_' . s:os . '_amd64'
-```
-
-The file engine binaries have been compiled for various OS's and CPU
-types, but only those for Linux, MacOS and Windows on 64 bit architectures
-are available in the git repository. The other versions for their 32 bit
-architecture counterparts, as well as for FreeBSD, NetBSD and OpenBSD
-on `ARM`, `MIPS`, `amd64` and `32` bit architectures can be downloaded at:
-
-	<https://git.io/vim-ctrlspace-release-all_os_file_engines>
-
-To find more about setting up the file engines, check:
-
-```VimL
-:help g:CtrlSpaceFileEngine
-```
-
-Lastly, this file engine sources the list of files it searches through from
-a text file cache (`cs_files`, typically stored under `.git/`). For small to
-medium-sized projects (say <1k files as a cautious estimate), where loading
-from this files cache isn't likely to yield a noticeable speed boost, and you
-might instead rather not think about when to refresh the cache (for instance
-on switching to a branch with different files), you may disable the cache and
-by extension forgo using the Go file engine by setting the option below:
-
-```VimL
-let g:CtrlSpaceEnableFilesCache = 0
-```
-
 ## Symbols
 
 Vim-Ctrlspace displays icons in the UI if your font supports UTF8, or
