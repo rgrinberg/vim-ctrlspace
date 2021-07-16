@@ -125,37 +125,37 @@ endfunction
 function! ctrlspace#roots#FindProjectRoot() abort
     let projectRoot = fnamemodify(".", ":p:h")
 
-    if !empty(s:config.ProjectRootMarkers)
-        let rootFound     = 0
-        let candidate     = fnamemodify(projectRoot, ":p:h")
-        let lastCandidate = ""
-
-        while candidate != lastCandidate
-            for marker in s:config.ProjectRootMarkers
-                let markerPath = candidate . "/" . marker
-                if filereadable(markerPath) || isdirectory(markerPath)
-                    let rootFound = 1
-                    break
-                endif
-            endfor
-
-            if !rootFound
-                let rootFound = exists("s:projectRoots[candidate]")
-            endif
-
-            if rootFound
-                let projectRoot = candidate
-                break
-            endif
-
-            let lastCandidate = candidate
-            let candidate = fnamemodify(candidate, ":p:h:h")
-        endwhile
-
-        return rootFound ? projectRoot : ""
+    if empty(s:config.ProjectRootMarkers)
+        return projectRoot
     endif
 
-    return projectRoot
+    let rootFound     = 0
+    let candidate     = fnamemodify(projectRoot, ":p:h")
+    let lastCandidate = ""
+
+    while candidate != lastCandidate
+        for marker in s:config.ProjectRootMarkers
+            let markerPath = candidate . "/" . marker
+            if filereadable(markerPath) || isdirectory(markerPath)
+                let rootFound = 1
+                break
+            endif
+        endfor
+
+        if !rootFound
+            let rootFound = exists("s:projectRoots[candidate]")
+        endif
+
+        if rootFound
+            let projectRoot = candidate
+            break
+        endif
+
+        let lastCandidate = candidate
+        let candidate = fnamemodify(candidate, ":p:h:h")
+    endwhile
+
+    return rootFound ? projectRoot : ""
 endfunction
 
 function! ctrlspace#roots#ProjectRootFound() abort
