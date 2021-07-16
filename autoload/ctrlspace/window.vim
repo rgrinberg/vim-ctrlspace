@@ -68,7 +68,8 @@ function! ctrlspace#window#Toggle(internal) abort
         return
     endif
 
-    let [b:items, b:indices, b:size, b:text] = ctrlspace#engine#Content()
+    let [b:items, b:indices, b:text] = ctrlspace#engine#Content()
+    let b:size = len(b:items)
 
     " set up window height
     if b:size > s:config.Height

@@ -189,5 +189,5 @@ function! s:prepareContent(items) abort
         call add(indices, item.index)
     endfor
 
-    return [a:items, indices, len(a:items), content]
+    return [a:items, indices, content]
 endfunction
