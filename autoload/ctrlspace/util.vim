@@ -140,8 +140,6 @@ function! ctrlspace#util#GetbufvarWithDefault(nr, name, default) abort
 endfunction
 
 function! ctrlspace#util#SetStatusline() abort
-    if has("statusline")
-        let config = ctrlspace#context#Configuration()
-        silent! exe "let &l:statusline = " . config.StatuslineFunction
-    endif
+    let config = ctrlspace#context#Configuration()
+    silent! exe "let &l:statusline = " . config.StatuslineFunction
 endfunction
