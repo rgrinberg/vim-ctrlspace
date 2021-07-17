@@ -304,13 +304,13 @@ endfunction
 function! ctrlspace#window#GoToWindow() abort
     let nr = ctrlspace#window#SelectedIndex()
 
-    if bufwinnr(nr) != -1
-        call ctrlspace#window#Kill(1)
-        silent! exe bufwinnr(nr) . "wincmd w"
-        return 1
+    if bufwinnr(nr) == -1
+        return 0
     endif
 
-    return 0
+    call ctrlspace#window#Kill(1)
+    silent! exe bufwinnr(nr) . "wincmd w"
+    return 1
 endfunction
 
 " tries to set the cursor to a line of the buffer list
