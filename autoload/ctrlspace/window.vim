@@ -532,14 +532,6 @@ function! s:filler() abort
     return s:filler[string(&columns)]
 endfunction
 
-function! s:fillBufferSpace() abort
-    let fill = s:filler()
-
-    while winheight(0) > line(".")
-        silent! put =fill
-    endwhile
-endfunction
-
 function! s:displayContent() abort
     setlocal modifiable
 
@@ -557,7 +549,6 @@ function! s:displayContent() abort
         endfor
 
         normal! GkJ
-        call s:fillBufferSpace()
         call s:modes.Nop.Disable()
     else
         let emptyListMessage = "  List empty"
@@ -570,8 +561,6 @@ function! s:displayContent() abort
 
         silent! put! =emptyListMessage
         normal! GkJ
-
-        call s:fillBufferSpace()
 
         normal! 0
 
