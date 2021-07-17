@@ -212,8 +212,6 @@ function! ctrlspace#window#MoveSelectionBar(where) abort
         let b:lastline = 0
     endif
 
-    setlocal modifiable
-
     " the mouse was pressed: remember which line
     " and go back to the original location for now
     if a:where == "mouse"
@@ -261,8 +259,6 @@ function! ctrlspace#window#MoveSelectionBar(where) abort
     " remember this line, in case the mouse is clicked
     " (which automatically moves the cursor there)
     let b:lastline = line(".")
-
-    setlocal nomodifiable
 endfunction
 
 function! ctrlspace#window#MoveCursor(where) abort
