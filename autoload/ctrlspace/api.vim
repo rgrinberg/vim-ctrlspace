@@ -3,6 +3,18 @@ scriptencoding utf-8
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
+function! s:CompareByText(a, b) abort
+    let lhs = fnamemodify(a:a.text, ':p')
+    let rhs = fnamemodify(a:b.text, ':p')
+    if lhs < rhs
+        return -1
+    elseif lhs > rhs
+        return 1
+    else
+        return 0
+    endif
+endfunction
+
 function! ctrlspace#api#BufferList(tabnr) abort
     let bufferList     = []
     let singleList     = ctrlspace#buffers#Buffers(a:tabnr)
@@ -24,7 +36,7 @@ function! ctrlspace#api#BufferList(tabnr) abort
         endif
     endfor
 
-    call sort(bufferList, function("ctrlspace#engine#CompareByText"))
+    call sort(bufferList, function("s:CompareByText"))
 
     return bufferList
 endfunction
