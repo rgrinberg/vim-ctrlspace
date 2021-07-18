@@ -252,12 +252,7 @@ function! ctrlspace#help#DisplayHelp(fill) abort
 
     if b:size > s:config.Height
         let maxHeight = ctrlspace#window#MaxHeight()
-
-        if b:size < maxHeight
-            silent! exe "resize " . b:size
-        else
-            silent! exe "resize " . maxHeight
-        endif
+        silent! exe "resize " . (b:size < maxHeight ? b:size : maxHeight)
     endif
 
     silent! put! =s:flushTextBuffer()
