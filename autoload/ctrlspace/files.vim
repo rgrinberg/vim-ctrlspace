@@ -304,10 +304,10 @@ function! ctrlspace#files#GoToDirectory(back) abort
     endif
 
     if a:back
-        if !empty(s:goToDirectorySave)
-            let path = s:goToDirectorySave[-1]
-        else
+        if empty(s:goToDirectorySave)
             return
+        else
+            let path = s:goToDirectorySave[-1]
         endif
     else
         let path = s:File.abs_fob_p()
