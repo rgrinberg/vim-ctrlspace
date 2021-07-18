@@ -147,25 +147,26 @@ endfunction
 call s:init()
 
 function! ctrlspace#help#CloseExternalWindow() abort
-    if bufexists(s:externalBufnr)
-        let curtab = tabpagenr()
-
-        for t in range(1, tabpagenr("$"))
-            let bufs = map(keys(ctrlspace#buffers#Buffers(t)), "str2nr(v:val)")
-
-            if index(bufs, s:externalBufnr) != -1 && len(bufs) > 1
-                silent! exe "normal! " . t . "gt"
-
-                if bufwinnr(s:externalBufnr) == 1 && winnr("$") == 1
-                    silent! exe ":CtrlSpaceGoDown"
-                endif
-
-                silent! exe "normal! " . curtab . "gt"
-            endif
-        endfor
-
-        silent! exe "bw " . s:externalBufnr
+    if !bufexists(s:externalBufnr)
+        return
     endif
+    let curtab = tabpagenr()
+
+    for t in range(1, tabpagenr("$"))
+        let bufs = map(keys(ctrlspace#buffers#Buffers(t)), "str2nr(v:val)")
+
+        if index(bufs, s:externalBufnr) != -1 && len(bufs) > 1
+            silent! exe "normal! " . t . "gt"
+
+            if bufwinnr(s:externalBufnr) == 1 && winnr("$") == 1
+                silent! exe ":CtrlSpaceGoDown"
+            endif
+
+            silent! exe "normal! " . curtab . "gt"
+        endif
+    endfor
+
+    silent! exe "bw " . s:externalBufnr
 endfunction
 
 function! ctrlspace#help#OpenInNewWindow() abort
