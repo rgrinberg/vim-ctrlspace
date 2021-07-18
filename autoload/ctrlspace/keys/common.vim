@@ -76,15 +76,13 @@ function! ctrlspace#keys#common#RestoreNextSearch(k) abort
 endfunction
 
 function! ctrlspace#keys#common#ToggleHelp(k) abort
-    call ctrlspace#window#Kill(0)
-
     if s:modes.Help.Enabled
         call s:modes.Help.Disable()
     else
         call s:modes.Help.Enable()
     endif
 
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#keys#common#Up(k) abort
