@@ -400,13 +400,14 @@ endfunction
 function! s:ensurePath(file) abort
     let directory = fnamemodify(a:file, ":.:h")
 
-    if !isdirectory(directory)
-        if !ctrlspace#ui#Confirmed("Directory '" . directory . "' will be created. Continue?")
-            return 0
-        endif
-
-        call mkdir(fnamemodify(directory, ":p"), "p")
+    if isdirectory(directory)
+        return 1
     endif
 
+    if !ctrlspace#ui#Confirmed("Directory '" . directory . "' will be created. Continue?")
+        return 0
+    endif
+
+    call mkdir(fnamemodify(directory, ":p"), "p")
     return 1
 endfunction
