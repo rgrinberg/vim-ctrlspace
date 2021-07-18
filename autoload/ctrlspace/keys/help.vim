@@ -5,6 +5,7 @@ function! ctrlspace#keys#help#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#ToggleHelp", "Help", ["BS", "?"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#Close",      "Help", ["q", "Esc", "C-c"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#Quit",       "Help", ["Q"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#help#OpenInNewWindow", "Help", ["W"])
 
     call s:map("Down",            "j")
     call s:map("Up",              "k")
