@@ -16,6 +16,39 @@ function! ctrlspace#window#run() abort
     call ctrlspace#window#Toggle(0)
 endfunction
 
+function! ctrlspace#window#refresh() abort
+    setlocal modifiable
+    call nvim_buf_set_lines(0, 0, line("$"), 0, [])
+    setlocal nomodifiable
+
+    silent! exe "resize" s:config.Height
+    call s:setUpBuffer()
+
+    if s:modes.Help.Enabled
+        call ctrlspace#help#DisplayHelp(s:filler())
+        call ctrlspace#util#SetStatusline()
+        return
+    endif
+
+    let [b:items, b:indices, b:text] = ctrlspace#engine#Content()
+    let b:size = len(b:items)
+
+    " set up window height
+    if b:size > s:config.Height
+        let maxHeight = ctrlspace#window#MaxHeight()
+        silent! exe "resize " . (b:size < maxHeight ? b:size : maxHeight)
+    endif
+
+    silent! exe "set updatetime=" . s:config.SearchTiming
+
+    call s:displayContent()
+    call ctrlspace#util#SetStatusline()
+
+    call s:setActiveLine()
+
+    normal! zb
+endfunction
+
 function! ctrlspace#window#Toggle(internal) abort
     if !a:internal
         call s:resetWindow()
