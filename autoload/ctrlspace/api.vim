@@ -86,12 +86,8 @@ endfunction
 
 function! ctrlspace#api#StatuslineTabSegment() abort
     let currentTab = tabpagenr()
-    let winnr      = tabpagewinnr(currentTab)
-    let buflist    = tabpagebuflist(currentTab)
-    let bufnr      = buflist[winnr - 1]
-    let bufname    = bufname(bufnr)
     let bufsNumber = ctrlspace#api#TabBuffersNumber(currentTab)
-    let title      = ctrlspace#api#TabTitle(currentTab, bufnr, bufname)
+    let title      = ctrlspace#api#TabTitle(currentTab)
 
     if !s:config.UseUnicode && !empty(bufsNumber)
         let bufsNumber = ":" . bufsNumber
@@ -199,9 +195,11 @@ function! ctrlspace#api#TabBuffersNumber(tabnr) abort
     return numberToShow
 endfunction
 
-function! ctrlspace#api#TabTitle(tabnr, bufnr, bufname) abort
-    let bufname = a:bufname
-    let bufnr   = a:bufnr
+function! ctrlspace#api#TabTitle(tabnr) abort
+    let winnr   = tabpagewinnr(a:tabnr)
+    let buflist = tabpagebuflist(a:tabnr)
+    let bufnr   = buflist[winnr - 1]
+    let bufname = bufname(bufnr)
     let title   = ctrlspace#util#Gettabvar(a:tabnr, "CtrlSpaceLabel")
 
     if !empty(title)
@@ -229,11 +227,7 @@ function! ctrlspace#api#TabTitle(tabnr, bufnr, bufname) abort
 endfunction
 
 function! ctrlspace#api#Guitablabel() abort
-    let winnr      = tabpagewinnr(v:lnum)
-    let buflist    = tabpagebuflist(v:lnum)
-    let bufnr      = buflist[winnr - 1]
-    let bufname    = bufname(bufnr)
-    let title      = ctrlspace#api#TabTitle(v:lnum, bufnr, bufname)
+    let title      = ctrlspace#api#TabTitle(v:lnum)
     let bufsNumber = ctrlspace#api#TabBuffersNumber(v:lnum)
 
     if !s:config.UseUnicode && !empty(bufsNumber)
@@ -257,11 +251,7 @@ function! ctrlspace#api#TabList() abort
     let currentTab = tabpagenr()
 
     for t in range(1, lastTab)
-        let winnr       = tabpagewinnr(t)
-        let buflist     = tabpagebuflist(t)
-        let bufnr       = buflist[winnr - 1]
-        let bufname     = bufname(bufnr)
-        let tabTitle    = ctrlspace#api#TabTitle(t, bufnr, bufname)
+        let tabTitle    = ctrlspace#api#TabTitle(t)
         let tabModified = ctrlspace#api#TabModified(t)
         let tabCurrent  = t == currentTab
 
@@ -277,12 +267,8 @@ function! ctrlspace#api#Tabline() abort
     let tabline    = ''
 
     for t in range(1, lastTab)
-        let winnr      = tabpagewinnr(t)
-        let buflist    = tabpagebuflist(t)
-        let bufnr      = buflist[winnr - 1]
-        let bufname    = bufname(bufnr)
         let bufsNumber = ctrlspace#api#TabBuffersNumber(t)
-        let title      = ctrlspace#api#TabTitle(t, bufnr, bufname)
+        let title      = ctrlspace#api#TabTitle(t)
 
         if !s:config.UseUnicode && !empty(bufsNumber)
             let bufsNumber = ":" . bufsNumber

@@ -83,12 +83,8 @@ function! s:tabContent(clv) abort
     let currentTab = tabpagenr()
 
     for i in range(1, tabpagenr("$"))
-        let winnr         = tabpagewinnr(i)
-        let buflist       = tabpagebuflist(i)
-        let bufnr         = buflist[winnr - 1]
-        let bufname       = bufname(bufnr)
         let tabBufsNumber = ctrlspace#api#TabBuffersNumber(i)
-        let title         = ctrlspace#api#TabTitle(i, bufnr, bufname)
+        let title         = ctrlspace#api#TabTitle(i)
 
         if !s:config.UseUnicode && !empty(tabBufsNumber)
             let tabBufsNumber = ":" . tabBufsNumber
