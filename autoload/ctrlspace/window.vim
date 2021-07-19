@@ -86,16 +86,16 @@ function! ctrlspace#window#Toggle(internal) abort
     let pbuf = ctrlspace#context#PluginBuffer()
 
     if bufexists(pbuf)
-        if bufwinnr(pbuf) != -1
-            call ctrlspace#window#Kill(1)
-            return
-        else
+        if bufwinnr(pbuf) == -1
             call ctrlspace#window#Kill(0)
             if !a:internal
                 let t:CtrlSpaceStartWindow = winnr()
                 let t:CtrlSpaceWinrestcmd  = winrestcmd()
                 let t:CtrlSpaceActivebuf   = bufnr("")
             endif
+        else
+            call ctrlspace#window#Kill(1)
+            return
         endif
     elseif !a:internal
         " make sure zoom window is closed
