@@ -48,7 +48,7 @@ function! s:set_globber() abort
   if !empty(s:config.GlobCommand)
       let glob_cmd = s:config.GlobCommand
   elseif executable('rg')
-      let glob_cmd = 'rg --color=never --files'
+      let glob_cmd = 'rg --color=never --files --sort path'
   elseif executable('fd')
       let glob_cmd = 'fd --color=never --type=file'
   elseif executable('ag')
