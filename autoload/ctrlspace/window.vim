@@ -77,6 +77,12 @@ function! ctrlspace#window#refresh() abort
     call s:insertContent()
 endfunction
 
+function! s:saveTabConfig() abort
+    let t:CtrlSpaceStartWindow = winnr()
+    let t:CtrlSpaceWinrestcmd  = winrestcmd()
+    let t:CtrlSpaceActivebuf   = bufnr("")
+endfunction
+
 function! ctrlspace#window#Toggle(internal) abort
     if !a:internal
         call s:resetWindow()
@@ -89,9 +95,7 @@ function! ctrlspace#window#Toggle(internal) abort
         if bufwinnr(pbuf) == -1
             call ctrlspace#window#Kill(0)
             if !a:internal
-                let t:CtrlSpaceStartWindow = winnr()
-                let t:CtrlSpaceWinrestcmd  = winrestcmd()
-                let t:CtrlSpaceActivebuf   = bufnr("")
+                call s:saveTabConfig()
             endif
         else
             call ctrlspace#window#Kill(1)
@@ -100,9 +104,7 @@ function! ctrlspace#window#Toggle(internal) abort
     elseif !a:internal
         " make sure zoom window is closed
         silent! exe "pclose"
-        let t:CtrlSpaceStartWindow = winnr()
-        let t:CtrlSpaceWinrestcmd  = winrestcmd()
-        let t:CtrlSpaceActivebuf   = bufnr("")
+        call s:saveTabConfig()
     endif
 
     if s:modes.Zoom.Enabled
