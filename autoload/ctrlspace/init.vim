@@ -12,12 +12,17 @@ endfunction
 
 function! s:run(options) abort
     let args = {}
-    let mode = a:options["__unknown_args__"][0]
-    let args["mode"] = toupper(mode[0]) . strpart(mode, 1)
+
+    let positional_args = a:options["__unknown_args__"]
+    if !empty(positional_args)
+        let mode = positional_args[0]
+        let args["mode"] = toupper(mode[0]) . strpart(mode, 1)
+    endif
 
     if has_key(a:options, "input")
         let args["input"] = a:options.input
     endif
+
     if has_key(a:options, "insert")
         let args["insert"] = a:options.insert
     endif
