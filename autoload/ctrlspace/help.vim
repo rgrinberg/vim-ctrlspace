@@ -236,7 +236,7 @@ function! ctrlspace#help#DisplayHelp(fill) abort
         let header .= " (" . join(mi[1:], ", ") . ")"
     endif
 
-    call s:puts(s:config.Symbols.CS . " CtrlSpace 5.0.7 (engine: " . s:config.FileEngineName . ")")
+    call s:puts(s:config.Symbols.CS . " CtrlSpace 5.0.7")
     call s:puts(header . " - press <CR> to expand")
     call s:puts("")
 

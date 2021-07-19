@@ -69,7 +69,6 @@ let s:configuration = {
                     \ "ProjectRootMarkers":        [".git", ".hg", ".svn", ".bzr", "_darcs", "CVS"],
                     \ "UseUnicode":                1,
                     \ "SearchTiming":              200,
-                    \ "FileEngine":                "auto",
                     \ }
 
 function! s:init() abort
@@ -92,62 +91,6 @@ function! s:init() abort
                       \ "IM":   strwidth(s:conf.Symbols.IM),
                       \ "Dots": strwidth(s:conf.Symbols.Dots)
                       \ }
-
-    if s:conf.FileEngine ==# "auto"
-        let s:conf.FileEngine = s:detectEngine()
-    endif
-
-    if !empty(s:conf.FileEngine)
-        let s:conf.FileEngineName = s:conf.FileEngine
-        let ebin = s:pluginFolder . "/bin/" . s:conf.FileEngine
-        let s:conf.FileEngine = executable(ebin) ? shellescape(ebin) : ""
-    endif
-
-    if empty(s:conf.FileEngine)
-        let s:conf.FileEngineName = "VIM"
-    endif
-endfunction
-
-function! s:detectEngine() abort
-    let [os, arch] = ["", ""]
-
-    if has("win32")
-        let os   = "windows"
-        let arch = empty(ctrlspace#util#system('set | find "ProgramFiles(x86)"')) ? "386" : "amd64"
-    else
-        let uname = ctrlspace#util#system("uname -a")
-
-        for sys in ["darwin", "linux", "freebsd", "netbsd", "openbsd"]
-            if uname =~? sys
-                let os = sys
-                break
-            endif
-        endfor
-
-        if uname =~? "mips64le"
-            let arch = "mips64le"
-        elseif uname =~? "mips64"
-            let arch = "mips64"
-        elseif uname =~? "mipsle"
-            let arch = "mipsle"
-        elseif uname =~? "mips"
-            let arch = "mips"
-        elseif uname =~? "s390x"
-            let arch = "s390x"
-        elseif uname =~? "arm"
-            let arch = "arm"
-        elseif uname =~? "64"
-            let arch = "amd64"
-        else
-            let arch = "386"
-        endif
-    endif
-
-    if empty(os) || empty(arch)
-        return ""
-    endif
-
-    return join(["file_engine", os, arch], "_")
 endfunction
 
 call s:init()

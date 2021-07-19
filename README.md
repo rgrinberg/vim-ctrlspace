@@ -38,7 +38,6 @@ selectable by the `j`, `k`, and `<CR>` keys.
       * [Fuzzy Search Hints](#fuzzy-search-hints)
       * [Automatically Saving Workspace](#automatically-saving-workspace)
    * [Advanced Settings](#advanced-settings)
-      * [Go Engine](#go-engine)
       * [Symbols](#symbols)
       * [Glob Command](#glob-command)
       * [Search Timing](#search-timing)

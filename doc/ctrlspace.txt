@@ -107,9 +107,8 @@ Table of Contents                                            *ctrlspace-toc*
      8.2.10 ctrlspace#api#Tabline()                |ctrlspace#api#Tabline()|
      8.2.11 ctrlspace#api#TabList()                |ctrlspace#api#TabList()|
      8.2.12 ctrlspace#api#BufNr()                    |ctrlspace#api#BufNr()|
- 9. File Engine Specifications                      |ctrlspace-engine-specs|
-10. FAQ                                                      |ctrlspace-FAQ|
-11. Authors and License                      |ctrlspace-authors-and-license|
+ 9  FAQ                                                      |ctrlspace-FAQ|
+10. Authors and License                      |ctrlspace-authors-and-license|
 
 ==========================================================================
 
@@ -1375,150 +1374,7 @@ otherwise.
                                                              |ctrlspace-toc|
 ==========================================================================
 
-9. File Engine Specifications                       *ctrlspace-engine-specs*
-
-It's fairly easy to provide your own implementation of a fuzzy searcher
-for files. The main reason for enabling such external searcher is the
-limited speed of Vim Script processing.
-
-Moreover the amount of data returned by the search algorithm is
-significantly greater than in other popular fuzzy searchers implemented in
-pure Vim Script (like `CtrlP`) thus it affects the performance too.
-
-
-General Assumptions~
-
-The file engine binaries have been compiled for various OS's and CPU
-types, but only those for Linux, MacOS and Windows on 64 bit architectures
-are available in the git repository. The other versions for their 32 bit
-architecture counterparts, as well as for FreeBSD, NetBSD and OpenBSD
-on 32 and 64 bit architectures can still be dowloaded from a specific
-release `all_os_file_engines`, downloadable at:
-
-	https://git.io/vim-ctrlspace-release-all_os_file_engines
-
-By default the plugin shows at most 500 items per list and 200 when fuzzy
-searched. That rule is enforced by internal fuzzy searcher implementation
-and by the external engine written in Go.
-
-More items make the plugin window sluggish and inconvenient to browse. If
-something you are looking for is not immediately available within those
-limits then most likely you should refine your search criteria.
-
-Of course your are not forced to follow those limitations. Feel free to
-change the limits in your own implementation if you think it would work
-better for you.
-
-The external engine is designed specifically for searching and displaying
-files. All other search in the plugin is performed by an internal engine.
-The communication with external processes involves some latency as Vim
-must execute an external command in the system shell.
-
-However, such latency is acceptable for files, where we might have a great
-volume to search and show. It is much less likely that you hit thousands
-of buffers, tabs, workspaces, or bookmarks. But for files that is a common
-scenario on everyday basis.
-
-The responsibility of an external engine is also to render the exact
-response - text that would be displayed in the plugin window together with
-all metadata that allow plugin proceed it further. This is because of the
-massive scale of processing needed in case of files. The engine technology
-is assumed to be a lot faster than Vim Script with string concatenation
-either.
-
-
-The Request~
-
-The plugin attempts to query data by executing the engine program and
-passing just a single line of text to the program Standard Input (`STDIN`).
-That line contains an object definition in JSON format describing the
-current context of Vim-CtrlSpace.
-
-The JSON object has the following structure (with sample data): >
-
-    {
-        "Query":    "gfx",
-        "Columns":  170,
-        "Limit":    0,
-        "Source":   "/Users/szw/Projects/vim-ctrlspace/.git/cs_files",
-        "Dots":     "…",
-        "DotsSize": 1
-    }
-<
-The fields mean:
-
- * `Query`    - Characters placed in the plugin search input
-              (`[A-Za-z0-9]`). The query might be empty - then the engine
-              should just display items.
-
- * `Columns`  - The width of the plugin window. Lines rendered in the
-              response should have extact width provided by this value.
-
- * `Limit`    - If greater than 0 then results should be trimmed to that
-              value - otherwise they should follow 500 / 200 rule.
-              The limit is used while Search Mode is enabled. In that
-              mode you cannot move the bar and browse List View.
-              Since you are just supposed to type search characters
-              there is no point to render more items than would be visible
-              at that moment.
-
- * `Source`   - The path to file containing list to files to be searched.
-              The source is a text file containg file paths. Each line
-              is a separate file path. The line number minus 1 is
-              considered as a correspondent index value.
-
- * `Dots`     - The character(s) used to trim the item text that exceeds
-              plugin window width. See also |g:CtrlSpaceSymbols|.
-
- * `DotsSize` - The visual size of the `Dots` symbol.
-
-
-The Response~
-
-The engine should generate output to its Standard Output (`STDOUT`). The
-expected response should be composed of a few lines. Each line provides
-different type of data and metadata. A sample response might look like
-this one: >
-
-    ["gfx"]
-    [31,44]
-    2
-      gfx/cs5_window.png
-      gfx/logo5.png
-<
-The first line should contain unique search patterns that will be used to
-highlight search results with `CtrlSpaceSearch` group. Those patterns
-should be expressed as a |list| definition in Vim Script, for example: >
-
-    ["gfx"]
-<
-The second line must be a list of indices (line numbers of the source file
-minus 1) sorted accordingly to search algorithm relevance (reversed).
-This order should also match to the order of text lines explained below.
-The list should be formatted as a Vim Script |list|: >
-
-    [31,44]
-<
-Third line is the results size: >
-
-    2
-<
-The next lines are just content lines. They must be of size given by
-context `Columns` field. That means all remaining characters should be
-filled with spaces (`'` `'`). Also first 2 and last 3 characters of each
-line should be always blank spaces. That format is strictly required
-by plugin rendering algorithm: >
-
-      gfx/cs5_window.png
-      gfx/logo5.png
-<
-The order reflects the reversed results relevance. The most relevant items
-should be placed at the bottom (as last ones).
-
-                                                             |ctrlspace-toc|
-==========================================================================
-
-10. FAQ                                                      *ctrlspace-FAQ*
+9 FAQ                                                      *ctrlspace-FAQ*
 
 Q: How to delete a buffer while leaving the tab page intact?
 A: Make good use of *CtrlSpace* [keys]! For example, the mapping
@@ -1529,7 +1385,7 @@ A: Make good use of *CtrlSpace* [keys]! For example, the mapping
 
 ==========================================================================
 
-11. Authors and License                      *ctrlspace-authors-and-license*
+10 Authors and License                      *ctrlspace-authors-and-license*
 
 Copyright (c) 2013-2020 Szymon Wrozynski and Contributors.
 
