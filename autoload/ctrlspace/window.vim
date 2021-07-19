@@ -356,7 +356,9 @@ function! ctrlspace#window#MoveCursor(where) abort
 endfunction
 
 function! ctrlspace#window#SelectedIndex() abort
-    return b:indices[line(".") - 1]
+    let pbuf = ctrlspace#context#PluginBuffer()
+    let indices = getbufvar(pbuf, "indices")
+    return indices[line(".") - 1]
 endfunction
 
 function! ctrlspace#window#GoToWindow() abort
