@@ -11,7 +11,32 @@ function! ctrlspace#window#MaxHeight() abort
     endif
 endfunction
 
-function! ctrlspace#window#run() abort
+function! ctrlspace#window#run(...) abort
+    let default = {
+                \ "insert": v:false,
+                \ "input": "" ,
+                \ "mode": "Buffer",
+                \ }
+
+    if a:0 > 0
+        let args = a:1
+    else
+        let args = {}
+    endif
+
+    let options = extend(default, args)
+
+    let mode = toupper(options.mode[0]) . strpart(options.mode, 1)
+    let mode = ctrlspace#modes#Modes()[mode]
+
+    call mode.Enable()
+
+    call s:modes.Search.SetData("Letters", split(options.input, '\zs'))
+
+    if options.insert
+        call ctrlspace#search#SwitchSearchMode(1)
+    endif
+
     call ctrlspace#files#ClearAll()
     call ctrlspace#window#Toggle(0)
 endfunction

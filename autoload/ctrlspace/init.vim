@@ -1,6 +1,30 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
+function! s:CompleteTypeOption(optlead, cmdline, cursorpos)
+    return filter(['buffer', 'workspace', 'tab', 'bookmark', 'file'],
+                \ 'a:optlead == "" ? 1 : (v:val =~# a:optlead)')
+endfunction
+
+function! CompleteCtrlSpace(arglead, cmdline, cursorpos)
+    return s:parser.complete(a:arglead, a:cmdline, a:cursorpos)
+endfunction
+
+function! s:run(options) abort
+    let args = {}
+    let mode = a:options["__unknown_args__"][0]
+    let args["mode"] = toupper(mode[0]) . strpart(mode, 1)
+
+    if has_key(a:options, "input")
+        let args["input"] = a:options.input
+    endif
+    if has_key(a:options, "insert")
+        let args["insert"] = a:options.insert
+    endif
+
+    call ctrlspace#window#run(args)
+endfunction
+
 function! ctrlspace#init#Init() abort
     augroup CtrlSpaceInit
         autocmd!
@@ -20,7 +44,19 @@ function! ctrlspace#init#Init() abort
         endif
     endif
 
-    command! -nargs=* -range CtrlSpace :call ctrlspace#window#run() | :call feedkeys(<q-args>)
+    let s:V = vital#ctrlspace#new()
+    let s:O = s:V.import('OptionParser')
+    let s:parser = s:O.new()
+    call s:parser.on('--input=VALUE', 'initial input')
+    call s:parser.on('--insert', 'open in insert(search) mode')
+
+
+    let s:parser.unknown_options_completion = function("s:CompleteTypeOption")
+
+    command! -nargs=* -count -bang -complete=customlist,CompleteCtrlSpace
+                \ CtrlSpaceNew :call s:run(s:parser.parse(<q-args>, <count>, <q-bang>))
+
+    command! -nargs=* -range CtrlSpace :call ctrlspace#window#run({"mode" : "buffer"}) | :call feedkeys(<q-args>)
     command! -nargs=0 -range CtrlSpaceGoUp :call ctrlspace#window#GoToBufferListPosition("up")
     command! -nargs=0 -range CtrlSpaceGoDown :call ctrlspace#window#GoToBufferListPosition("down")
     command! -nargs=0 -range CtrlSpaceTabLabel :call ctrlspace#tabs#NewTabLabel(0)
