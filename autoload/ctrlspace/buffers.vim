@@ -120,7 +120,7 @@ function! ctrlspace#buffers#ZoomBuffer(nr, ...) abort
 
     let nr = a:nr ? a:nr : ctrlspace#window#SelectedIndex()
 
-    call ctrlspace#window#Kill(0)
+    call ctrlspace#window#hide()
     call ctrlspace#window#GoToStartWindow()
 
     silent! exe ":b " . nr
@@ -131,7 +131,8 @@ function! ctrlspace#buffers#ZoomBuffer(nr, ...) abort
         silent! exe c
     endfor
 
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#restore()
+    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#buffers#CopyBufferToTab(tab) abort

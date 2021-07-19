@@ -51,9 +51,8 @@ function! ctrlspace#keys#workspace#NewWorkspace(k) abort
         return
     endif
 
-    call ctrlspace#window#Kill(0)
     call s:modes.Workspace.Enable()
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#keys#workspace#ToggleSubmode(k) abort

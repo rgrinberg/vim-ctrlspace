@@ -77,10 +77,22 @@ function! ctrlspace#window#refresh() abort
     call s:insertContent()
 endfunction
 
+" this is necessary to restore the user's original configuration when
+" ctrlspace is turned off
 function! s:saveTabConfig() abort
     let t:CtrlSpaceStartWindow = winnr()
     let t:CtrlSpaceWinrestcmd  = winrestcmd()
     let t:CtrlSpaceActivebuf   = bufnr("")
+endfunction
+
+function! ctrlspace#window#hide() abort
+    winc c
+endfunction
+
+function! ctrlspace#window#restore() abort
+    call s:saveTabConfig()
+    silent! exe "noautocmd botright pedit CtrlSpace"
+    silent! exe "noautocmd wincmd P"
 endfunction
 
 function! ctrlspace#window#Toggle(internal) abort
@@ -112,8 +124,7 @@ function! ctrlspace#window#Toggle(internal) abort
     endif
 
     " create the buffer first & set it up
-    silent! exe "noautocmd botright pedit CtrlSpace"
-    silent! exe "noautocmd wincmd P"
+    call ctrlspace#window#restore()
 
     " zoom start window in Zoom Mode
     if s:modes.Zoom.Enabled
