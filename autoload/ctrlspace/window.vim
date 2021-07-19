@@ -41,11 +41,7 @@ function! ctrlspace#window#run(...) abort
     call ctrlspace#window#Toggle(0)
 endfunction
 
-function! ctrlspace#window#refresh() abort
-    setlocal modifiable
-    call nvim_buf_set_lines(0, 0, line("$"), 0, [])
-    setlocal nomodifiable
-
+function! s:insertContent() abort
     silent! exe "resize" s:config.Height
     call s:setUpBuffer()
 
@@ -72,6 +68,13 @@ function! ctrlspace#window#refresh() abort
     call s:setActiveLine()
 
     normal! zb
+endfunction
+
+function! ctrlspace#window#refresh() abort
+    setlocal modifiable
+    call nvim_buf_set_lines(0, 0, line("$"), 0, [])
+    setlocal nomodifiable
+    call s:insertContent()
 endfunction
 
 function! ctrlspace#window#Toggle(internal) abort
@@ -109,7 +112,6 @@ function! ctrlspace#window#Toggle(internal) abort
     " create the buffer first & set it up
     silent! exe "noautocmd botright pedit CtrlSpace"
     silent! exe "noautocmd wincmd P"
-    silent! exe "resize" s:config.Height
 
     " zoom start window in Zoom Mode
     if s:modes.Zoom.Enabled
@@ -118,31 +120,7 @@ function! ctrlspace#window#Toggle(internal) abort
         silent! exe "noautocmd wincmd P"
     endif
 
-    call s:setUpBuffer()
-
-    if s:modes.Help.Enabled
-        call ctrlspace#help#DisplayHelp(s:filler())
-        call ctrlspace#util#SetStatusline()
-        return
-    endif
-
-    let [b:items, b:indices, b:text] = ctrlspace#engine#Content()
-    let b:size = len(b:items)
-
-    " set up window height
-    if b:size > s:config.Height
-        let maxHeight = ctrlspace#window#MaxHeight()
-        silent! exe "resize " . (b:size < maxHeight ? b:size : maxHeight)
-    endif
-
-    silent! exe "set updatetime=" . s:config.SearchTiming
-
-    call s:displayContent()
-    call ctrlspace#util#SetStatusline()
-
-    call s:setActiveLine()
-
-    normal! zb
+    call s:insertContent()
 endfunction
 
 function! ctrlspace#window#GoToBufferListPosition(direction) abort
