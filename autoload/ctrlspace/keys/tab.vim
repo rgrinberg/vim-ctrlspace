@@ -33,8 +33,6 @@ function! ctrlspace#keys#tab#CloseTab(k) abort
     call ctrlspace#window#hide()
     silent! exe "normal! " . nr . "gt"
     call ctrlspace#tabs#CloseTab()
-    " TODO is this necessary?
-    call s:modes.Tab.Enable()
     call ctrlspace#window#restore()
     call ctrlspace#window#refresh()
 endfunction
@@ -44,8 +42,6 @@ function! ctrlspace#keys#tab#AddTab(k) abort
     call ctrlspace#window#hide()
     silent! exe "normal! " . nr . "gt"
     silent! exe "tabnew"
-    " TODO is this necessary?
-    " call s:modes.Tab.Enable()
     call ctrlspace#window#restore()
     call ctrlspace#window#refresh()
 endfunction
