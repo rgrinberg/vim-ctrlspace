@@ -65,11 +65,13 @@ let s:configuration = {
                     \ "SaveWorkspaceOnSwitch":     0,
                     \ "LoadLastWorkspaceOnStart":  0,
                     \ "EnableBufferTabWrapAround": 1,
-                    \ "CacheDir":                  expand($HOME),
+                    \ "CacheDir":                  expand(stdpath("cache")) . "/ctrlspace",
                     \ "ProjectRootMarkers":        [".git", ".hg", ".svn", ".bzr", "_darcs", "CVS"],
                     \ "UseUnicode":                1,
                     \ "SearchTiming":              200,
                     \ }
+
+call mkdir(s:configuration.CacheDir)
 
 function! s:init() abort
     let s:conf = copy(s:configuration)
