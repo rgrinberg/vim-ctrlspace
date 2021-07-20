@@ -73,6 +73,18 @@ function! ctrlspace#util#FilesCache() abort
     return s:internalFilePath("cs_files")
 endfunction
 
+let s:cacheDir = expand(stdpath("cache")) . "/ctrlspace"
+let s:initCacheDir = v:false
+
+function! ctrlspace#util#CsCache() abort
+    if !s:initCacheDir
+        call mkdir(s:cacheDir, "p")
+        let s:initCacheDir = v:true
+    endif
+
+    return s:cacheDir . "/.cs_cache"
+endfunction
+
 function! ctrlspace#util#ChDir(dir) abort
     let dir    = fnameescape(a:dir)
     let curtab = tabpagenr()

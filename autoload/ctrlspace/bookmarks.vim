@@ -1,4 +1,3 @@
-let s:config    = ctrlspace#context#Configuration()
 let s:modes     = ctrlspace#modes#Modes()
 let s:bookmarks = []
 
@@ -70,7 +69,7 @@ function! ctrlspace#bookmarks#RemoveBookmark(nr) abort
     call remove(s:bookmarks, a:nr)
 
     let lines     = []
-    let cacheFile = s:config.CacheDir . "/.cs_cache"
+    let cacheFile = ctrlspace#util#CsCache()
 
     if filereadable(cacheFile)
         for oldLine in readfile(cacheFile)
@@ -153,7 +152,7 @@ function! ctrlspace#bookmarks#AddToBookmarks(directory, name) abort
 
     let lines     = []
     let bmRoots   = {}
-    let cacheFile = s:config.CacheDir . "/.cs_cache"
+    let cacheFile = ctrlspace#util#CsCache()
 
     if filereadable(cacheFile)
         for oldLine in readfile(cacheFile)

@@ -75,7 +75,7 @@ function! s:removeProjectRoot(directory) abort
     endif
 
     let lines     = []
-    let cacheFile = s:config.CacheDir . "/.cs_cache"
+    let cacheFile = ctrlspace#util#CsCache()
 
     if filereadable(cacheFile)
         for oldLine in readfile(cacheFile)
@@ -99,7 +99,7 @@ function! s:addProjectRoot(directory) abort
 
     let lines     = []
     let bmRoots   = {}
-    let cacheFile = s:config.CacheDir . "/.cs_cache"
+    let cacheFile = ctrlspace#util#CsCache()
 
     for bm in ctrlspace#bookmarks#Bookmarks()
         let bmRoots[bm.Directory] = 1
