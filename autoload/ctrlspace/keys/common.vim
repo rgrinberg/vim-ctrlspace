@@ -226,9 +226,8 @@ function! s:toggleListView(k, mode) abort
 
     let s:lastListView = ctrlspace#modes#CurrentListView().Name
 
-    call ctrlspace#window#Kill(0)
     call s:modes[a:mode].Enable()
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 
     return 1
 endfunction
