@@ -133,8 +133,7 @@ endfunction
 
 function! ctrlspace#files#RefreshFiles() abort
     let s:files = v:null
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#files#RemoveFile() abort
