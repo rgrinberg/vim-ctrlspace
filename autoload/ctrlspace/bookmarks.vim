@@ -14,6 +14,7 @@ endfunction
 function! ctrlspace#bookmarks#GoToBookmark(nr) abort
     let newBookmark = s:bookmarks[a:nr]
     call ctrlspace#util#ChDir(newBookmark.Directory)
+    call ctrlspace#roots#SetCurrentProjectRoot(newBookmark.Directory)
     call ctrlspace#ui#DelayedMsg("CWD is now: " . newBookmark.Directory)
 endfunction
 
