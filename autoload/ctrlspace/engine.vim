@@ -32,18 +32,19 @@ function! s:contentSource() abort
     elseif clv.Name ==# "Workspace"
         return s:workspaceListContent(clv)
     elseif clv.Name ==# "Bookmark"
-        return s:bookmarkListContent(clv)
+        return s:bookmarkListContent()
     endif
 endfunction
 
-function! s:bookmarkListContent(clv) abort
+function! s:bookmarkListContent() abort
     let content   = []
     let bookmarks = ctrlspace#bookmarks#Bookmarks()
+    let activeBookmark = ctrlspace#bookmarks#FindActiveBookmark()
 
     for i in range(len(bookmarks))
         let indicators = ""
 
-        if !empty(a:clv.Data.Active) && (bookmarks[i].Directory ==# a:clv.Data.Active.Directory)
+        if !empty(activeBookmark) && (bookmarks[i].Directory ==# activeBookmark.Directory)
             let indicators .= s:config.Symbols.IA
         endif
 
