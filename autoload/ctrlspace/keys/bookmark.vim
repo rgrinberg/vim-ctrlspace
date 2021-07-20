@@ -10,20 +10,12 @@ function! ctrlspace#keys#bookmark#Init() abort
 endfunction
 
 function! ctrlspace#keys#bookmark#GoToBookmark(k) abort
+    let curline = line(".")
     let nr = ctrlspace#window#SelectedIndex()
-
-    call ctrlspace#window#hide()
     call ctrlspace#bookmarks#GoToBookmark(nr)
-
-    if a:k ==# "CR"
-        " do nothing
-    elseif a:k ==# "Space"
-        call s:modes.Bookmark.Enable()
-    endif
-
-    call ctrlspace#window#restore()
+    call ctrlspace#files#ClearAll()
     call ctrlspace#window#refresh()
-
+    call ctrlspace#window#MoveSelectionBar(curline)
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
