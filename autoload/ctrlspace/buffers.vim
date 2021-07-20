@@ -131,7 +131,7 @@ function! ctrlspace#buffers#ZoomBuffer(nr, ...) abort
         silent! exe c
     endfor
 
-    call ctrlspace#window#restore()
+    call ctrlspace#window#show()
     call ctrlspace#window#refresh()
 endfunction
 

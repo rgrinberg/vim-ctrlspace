@@ -30,20 +30,16 @@ endfunction
 
 function! ctrlspace#keys#tab#CloseTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#hide()
     silent! exe "normal! " . nr . "gt"
     call ctrlspace#tabs#CloseTab()
-    call ctrlspace#window#restore()
-    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#keys#tab#AddTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#hide()
+    call ctrlspace#window#kill()
     silent! exe "normal! " . nr . "gt"
     silent! exe "tabnew"
-    call ctrlspace#window#restore()
-    call ctrlspace#window#refresh()
+    call ctrlspace#window#revive()
 endfunction
 
 function! ctrlspace#keys#tab#CopyTab(k) abort

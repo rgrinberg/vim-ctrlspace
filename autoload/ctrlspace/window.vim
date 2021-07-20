@@ -88,10 +88,42 @@ function! ctrlspace#window#hide() abort
     silent! exe "noautocmd winc c"
 endfunction
 
-function! ctrlspace#window#restore() abort
+function! ctrlspace#window#show() abort
     call s:saveTabConfig()
     silent! exe "noautocmd botright pedit CtrlSpace"
     silent! exe "noautocmd wincmd P"
+endfunction
+
+function! ctrlspace#window#kill() abort
+    call ctrlspace#window#Kill(1)
+endfunction
+
+function! ctrlspace#window#revive() abort
+    " call s:resetWindow()
+
+    " if we get called and the list is open --> close it
+    let pbuf = ctrlspace#context#PluginBuffer()
+
+    " make sure zoom window is closed
+    silent! exe "pclose"
+    call s:saveTabConfig()
+
+    if s:modes.Zoom.Enabled
+        let t:CtrlSpaceActivebuf = bufnr("")
+    endif
+
+    " create the buffer first & set it up
+    call ctrlspace#window#show()
+
+    " zoom start window in Zoom Mode
+    if s:modes.Zoom.Enabled
+        silent! exe t:CtrlSpaceStartWindow . "wincmd w"
+        vert resize | resize
+        silent! exe "noautocmd wincmd P"
+    endif
+
+    call s:setUpBuffer()
+    call s:insertContent()
 endfunction
 
 function! ctrlspace#window#Toggle(internal) abort
@@ -123,7 +155,7 @@ function! ctrlspace#window#Toggle(internal) abort
     endif
 
     " create the buffer first & set it up
-    call ctrlspace#window#restore()
+    call ctrlspace#window#show()
 
     " zoom start window in Zoom Mode
     if s:modes.Zoom.Enabled
@@ -415,7 +447,7 @@ endfunction
 function! s:setUpBuffer() abort
     setlocal noswapfile
     setlocal buftype=nofile
-    " setlocal bufhidden=delete
+    setlocal bufhidden=delete
     setlocal nobuflisted
     setlocal nomodifiable
     setlocal nowrap

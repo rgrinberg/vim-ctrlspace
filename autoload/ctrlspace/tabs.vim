@@ -48,14 +48,14 @@ function! ctrlspace#tabs#CloseTab() abort
         endif
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
 
     tabclose
 
     call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)
     call ctrlspace#buffers#DeleteForeignBuffers(1)
 
-    call ctrlspace#window#Toggle(0)
+    call ctrlspace#window#revive()
 endfunction
 
 function! ctrlspace#tabs#CollectUnsavedBuffers() abort
