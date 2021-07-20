@@ -71,7 +71,7 @@ let s:configuration = {
                     \ "SearchTiming":              200,
                     \ }
 
-call mkdir(s:configuration.CacheDir)
+call mkdir(s:configuration.CacheDir, "p")
 
 function! s:init() abort
     let s:conf = copy(s:configuration)
