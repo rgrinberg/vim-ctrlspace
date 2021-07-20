@@ -45,7 +45,7 @@ function! ctrlspace#keys#tab#AddTab(k) abort
     silent! exe "normal! " . nr . "gt"
     silent! exe "tabnew"
     " TODO is this necessary?
-    call s:modes.Tab.Enable()
+    " call s:modes.Tab.Enable()
     call ctrlspace#window#restore()
     call ctrlspace#window#refresh()
 endfunction

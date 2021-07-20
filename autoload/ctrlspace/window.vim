@@ -85,7 +85,7 @@ function! s:saveTabConfig() abort
 endfunction
 
 function! ctrlspace#window#hide() abort
-    winc c
+    silent! exe "noautocmd winc c"
 endfunction
 
 function! ctrlspace#window#restore() abort
@@ -415,7 +415,7 @@ endfunction
 function! s:setUpBuffer() abort
     setlocal noswapfile
     setlocal buftype=nofile
-    setlocal bufhidden=delete
+    " setlocal bufhidden=delete
     setlocal nobuflisted
     setlocal nomodifiable
     setlocal nowrap
