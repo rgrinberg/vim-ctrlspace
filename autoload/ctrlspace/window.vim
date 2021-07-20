@@ -43,7 +43,6 @@ endfunction
 
 function! s:insertContent() abort
     silent! exe "resize" s:config.Height
-    call s:setUpBuffer()
 
     if s:modes.Help.Enabled
         call ctrlspace#help#DisplayHelp(s:filler())
@@ -133,6 +132,7 @@ function! ctrlspace#window#Toggle(internal) abort
         silent! exe "noautocmd wincmd P"
     endif
 
+    call s:setUpBuffer()
     call s:insertContent()
 endfunction
 
