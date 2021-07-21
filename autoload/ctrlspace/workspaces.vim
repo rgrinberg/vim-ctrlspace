@@ -243,12 +243,12 @@ function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort
 
     call s:execWorkspaceCommands(a:bang, name, lines)
 
-    if !a:bang
-        let s:modes.Workspace.Data.Active.Digest = ctrlspace#workspaces#CreateDigest()
-        let msg = "Workspace '" . name . "' has been loaded."
-    else
+    if a:bang
         let s:modes.Workspace.Data.Active.Digest = ""
         let msg = "Workspace '" . name . "' has been appended."
+    else
+        let s:modes.Workspace.Data.Active.Digest = ctrlspace#workspaces#CreateDigest()
+        let msg = "Workspace '" . name . "' has been loaded."
     endif
 
     call ctrlspace#ui#Msg(msg)
@@ -264,17 +264,17 @@ endfunction
 function! s:execWorkspaceCommands(bang, name, lines) abort
     let commands = []
 
-    if !a:bang
+    if a:bang
+        let curTab = tabpagenr()
+        call ctrlspace#ui#Msg("Appending workspace '" . a:name . "'...")
+        call add(commands, "tabe")
+    else
         call ctrlspace#ui#Msg("Loading workspace '" . a:name . "'...")
         call add(commands, "tabe")
         call add(commands, "tabo!")
         call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
         call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers(1)")
         call ctrlspace#workspaces#SetActiveWorkspaceName(a:name)
-    else
-        let curTab = tabpagenr()
-        call ctrlspace#ui#Msg("Appending workspace '" . a:name . "'...")
-        call add(commands, "tabe")
     endif
 
     call writefile(a:lines, "CS_SESSION")
