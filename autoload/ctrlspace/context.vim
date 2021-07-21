@@ -1,7 +1,6 @@
 scriptencoding utf-8
 
 let s:pluginBuffer = -1
-let s:pluginFolder = fnamemodify(resolve(expand('<sfile>:p')), ':h:h:h')
 
 let s:configuration = {
                     \ "defaultSymbols": {
@@ -93,10 +92,6 @@ function! s:init() abort
 endfunction
 
 call s:init()
-
-function! ctrlspace#context#PluginFolder() abort
-    return s:pluginFolder
-endfunction
 
 function! ctrlspace#context#PluginBuffer() abort
     return s:pluginBuffer
