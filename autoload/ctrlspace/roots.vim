@@ -15,7 +15,6 @@ endfunction
 
 function! ctrlspace#roots#SetCurrentProjectRoot(value) abort
     let s:currentProjectRoot = a:value
-    return s:currentProjectRoot
 endfunction
 
 function! ctrlspace#roots#LastProjectRoot() abort
@@ -24,7 +23,6 @@ endfunction
 
 function! ctrlspace#roots#SetLastProjectRoot(value) abort
     let s:lastProjectRoot = a:value
-    return s:lastProjectRoot
 endfunction
 
 function! ctrlspace#roots#AddProjectRoot(directory) abort
