@@ -81,7 +81,7 @@ function! ctrlspace#init#Init() abort
         call ctrlspace#keys#SetDefaultMapping(s:config.DefaultMappingKey, ":CtrlSpace<CR>")
     endif
 
-    call s:initProjectRootsAndBookmarks()
+    call ctrlspace#db#latest()
     call ctrlspace#keys#Init()
 
     if argc() > 1
@@ -107,32 +107,4 @@ function! ctrlspace#init#Init() abort
     if s:config.LoadLastWorkspaceOnStart
         autocmd CtrlSpaceInit VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
     endif
-endfunction
-
-function! s:initProjectRootsAndBookmarks() abort
-    let cacheFile = ctrlspace#util#CsCache()
-    let projectRoots = {}
-    let bookmarks    = []
-
-    if filereadable(cacheFile)
-        for line in readfile(cacheFile)
-            if line =~# "CS_PROJECT_ROOT: "
-                let projectRoots[line[17:]] = 1
-            endif
-
-            if line =~# "CS_BOOKMARK: "
-                let parts = split(line[13:], ctrlspace#context#Separator())
-                let bookmark = {
-                            \ "Name": ((len(parts) > 1) ? parts[1] : parts[0]),
-                            \ "Directory": parts[0],
-                            \ "JumpCounter": 0
-                            \ }
-                call add(bookmarks, bookmark)
-                let projectRoots[bookmark.Directory] = 1
-            endif
-        endfor
-    endif
-
-    call ctrlspace#roots#SetProjectRoots(projectRoots)
-    call ctrlspace#bookmarks#SetBookmarks(bookmarks)
 endfunction

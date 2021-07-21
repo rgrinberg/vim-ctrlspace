@@ -1,17 +1,12 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
-let s:projectRoots       = {}
 let s:lastProjectRoot    = ""
 let s:currentProjectRoot = ""
 
 function! ctrlspace#roots#ProjectRoots() abort
-    return s:projectRoots
-endfunction
-
-function! ctrlspace#roots#SetProjectRoots(value) abort
-    let s:projectRoots = a:value
-    return s:projectRoots
+    let db = ctrlspace#db#latest()
+    return db.roots
 endfunction
 
 function! ctrlspace#roots#CurrentProjectRoot() abort
@@ -40,7 +35,7 @@ function! ctrlspace#roots#AddProjectRoot(directory) abort
         return
     endif
 
-    let roots = copy(s:projectRoots)
+    let roots = copy(ctrlspace#roots#ProjectRoots())
 
     for bm in ctrlspace#bookmarks#Bookmarks()
         let roots[bm.Directory] = 1
@@ -58,7 +53,8 @@ endfunction
 function! ctrlspace#roots#RemoveProjectRoot(directory) abort
     let directory = ctrlspace#util#NormalizeDirectory(fnamemodify(empty(a:directory) ? getcwd() : a:directory, ":p"))
 
-    if !exists("s:projectRoots[directory]")
+    let projectRoots = ctrlspace#roots#ProjectRoots()
+    if !exists(projectRoots, directory)
         call ctrlspace#ui#Msg("Directory '" . directory . "' is not a permanent project root!" )
         return
     endif
@@ -69,57 +65,12 @@ endfunction
 
 function! s:removeProjectRoot(directory) abort
     let directory = ctrlspace#util#NormalizeDirectory(a:directory)
-
-    if exists("s:projectRoots[directory]")
-        unlet s:projectRoots[directory]
-    endif
-
-    let lines     = []
-    let cacheFile = ctrlspace#util#CsCache()
-
-    if filereadable(cacheFile)
-        for oldLine in readfile(cacheFile)
-            if oldLine !~# "CS_PROJECT_ROOT: "
-                call add(lines, oldLine)
-            endif
-        endfor
-    endif
-
-    for root in keys(s:projectRoots)
-        call add(lines, "CS_PROJECT_ROOT: " . root)
-    endfor
-
-    call writefile(lines, cacheFile)
+    ctrlspace#db#remove_root(ctrlspace#db#latest(), directory)
 endfunction
 
 function! s:addProjectRoot(directory) abort
     let directory = ctrlspace#util#NormalizeDirectory(a:directory)
-
-    let s:projectRoots[directory] = 1
-
-    let lines     = []
-    let bmRoots   = {}
-    let cacheFile = ctrlspace#util#CsCache()
-
-    for bm in ctrlspace#bookmarks#Bookmarks()
-        let bmRoots[bm.Directory] = 1
-    endfor
-
-    if filereadable(cacheFile)
-        for oldLine in readfile(cacheFile)
-            if oldLine !~# "CS_PROJECT_ROOT: "
-                call add(lines, oldLine)
-            endif
-        endfor
-    endif
-
-    for root in keys(s:projectRoots)
-        if !exists("bmRoots[root]")
-            call add(lines, "CS_PROJECT_ROOT: " . root)
-        endif
-    endfor
-
-    call writefile(lines, cacheFile)
+    call ctrlspace#db#add_root(ctrlspace#db#latest(), directory)
 endfunction
 
 function! ctrlspace#roots#FindProjectRoot() abort
@@ -143,7 +94,7 @@ function! ctrlspace#roots#FindProjectRoot() abort
         endfor
 
         if !rootFound
-            let rootFound = exists("s:projectRoots[candidate]")
+            let rootFound = has_key(ctrlspace#roots#ProjectRoots(), candidate)
         endif
 
         if rootFound

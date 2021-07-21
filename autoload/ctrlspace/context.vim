@@ -98,10 +98,6 @@ function! ctrlspace#context#PluginFolder() abort
     return s:pluginFolder
 endfunction
 
-function! ctrlspace#context#Separator() abort
-    return "|CS_###_CS|"
-endfunction
-
 function! ctrlspace#context#PluginBuffer() abort
     return s:pluginBuffer
 endfunction
