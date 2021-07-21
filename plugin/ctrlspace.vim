@@ -37,10 +37,6 @@ endif
 let g:CtrlSpaceLoaded = 1
 let s:errors = []
 
-if &cp
-    call add(s:errors, "CtrlSpace requires 'nocompatible' option enabled!")
-endif
-
 if !&hid
     call add(s:errors, "CtrlSpace requires 'hidden' option enabled!")
 endif
