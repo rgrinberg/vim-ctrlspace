@@ -85,8 +85,7 @@ function! ctrlspace#keys#buffer#VisibleMode(k) abort
         call s:modes.Buffer.SetData("SubMode", "visible")
     endif
 
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#keys#buffer#ZoomMode(k) abort
@@ -178,10 +177,10 @@ function! ctrlspace#keys#buffer#RemoveTabLabel(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#SwitchTab(k) abort
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
     let dir = {'[': 'BWD', ']': 'FWD'}[a:k]
     call ctrlspace#changebuftab#Execute("SwitchTabInBufMode", dir)
-    call ctrlspace#window#Toggle(0)
+    call ctrlspace#window#revive()
 endfunction
 
 function! ctrlspace#keys#buffer#CopyBufferToTab(k) abort
@@ -282,6 +281,5 @@ function! s:toggleAllMode() abort
         call s:modes.Search.SetData("NewSearchPerformed", 1)
     endif
 
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 endfunction

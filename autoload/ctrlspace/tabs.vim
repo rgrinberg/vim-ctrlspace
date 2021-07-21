@@ -69,10 +69,9 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
 
     if empty(buffers)
         call ctrlspace#ui#Msg("There are no unsaved buffers.")
-        return 0
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#revive()
 
     tabnew
 
@@ -83,8 +82,7 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
     endfor
 
     call s:modes.Tab.Enable()
-    call ctrlspace#window#Toggle(1)
-    return 1
+    call ctrlspace#window#revive()
 endfunction
 
 function! ctrlspace#tabs#CollectForeignBuffers() abort
@@ -104,10 +102,9 @@ function! ctrlspace#tabs#CollectForeignBuffers() abort
 
     if empty(foreignBuffers)
         call ctrlspace#ui#Msg("There are no foreign buffers.")
-        return 0
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
 
     tabnew
 
@@ -118,6 +115,5 @@ function! ctrlspace#tabs#CollectForeignBuffers() abort
     endfor
 
     call s:modes.Tab.Enable()
-    call ctrlspace#window#Toggle(1)
-    return 1
+    call ctrlspace#window#revive()
 endfunction
