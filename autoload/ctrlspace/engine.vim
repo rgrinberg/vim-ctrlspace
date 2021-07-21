@@ -16,7 +16,8 @@ function! ctrlspace#engine#Content() abort
         let items = v:lua.ctrlspace_filter(items, join(s:modes.Search.Data.Letters, ''), max)
     endif
 
-    return s:prepareContent(items)
+    let content = s:prepareContent(items)
+    return [items, content]
 endfunction
 
 function! s:contentSource() abort
@@ -182,5 +183,5 @@ function! s:prepareContent(items) abort
         let content .= "  " . line . "\n"
     endfor
 
-    return [a:items, content]
+    return content
 endfunction
