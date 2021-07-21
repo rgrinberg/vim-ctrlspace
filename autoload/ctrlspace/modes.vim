@@ -79,18 +79,6 @@ function! ctrlspace#modes#Modes() abort
     return s:collection
 endfunction
 
-function! ctrlspace#modes#Enabled() abort
-    let result = []
-
-    for m in values(s:collection)
-        if m.Enabled
-            call add(result, m)
-        endif
-    endfor
-
-    return result
-endfunction
-
 function! ctrlspace#modes#ListViews() abort
     return s:lists
 endfunction
