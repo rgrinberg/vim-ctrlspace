@@ -86,13 +86,13 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     let newName = ctrlspace#ui#GetInput("Rename workspace '" . a:name . "' to: ", a:name)
 
     if empty(newName)
-        return 0
+        return
     endif
 
     for existingName in s:workspaces
         if newName ==# existingName
             call ctrlspace#ui#Msg("Workspace '" . newName . "' already exists.")
-            return 0
+            return
         endif
     endfor
 
@@ -128,12 +128,11 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     call ctrlspace#window#Toggle(1)
 
     call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been renamed to '" . newName . "'.")
-    return 1
 endfunction
 
 function! ctrlspace#workspaces#DeleteWorkspace(name) abort
     if !ctrlspace#ui#Confirmed("Delete workspace '" . a:name . "'?")
-        return 0
+        return
     endif
 
     let filename = s:workspaceFile()
@@ -175,8 +174,6 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
     endif
 
     call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been deleted.")
-
-    return 1
 endfunction
 
 " bang == 0) load
