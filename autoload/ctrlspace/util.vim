@@ -65,10 +65,6 @@ function! s:handleAutochdir(switch) abort
     endif
 endfunction
 
-function! ctrlspace#util#WorkspaceFile() abort
-    return s:internalFilePath("cs_workspaces")
-endfunction
-
 function! ctrlspace#util#ChDir(dir) abort
     let dir    = fnameescape(a:dir)
     let curtab = tabpagenr()
@@ -92,7 +88,7 @@ function! ctrlspace#util#ChDir(dir) abort
     silent! exe "noautocmd " . curwin . "wincmd w"
 endfunction
 
-function! s:internalFilePath(name) abort
+function ctrlspace#util#projectLocalFile(name) abort
     let config = ctrlspace#context#Configuration()
     let root = ctrlspace#roots#CurrentProjectRoot()
     let fullPart = empty(root) ? "" : (root . "/")

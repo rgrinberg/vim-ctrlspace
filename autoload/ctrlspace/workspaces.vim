@@ -2,12 +2,16 @@ let s:config     = ctrlspace#context#Configuration()
 let s:modes      = ctrlspace#modes#Modes()
 let s:workspaces = []
 
+function! s:workspaceFile() abort
+    return ctrlspace#util#projectLocalFile("cs_workspaces")
+endfunction
+
 function! ctrlspace#workspaces#Workspaces() abort
     return s:workspaces
 endfunction
 
 function! ctrlspace#workspaces#SetWorkspaceNames() abort
-    let filename     = ctrlspace#util#WorkspaceFile()
+    let filename     = s:workspaceFile()
     let s:workspaces = []
 
     call s:modes.Workspace.SetData("LastActive", "")
@@ -33,7 +37,7 @@ function! ctrlspace#workspaces#SetActiveWorkspaceName(name, ...) abort
     call s:modes.Workspace.SetData("Active", { "Name": a:name, "Digest": digest, "Root": ctrlspace#roots#CurrentProjectRoot() })
     call s:modes.Workspace.SetData("LastActive", a:name)
 
-    let filename = ctrlspace#util#WorkspaceFile()
+    let filename     = s:workspaceFile()
     let lines    = []
 
     if filereadable(filename)
@@ -92,7 +96,7 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
         endif
     endfor
 
-    let filename = ctrlspace#util#WorkspaceFile()
+    let filename = s:workspaceFile()
     let lines    = []
 
     let workspaceStartMarker = "CS_WORKSPACE_BEGIN: " . a:name
@@ -132,7 +136,7 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
         return 0
     endif
 
-    let filename    = ctrlspace#util#WorkspaceFile()
+    let filename = s:workspaceFile()
     let lines       = []
     let inWorkspace = 0
 
@@ -187,7 +191,7 @@ function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort
     let cwdSave = fnamemodify(".", ":p:h")
     silent! exe "cd " . fnameescape(ctrlspace#roots#CurrentProjectRoot())
 
-    let filename = ctrlspace#util#WorkspaceFile()
+    let filename = s:workspaceFile()
 
     if !filereadable(filename)
         silent! exe "cd " . fnameescape(cwdSave)
@@ -316,7 +320,7 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
         let name = a:name
     endif
 
-    let filename = ctrlspace#util#WorkspaceFile()
+    let filename = s:workspaceFile()
     let lastTab  = tabpagenr("$")
 
     let lines       = []
