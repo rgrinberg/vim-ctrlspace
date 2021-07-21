@@ -16,25 +16,21 @@ function! ctrlspace#workspaces#SetWorkspaceNames() abort
 
     call s:modes.Workspace.SetData("LastActive", "")
 
-    if filereadable(filename)
-        for line in readfile(filename)
-            if line =~? "CS_WORKSPACE_BEGIN: "
-                call add(s:workspaces, line[20:])
-            elseif line =~? "CS_LAST_WORKSPACE: "
-                call s:modes.Workspace.SetData("LastActive", line[19:])
-            endif
-        endfor
+    if !filereadable(filename)
+        return
     endif
+
+    for line in readfile(filename)
+        if line =~? "CS_WORKSPACE_BEGIN: "
+            call add(s:workspaces, line[20:])
+        elseif line =~? "CS_LAST_WORKSPACE: "
+            call s:modes.Workspace.SetData("LastActive", line[19:])
+        endif
+    endfor
 endfunction
 
-function! s:setActiveWorkspaceName(name, ...) abort
-    if a:0 > 0
-        let digest = a:1
-    else
-        let digest = s:modes.Workspace.Data.Active.Digest
-    end
-
-    call s:modes.Workspace.SetData("Active", { "Name": a:name, "Digest": digest, "Root": ctrlspace#roots#CurrentProjectRoot() })
+function! s:setActiveWorkspaceName(name, digest) abort
+    call s:modes.Workspace.SetData("Active", { "Name": a:name, "Digest": a:digest, "Root": ctrlspace#roots#CurrentProjectRoot() })
     call s:modes.Workspace.SetData("LastActive", a:name)
 
     let filename     = s:workspaceFile()
@@ -120,7 +116,7 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     call writefile(lines, filename)
 
     if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
-        call s:setActiveWorkspaceName(newName)
+        call s:setActiveWorkspaceName(newName, s:modes.Workspace.Data.Active.Digest)
     endif
 
     call ctrlspace#workspaces#SetWorkspaceNames()
@@ -271,7 +267,7 @@ function! s:execWorkspaceCommands(bang, name, lines) abort
         call add(commands, "tabo!")
         call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
         call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers(1)")
-        call s:setActiveWorkspaceName(a:name)
+        call s:setActiveWorkspaceName(a:name, s:modes.Workspace.Data.Active.Digest)
     endif
 
     call writefile(a:lines, "CS_SESSION")
