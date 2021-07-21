@@ -63,7 +63,7 @@ endfunction
 
 function! s:removeProjectRoot(directory) abort
     let directory = ctrlspace#util#NormalizeDirectory(a:directory)
-    ctrlspace#db#remove_root(ctrlspace#db#latest(), directory)
+    call ctrlspace#db#remove_root(ctrlspace#db#latest(), directory)
 endfunction
 
 function! s:addProjectRoot(directory) abort
