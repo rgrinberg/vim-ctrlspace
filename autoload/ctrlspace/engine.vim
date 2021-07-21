@@ -3,7 +3,6 @@ let s:modes      = ctrlspace#modes#Modes()
 
 call luaeval('require("ctrlspace")')
 
-" returns [patterns, indices, size, text]
 function! ctrlspace#engine#Content() abort
     let items = s:contentSource()
     let absoluteMax = 500
@@ -168,7 +167,6 @@ function! s:prepareContent(items) abort
     endif
 
     let content  = ""
-    let indices  = []
 
     for item in a:items
         let line = item.text
@@ -182,9 +180,7 @@ function! s:prepareContent(items) abort
         endif
 
         let content .= "  " . line . "\n"
-
-        call add(indices, item.index)
     endfor
 
-    return [a:items, indices, content]
+    return [a:items, content]
 endfunction

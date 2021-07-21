@@ -334,7 +334,7 @@ function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
         silent! exe "normal! " . targetTab . "gt"
         call ctrlspace#window#Toggle(0)
         for i in range(b:size)
-            if b:indices[i] == targetBuf
+            if b:items[i].index == targetBuf
                 call ctrlspace#window#MoveSelectionBar(i + 1)
                 break
             endif
@@ -427,7 +427,7 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
     let bname = bufname(str2nr(nr))
 
     for i in range(b:size)
-        if bufname(b:indices[i]) ==# bname
+        if bufname(b:items[i].index) ==# bname
             call ctrlspace#window#MoveSelectionBar(i + 1)
             call ctrlspace#buffers#LoadManyBuffers()
             break

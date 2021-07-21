@@ -50,7 +50,7 @@ function! s:insertContent() abort
         return
     endif
 
-    let [b:items, b:indices, b:text] = ctrlspace#engine#Content()
+    let [b:items, b:text] = ctrlspace#engine#Content()
     let b:size = len(b:items)
 
     " set up window height
@@ -380,8 +380,8 @@ endfunction
 
 function! ctrlspace#window#SelectedIndex() abort
     let pbuf = ctrlspace#context#PluginBuffer()
-    let indices = getbufvar(pbuf, "indices")
-    return indices[line(".") - 1]
+    let items = getbufvar(pbuf, "items")
+    return items[line(".") - 1].index
 endfunction
 
 function! ctrlspace#window#GoToWindow() abort
@@ -541,7 +541,7 @@ function! s:setActiveLine() abort
                     let workspaces = ctrlspace#workspaces#Workspaces()
 
                     for i in range(b:size)
-                        if currWsp ==# workspaces[b:indices[i]]
+                        if currWsp ==# workspaces[b:items[i].index]
                             let activeLine = i + 1
                             break
                         endif
@@ -557,7 +557,7 @@ function! s:setActiveLine() abort
                 let bookmarks = ctrlspace#bookmarks#Bookmarks()
 
                 for i in range(b:size)
-                    if clv.Data.Active.Name ==# bookmarks[b:indices[i]].Name
+                    if clv.Data.Active.Name ==# bookmarks[b:items[i].index].Name
                         let activeLine = i + 1
                         break
                     endif
@@ -571,12 +571,12 @@ function! s:setActiveLine() abort
             let lastLine   = 0
 
             for i in range(b:size)
-                if b:indices[i] == t:CtrlSpaceActivebuf
+                if b:items[i].index == t:CtrlSpaceActivebuf
                     let activeLine = i + 1
                     break
                 endif
 
-                let currentJumpCounter = ctrlspace#util#GetbufvarWithDefault(b:indices[i], "CtrlSpaceJumpCounter", 0)
+                let currentJumpCounter = ctrlspace#util#GetbufvarWithDefault(b:items[i].index, "CtrlSpaceJumpCounter", 0)
 
                 if currentJumpCounter > maxCounter
                     let maxCounter = currentJumpCounter

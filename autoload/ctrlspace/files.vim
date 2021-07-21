@@ -227,7 +227,7 @@ function! ctrlspace#files#CopyFileOrBuffer() abort
         let names = ctrlspace#api#Buffers(tabpagenr())
 
         for i in range(b:size)
-            if names[b:indices[i]] ==# newFile
+            if names[b:items[i].index] ==# newFile
                 call ctrlspace#window#MoveSelectionBar(i + 1)
                 break
             endif

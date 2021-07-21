@@ -32,7 +32,7 @@ function! s:createBookmarkJumps() abort
     let bookmarks      = ctrlspace#bookmarks#Bookmarks()
 
     for l in range(1, b:jumplinesLen)
-        let counter = bookmarks[b:indices[l - 1]].JumpCounter
+        let counter = bookmarks[b:items[l - 1].index].JumpCounter
         call add(b:jumplines, { "line": l, "counter": counter })
     endfor
 endfunction
@@ -42,7 +42,7 @@ function! s:createBufferJumps() abort
     let b:jumplinesLen = b:size
 
     for l in range(1, b:jumplinesLen)
-        let counter = ctrlspace#util#GetbufvarWithDefault(b:indices[l - 1], "CtrlSpaceJumpCounter", 0)
+        let counter = ctrlspace#util#GetbufvarWithDefault(b:items[l - 1].index, "CtrlSpaceJumpCounter", 0)
         call add(b:jumplines, { "line": l, "counter": counter })
     endfor
 endfunction
