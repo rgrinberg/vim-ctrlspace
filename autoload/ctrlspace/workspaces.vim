@@ -27,7 +27,7 @@ function! ctrlspace#workspaces#SetWorkspaceNames() abort
     endif
 endfunction
 
-function! ctrlspace#workspaces#SetActiveWorkspaceName(name, ...) abort
+function! s:setActiveWorkspaceName(name, ...) abort
     if a:0 > 0
         let digest = a:1
     else
@@ -120,7 +120,7 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     call writefile(lines, filename)
 
     if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
-        call ctrlspace#workspaces#SetActiveWorkspaceName(newName)
+        call s:setActiveWorkspaceName(newName)
     endif
 
     call ctrlspace#workspaces#SetWorkspaceNames()
@@ -162,7 +162,7 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
     call writefile(lines, filename)
 
     if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
-        call ctrlspace#workspaces#SetActiveWorkspaceName(a:name, "")
+        call s:setActiveWorkspaceName(a:name, "")
     endif
 
     call ctrlspace#workspaces#SetWorkspaceNames()
@@ -274,7 +274,7 @@ function! s:execWorkspaceCommands(bang, name, lines) abort
         call add(commands, "tabo!")
         call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
         call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers(1)")
-        call ctrlspace#workspaces#SetActiveWorkspaceName(a:name)
+        call s:setActiveWorkspaceName(a:name)
     endif
 
     call writefile(a:lines, "CS_SESSION")
@@ -436,7 +436,7 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
     call writefile(lines, filename)
     call delete("CS_SESSION")
 
-    call ctrlspace#workspaces#SetActiveWorkspaceName(name, ctrlspace#workspaces#CreateDigest())
+    call s:setActiveWorkspaceName(name, ctrlspace#workspaces#CreateDigest())
     call ctrlspace#workspaces#SetWorkspaceNames()
 
     silent! exe "cd " . fnameescape(cwdSave)
