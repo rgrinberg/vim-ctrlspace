@@ -66,7 +66,7 @@ let s:configuration = {
                     \ "EnableBufferTabWrapAround": 1,
                     \ "ProjectRootMarkers":        [".git", ".hg", ".svn", ".bzr", "_darcs", "CVS"],
                     \ "UseUnicode":                1,
-                    \ "SearchTiming":              200,
+                    \ "SearchTiming":              60,
                     \ }
 
 function! s:init() abort
