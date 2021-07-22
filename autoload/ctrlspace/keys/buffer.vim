@@ -259,14 +259,14 @@ function! ctrlspace#keys#buffer#NewWorkspace(k) abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
 
     if saveWorkspaceBefore
         call ctrlspace#workspaces#SaveWorkspace("")
     endif
 
     call ctrlspace#workspaces#NewWorkspace()
-    call ctrlspace#window#Toggle(0)
+    call ctrlspace#window#revive()
     return 1
 endfunction
 
