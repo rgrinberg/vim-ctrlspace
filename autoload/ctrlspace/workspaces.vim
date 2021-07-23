@@ -149,16 +149,14 @@ function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort
 
     call ctrlspace#util#HandleVimSettings("start")
 
+    if !has_key(s:db.workspaces, a:name)
+        call ctrlspace#ui#Msg("Workspace '" . a:name . "' not found")
+        return 0
+    endif
+
     let cwdSave = fnamemodify(".", ":p:h")
     silent! exe "cd " . fnameescape(ctrlspace#roots#CurrentProjectRoot())
 
-    call s:loadWorkspaces()
-    if !has_key(s:db.workspaces, a:name)
-        call ctrlspace#ui#Msg("Workspace '" . a:name . "' not found")
-        call ctrlspace#workspaces#SetWorkspaceNames()
-        silent! exe "cd " . fnameescape(cwdSave)
-        return 0
-    endif
     let workspace = s:db.workspaces[a:name]
     call s:execWorkspaceCommands(a:bang, workspace)
 
@@ -180,16 +178,13 @@ function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort
     return 1
 endfunction
 
-function! s:execWorkspaceCommands(bang, name, lines) abort
-    let commands = []
 function! s:execWorkspaceCommands(bang, workspace) abort
+    let commands = ["tabe"]
 
     if a:bang
         let curTab = tabpagenr()
-        call add(commands, "tabe")
         call ctrlspace#ui#Msg("Appending workspace '" . a:workspace.Name . "'...")
     else
-        call add(commands, "tabe")
         call ctrlspace#ui#Msg("Loading workspace '" . a:workspace.Name . "'...")
         call add(commands, "tabo!")
         call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
@@ -197,7 +192,6 @@ function! s:execWorkspaceCommands(bang, workspace) abort
         call s:setActiveWorkspaceName(a:name, s:modes.Workspace.Data.Active.Digest)
     endif
 
-    call writefile(a:lines, "CS_SESSION")
     call writefile(a:workspaces.commands, "CS_SESSION")
 
     call add(commands, "source CS_SESSION")
