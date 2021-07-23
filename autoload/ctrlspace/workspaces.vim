@@ -8,7 +8,7 @@ endfunction
 let s:db = s:emptyWorkspaces()
 
 function! s:workspaceFile() abort
-    return ctrlspace#util#projectLocalFile("cs_workspaces")
+    return ctrlspace#util#projectLocalFile("cs_workspaces.json")
 endfunction
 
 function! ctrlspace#workspaces#Workspaces() abort
