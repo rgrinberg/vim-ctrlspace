@@ -160,7 +160,7 @@ function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort
         return 0
     endif
     let workspace = s:db.workspaces[a:name]
-    call s:execWorkspaceCommands(a:bang, workspace.Name, workspace.commands)
+    call s:execWorkspaceCommands(a:bang, workspace)
 
     if a:bang
         let s:modes.Workspace.Data.Active.Digest = ""
@@ -182,14 +182,15 @@ endfunction
 
 function! s:execWorkspaceCommands(bang, name, lines) abort
     let commands = []
+function! s:execWorkspaceCommands(bang, workspace) abort
 
     if a:bang
         let curTab = tabpagenr()
-        call ctrlspace#ui#Msg("Appending workspace '" . a:name . "'...")
         call add(commands, "tabe")
+        call ctrlspace#ui#Msg("Appending workspace '" . a:workspace.Name . "'...")
     else
-        call ctrlspace#ui#Msg("Loading workspace '" . a:name . "'...")
         call add(commands, "tabe")
+        call ctrlspace#ui#Msg("Loading workspace '" . a:workspace.Name . "'...")
         call add(commands, "tabo!")
         call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
         call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers(1)")
@@ -197,6 +198,7 @@ function! s:execWorkspaceCommands(bang, name, lines) abort
     endif
 
     call writefile(a:lines, "CS_SESSION")
+    call writefile(a:workspaces.commands, "CS_SESSION")
 
     call add(commands, "source CS_SESSION")
     call add(commands, "redraw!")
