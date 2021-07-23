@@ -46,7 +46,7 @@ function! ctrlspace#workspaces#SetWorkspaceNames() abort
     call s:loadWorkspaces()
 
     if has_key(s:db.workspaces, "LastActive")
-        call s:modes.Workspace.SetData("LastActive", workspaces.LastActive)
+        call s:modes.Workspace.SetData("LastActive", s:db.LastActive)
     endif
 endfunction
 
