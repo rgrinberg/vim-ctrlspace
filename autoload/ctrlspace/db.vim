@@ -1,4 +1,4 @@
-let s:empty = { "bookmarks": [], "roots": [] }
+let s:empty = { "bookmarks": [], "roots": {} }
 let s:latest = v:null
 
 let s:cacheDir = stdpath("cache") . "/ctrlspace"
