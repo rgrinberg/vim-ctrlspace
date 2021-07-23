@@ -105,6 +105,6 @@ function! ctrlspace#init#Init() abort
     endif
 
     if s:config.LoadLastWorkspaceOnStart
-        autocmd CtrlSpaceInit VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
+        autocmd CtrlSpaceInit VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#SetWorkspaceNames() | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
     endif
 endfunction
