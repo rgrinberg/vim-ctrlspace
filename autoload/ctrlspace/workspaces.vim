@@ -1,54 +1,61 @@
 let s:config     = ctrlspace#context#Configuration()
 let s:modes      = ctrlspace#modes#Modes()
-let s:workspaces = []
+
+function! s:emptyWorkspaces()
+    return { "workspaces": {} }
+endfunction
+
+let s:db = s:emptyWorkspaces()
 
 function! s:workspaceFile() abort
     return ctrlspace#util#projectLocalFile("cs_workspaces")
 endfunction
 
 function! ctrlspace#workspaces#Workspaces() abort
-    return s:workspaces
+    let names = keys(s:db.workspaces)
+    call sort(names)
+    return names
+endfunction
+
+let s:emptyKey = "<unnamed>"
+
+function! s:loadWorkspaces() abort
+    let file = s:workspaceFile()
+    if filereadable(file)
+        let s:db = json_decode(readfile(file))
+        if has_key(s:db.workspaces, s:emptyKey)
+            let s:db.workspaces[""] = s:db.workspaces[s:emptyKey]
+            unlet s:db.workspaces[s:emptyKey]
+        endif
+    else
+        let s:db = s:emptyWorkspaces()
+    endif
+endfunction
+
+function! s:saveWorkspaces() abort
+    let file = s:workspaceFile()
+    let data = deepcopy(s:db)
+    if has_key(data.workspaces, "")
+        data.workspaces[s:emptyKey] = data[""]
+    endif
+    call writefile([json_encode(data)], file)
 endfunction
 
 function! ctrlspace#workspaces#SetWorkspaceNames() abort
-    let filename     = s:workspaceFile()
-    let s:workspaces = []
-
     call s:modes.Workspace.SetData("LastActive", "")
+    call s:loadWorkspaces()
 
-    if !filereadable(filename)
-        return
+    if has_key(s:db.workspaces, "LastActive")
+        call s:modes.Workspace.SetData("LastActive", workspaces.LastActive)
     endif
-
-    for line in readfile(filename)
-        if line =~? "CS_WORKSPACE_BEGIN: "
-            call add(s:workspaces, line[20:])
-        elseif line =~? "CS_LAST_WORKSPACE: "
-            call s:modes.Workspace.SetData("LastActive", line[19:])
-        endif
-    endfor
 endfunction
 
 function! s:setActiveWorkspaceName(name, digest) abort
     call s:modes.Workspace.SetData("Active", { "Name": a:name, "Digest": a:digest, "Root": ctrlspace#roots#CurrentProjectRoot() })
     call s:modes.Workspace.SetData("LastActive", a:name)
 
-    let filename     = s:workspaceFile()
-    let lines    = []
-
-    if filereadable(filename)
-        for line in readfile(filename)
-            if !(line =~? "CS_LAST_WORKSPACE: ")
-                call add(lines, line)
-            endif
-        endfor
-    endif
-
-    if !empty(a:name)
-        call insert(lines, "CS_LAST_WORKSPACE: " . a:name)
-    endif
-
-    call writefile(lines, filename)
+    let s:db.LastActive = a:name
+    call s:saveWorkspaces()
 endfunction
 
 function! ctrlspace#workspaces#ActiveWorkspace() abort
@@ -75,7 +82,7 @@ function! ctrlspace#workspaces#NewWorkspace() abort
 endfunction
 
 function! ctrlspace#workspaces#SelectedWorkspaceName() abort
-    return s:modes.Workspace.Enabled ? s:workspaces[ctrlspace#window#SelectedIndex()] : ""
+    return s:modes.Workspace.Enabled ? ctrlspace#workspaces#Workspaces()[ctrlspace#window#SelectedIndex()] : ""
 endfunction
 
 function! ctrlspace#workspaces#RenameWorkspace(name) abort
@@ -85,35 +92,16 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
         return
     endif
 
-    for existingName in s:workspaces
-        if newName ==# existingName
-            call ctrlspace#ui#Msg("Workspace '" . newName . "' already exists.")
-            return
-        endif
-    endfor
-
-    let filename = s:workspaceFile()
-    let lines    = []
-
-    let workspaceStartMarker = "CS_WORKSPACE_BEGIN: " . a:name
-    let workspaceEndMarker   = "CS_WORKSPACE_END: " . a:name
-    let lastWorkspaceMarker  = "CS_LAST_WORKSPACE: " . a:name
-
-    if filereadable(filename)
-        for line in readfile(filename)
-            if line ==# workspaceStartMarker
-                let line = "CS_WORKSPACE_BEGIN: " . newName
-            elseif line ==# workspaceEndMarker
-                let line = "CS_WORKSPACE_END: " . newName
-            elseif line ==# lastWorkspaceMarker
-                let line = "CS_LAST_WORKSPACE: " . newName
-            endif
-
-            call add(lines, line)
-        endfor
+    if has_key(s:db.workspaces, newName)
+        call ctrlspace#ui#Msg("Workspace '" . newName . "' already exists.")
+        return
     endif
 
-    call writefile(lines, filename)
+    let s:db.LastActive = a:name
+
+    let s:db.workspaces[newName] = s:db.workspaces[a:name]
+    unlet s:db.workspaces[a:name]
+    call s:saveWorkspaces()
 
     if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
         call s:setActiveWorkspaceName(newName, s:modes.Workspace.Data.Active.Digest)
@@ -131,30 +119,10 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
         return
     endif
 
-    let filename = s:workspaceFile()
-    let lines       = []
     let inWorkspace = 0
 
-    let workspaceStartMarker = "CS_WORKSPACE_BEGIN: " . a:name
-    let workspaceEndMarker   = "CS_WORKSPACE_END: " . a:name
-
-    if filereadable(filename)
-        for oldLine in readfile(filename)
-            if oldLine ==# workspaceStartMarker
-                let inWorkspace = 1
-            endif
-
-            if !inWorkspace
-                call add(lines, oldLine)
-            endif
-
-            if oldLine ==# workspaceEndMarker
-                let inWorkspace = 0
-            endif
-        endfor
-    endif
-
-    call writefile(lines, filename)
+    unlet s:db.workspaces[a:name]
+    call s:saveWorkspaces()
 
     if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
         call s:setActiveWorkspaceName(a:name, "")
@@ -162,7 +130,7 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
 
     call ctrlspace#workspaces#SetWorkspaceNames()
 
-    if empty(s:workspaces)
+    if empty(s:db.workspaces)
         call ctrlspace#window#Kill(1)
     else
         call ctrlspace#window#Kill(0)
@@ -184,64 +152,22 @@ function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort
     let cwdSave = fnamemodify(".", ":p:h")
     silent! exe "cd " . fnameescape(ctrlspace#roots#CurrentProjectRoot())
 
-    let filename = s:workspaceFile()
-
-    if !filereadable(filename)
-        silent! exe "cd " . fnameescape(cwdSave)
-        return 0
-    endif
-
-    let oldLines = readfile(filename)
-
-    if empty(a:name)
-        let name = ""
-
-        for line in oldLines
-            if line =~? "CS_LAST_WORKSPACE: "
-                let name = line[19:]
-                break
-            endif
-        endfor
-
-        if empty(name)
-            silent! exe "cd " . fnameescape(cwdSave)
-            return 0
-        endif
-    else
-        let name = a:name
-    endif
-
-    let startMarker = "CS_WORKSPACE_BEGIN: " . name
-    let endMarker   = "CS_WORKSPACE_END: " . name
-
-    let lines       = []
-    let inWorkspace = 0
-
-    for ol in oldLines
-        if ol ==# startMarker
-            let inWorkspace = 1
-        elseif ol ==# endMarker
-            let inWorkspace = 0
-        elseif inWorkspace
-            call add(lines, ol)
-        endif
-    endfor
-
-    if empty(lines)
-        call ctrlspace#ui#Msg("Workspace '" . name . "' not found in file '" . filename . "'.")
+    call s:loadWorkspaces()
+    if !has_key(s:db.workspaces, a:name)
+        call ctrlspace#ui#Msg("Workspace '" . a:name . "' not found")
         call ctrlspace#workspaces#SetWorkspaceNames()
         silent! exe "cd " . fnameescape(cwdSave)
         return 0
     endif
-
-    call s:execWorkspaceCommands(a:bang, name, lines)
+    let workspace = s:db.workspaces[a:name]
+    call s:execWorkspaceCommands(a:bang, workspace.Name, workspace.commands)
 
     if a:bang
         let s:modes.Workspace.Data.Active.Digest = ""
-        let msg = "Workspace '" . name . "' has been appended."
+        let msg = "Workspace '" . a:name . "' has been appended."
     else
         let s:modes.Workspace.Data.Active.Digest = ctrlspace#workspaces#CreateDigest()
-        let msg = "Workspace '" . name . "' has been loaded."
+        let msg = "Workspace '" . a:name . "' has been loaded."
     endif
 
     call ctrlspace#ui#Msg(msg)
@@ -314,30 +240,6 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
     let filename = s:workspaceFile()
     let lastTab  = tabpagenr("$")
 
-    let lines       = []
-    let inWorkspace = 0
-
-    let startMarker = "CS_WORKSPACE_BEGIN: " . name
-    let endMarker   = "CS_WORKSPACE_END: " . name
-
-    if filereadable(filename)
-        for oldLine in readfile(filename)
-            if oldLine ==# startMarker
-                let inWorkspace = 1
-            endif
-
-            if !inWorkspace
-                call add(lines, oldLine)
-            endif
-
-            if oldLine ==# endMarker
-                let inWorkspace = 0
-            endif
-        endfor
-    endif
-
-    call add(lines, startMarker)
-
     let ssopSave = &ssop
     set ssop=winsize,tabpages,buffers,sesdir
 
@@ -379,6 +281,7 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
     endif
 
     let tabIndex = 0
+    let lines = []
 
     for cmd in readfile("CS_SESSION")
         if cmd =~# "^lcd "
@@ -424,10 +327,10 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
         endif
     endfor
 
-    call add(lines, endMarker)
-
-    call writefile(lines, filename)
     call delete("CS_SESSION")
+    let newWs = { "commands" : lines, "Name": a:name }
+    let s:db.workspaces[a:name] = newWs
+    call s:saveWorkspaces()
 
     call s:setActiveWorkspaceName(name, ctrlspace#workspaces#CreateDigest())
     call ctrlspace#workspaces#SetWorkspaceNames()
