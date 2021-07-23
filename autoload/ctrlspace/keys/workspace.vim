@@ -2,12 +2,12 @@ let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#keys#workspace#Init() abort
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#LoadOrSave",    "Workspace", ["Tab", "CR", "Space"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Append",        "Workspace", ["a"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#NewWorkspace",  "Workspace", ["N"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#ToggleSubmode", "Workspace", ["s"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Delete",        "Workspace", ["d"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Rename",        "Workspace", ["=", "m"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Load",         "Workspace", ["Tab", "CR", "Space"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Append",       "Workspace", ["a"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#NewWorkspace", "Workspace", ["N"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Save",         "Workspace", ["s"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Delete",       "Workspace", ["d"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#workspace#Rename",       "Workspace", ["=", "m"])
 endfunction
 
 function! ctrlspace#keys#workspace#Delete(k) abort
@@ -20,25 +20,24 @@ function! ctrlspace#keys#workspace#Rename(k) abort
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
-function! ctrlspace#keys#workspace#LoadOrSave(k) abort
-    if s:modes.Workspace.Data.SubMode ==# "load"
-        if !s:loadWorkspace(0, ctrlspace#workspaces#SelectedWorkspaceName())
-            return
-        endif
-    elseif s:modes.Workspace.Data.SubMode ==# "save"
-        if !s:saveWorkspace(ctrlspace#workspaces#SelectedWorkspaceName())
-            return
-        endif
+function! ctrlspace#keys#workspace#Load(k) abort
+    if !s:loadWorkspace(0, ctrlspace#workspaces#SelectedWorkspaceName())
+        return
     endif
 
-    if a:k ==# "CR"
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#ui#DelayedMsg()
-    elseif a:k ==# "Space"
-        call s:modes.Workspace.Enable()
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#ui#DelayedMsg()
+    call s:modes.Workspace.Enable()
+    call ctrlspace#window#Toggle(1)
+    call ctrlspace#ui#DelayedMsg()
+endfunction
+
+function! ctrlspace#keys#workspace#Save(k) abort
+    if !s:saveWorkspace(ctrlspace#workspaces#SelectedWorkspaceName())
+        return
     endif
+
+    call s:modes.Workspace.Enable()
+    call ctrlspace#window#Toggle(1)
+    call ctrlspace#ui#DelayedMsg()
 endfunction
 
 function! ctrlspace#keys#workspace#Append(k) abort
@@ -53,19 +52,6 @@ function! ctrlspace#keys#workspace#NewWorkspace(k) abort
 
     call s:modes.Workspace.Enable()
     call ctrlspace#window#refresh()
-endfunction
-
-function! ctrlspace#keys#workspace#ToggleSubmode(k) abort
-    call s:modes.Workspace.SetData("LastBrowsed", line("."))
-    call ctrlspace#window#Kill(0)
-
-    if s:modes.Workspace.Data.SubMode ==# "load"
-        call s:modes.Workspace.SetData("SubMode", "save")
-    else
-        call s:modes.Workspace.SetData("SubMode", "load")
-    endif
-
-    call ctrlspace#window#Toggle(1)
 endfunction
 
 function! s:saveWorkspace(name) abort

@@ -426,7 +426,6 @@ function! s:resetWindow() abort
     call s:modes.Search.SetData("HistoryIndex", -1)
 
     call s:modes.Workspace.SetData("LastBrowsed", 0)
-    call s:modes.Workspace.SetData("SubMode", "load")
 
     call ctrlspace#roots#SetCurrentProjectRoot(ctrlspace#roots#FindProjectRoot())
     call s:modes.Bookmark.SetData("Active", ctrlspace#bookmarks#FindActiveBookmark())
