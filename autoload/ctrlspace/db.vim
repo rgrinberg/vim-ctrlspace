@@ -1,7 +1,7 @@
 let s:empty = { "bookmarks": [], "roots": {} }
 let s:latest = v:null
 
-let s:cacheDir = stdpath("cache") . "/ctrlspace.json"
+let s:cacheDir = stdpath("cache") . "/ctrlspace"
 let s:initCacheDir = v:false
 
 function! s:cacheFile() abort
@@ -10,7 +10,7 @@ function! s:cacheFile() abort
         let s:initCacheDir = v:true
     endif
 
-    return s:cacheDir . "/.cs_cache"
+    return s:cacheDir . "/bookmarks_and_roots.json"
 endfunction
 
 
