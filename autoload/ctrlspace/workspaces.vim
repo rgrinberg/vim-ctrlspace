@@ -189,10 +189,10 @@ function! s:execWorkspaceCommands(bang, workspace) abort
         call add(commands, "tabo!")
         call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
         call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers(1)")
-        call s:setActiveWorkspaceName(a:name, s:modes.Workspace.Data.Active.Digest)
+        call s:setActiveWorkspaceName(a:workspace.Name, s:modes.Workspace.Data.Active.Digest)
     endif
 
-    call writefile(a:workspaces.commands, "CS_SESSION")
+    call writefile(a:workspace.commands, "CS_SESSION")
 
     call add(commands, "source CS_SESSION")
     call add(commands, "redraw!")
