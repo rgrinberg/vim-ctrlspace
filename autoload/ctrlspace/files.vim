@@ -29,11 +29,7 @@ let s:File = s:file_obj_init()
 
 " comparison check helper
 function! s:isValidFilePath(path) abort
-    if empty(a:path) || !filereadable(a:path) || isdirectory(a:path)
-      return v:false
-    else
-      return v:true
-    endif
+    return !(empty(a:path) || !filereadable(a:path) || isdirectory(a:path))
 endfunction
 
 function! ctrlspace#files#ClearAll() abort
