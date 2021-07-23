@@ -47,12 +47,12 @@ function! ctrlspace#db#remove_bookmark(data, idx) abort
 endfunction
 
 function! ctrlspace#db#add_root(data, root) abort
-    let a:data.roots[root] = 1
+    let a:data.roots[a:root] = 1
     call ctrlspace#db#save(a:data)
 endfunction
 
 function! ctrlspace#db#remove_root(data, root) abort
-    unlet data.roots[root]
+    unlet data.roots[a:root]
     call remove(a:data.roots, a:idx)
     call ctrlspace#db#save(a:data)
 endfunction
