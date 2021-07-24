@@ -90,7 +90,7 @@ function! ctrlspace#bookmarks#AddNewBookmark(...) abort
     let directory = ctrlspace#util#NormalizeDirectory(directory)
 
     if !isdirectory(directory)
-        call ctrlspace#ui#Msg("Directory incorrect.")
+        call ctrlspace#ui#Msg("Directory '" . directory . "' is invalid.")
         return 0
     endif
 
