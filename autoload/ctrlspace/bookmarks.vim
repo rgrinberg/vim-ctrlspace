@@ -61,7 +61,7 @@ function! ctrlspace#bookmarks#RemoveBookmark(nr) abort
         return
     endif
 
-    call ctrlspace#db#remove_bookmark(db, a:nr)
+    call ctrlspace#db#remove_bookmark(ctrlspace#db#latest(), a:nr)
     call ctrlspace#ui#DelayedMsg("Bookmark '" . name . "' has been deleted.")
 endfunction
 
