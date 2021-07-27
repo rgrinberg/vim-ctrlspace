@@ -59,9 +59,7 @@ function! ctrlspace#init#Init() abort
     let s:parser.unknown_options_completion = function("s:CompleteTypeOption")
 
     command! -nargs=* -count -bang -complete=customlist,CompleteCtrlSpace
-                \ CtrlSpaceNew :call s:run(s:parser.parse(<q-args>, <count>, <q-bang>))
-
-    command! -nargs=* -range CtrlSpace :call ctrlspace#window#run({"mode" : "buffer"}) | :call feedkeys(<q-args>)
+                \ CtrlSpace :call s:run(s:parser.parse(<q-args>, <count>, <q-bang>))
     command! -nargs=0 -range CtrlSpaceGoUp :call ctrlspace#window#GoToBufferListPosition("up")
     command! -nargs=0 -range CtrlSpaceGoDown :call ctrlspace#window#GoToBufferListPosition("down")
     command! -nargs=0 -range CtrlSpaceTabLabel :call ctrlspace#tabs#NewTabLabel(0)

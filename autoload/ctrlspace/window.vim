@@ -27,18 +27,21 @@ function! ctrlspace#window#run(...) abort
     let options = extend(default, args)
 
     let mode = toupper(options.mode[0]) . strpart(options.mode, 1)
-    let mode = ctrlspace#modes#Modes()[mode]
+    let modes = ctrlspace#modes#Modes()
+    let mode = modes[mode]
 
     call mode.Enable()
 
     call s:modes.Search.SetData("Letters", split(options.input, '\zs'))
+    call ctrlspace#files#ClearAll()
 
     if options.insert
-        call ctrlspace#search#SwitchSearchMode(1)
+        call modes.Search.Enable()
+    else
+        call modes.Search.Disable()
     endif
 
-    call ctrlspace#files#ClearAll()
-    call ctrlspace#window#Toggle(0)
+    call ctrlspace#window#revive()
 endfunction
 
 function! s:insertContent() abort
