@@ -33,9 +33,7 @@ function! ctrlspace#keys#file#SearchParentDirectory(k) abort
 endfunction
 
 function! ctrlspace#keys#file#ZoomMode(k) abort
-    if !s:modes.Zoom.Enabled
-        call ctrlspace#files#ZoomFile()
-    else
+    if s:modes.Zoom.Enabled
         if s:modes.Zoom.Data.Mode ==# "File"
             call s:modes.File.Enable()
         else
@@ -44,6 +42,8 @@ function! ctrlspace#keys#file#ZoomMode(k) abort
         call s:modes.Search.SetData("Letters", copy(s:modes.Zoom.Data.Letters))
         call ctrlspace#window#Toggle(1)
         call ctrlspace#window#MoveSelectionBar(s:modes.Zoom.Data.Line)
+    else
+        call ctrlspace#files#ZoomFile()
     endif
 endfunction
 
