@@ -85,43 +85,34 @@ function! ctrlspace#files#CollectFiles() abort
     return s:files
 endfunction
 
-function! ctrlspace#files#LoadFile(...) abort
+function! ctrlspace#files#LoadFile(commands) abort
     let file = s:File.abs_fpath()
-
     call ctrlspace#window#Kill(1)
 
-    let commands = len(a:000)
-
-    if commands > 0
-        exec ":" . a:1
-    endif
+    for command in a:commands
+        exec ":" . command
+    endfor
 
     call s:loadFileOrBuffer(file)
-
-    if commands > 1
-        silent! exe ":" . a:2
-    endif
 endfunction
 
-function! ctrlspace#files#LoadManyFiles(...) abort
+function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
     let file = s:File.abs_fpath()
     let curln = line(".")
 
     call ctrlspace#window#Kill(0)
     call ctrlspace#window#GoToStartWindow()
 
-    let commands = len(a:000)
-
-    if commands > 0
-        exec ":" . a:1
-    endif
+    for command in a:preCommands
+        exec ":" . command
+    endfor
 
     call s:loadFileOrBuffer(file)
     normal! zb
 
-    if commands > 1
-        silent! exe ":" . a:2
-    endif
+    for command in a:postCommands
+        silent! exe ":" . command
+    endfor
 
     call ctrlspace#window#Toggle(1)
     call ctrlspace#window#MoveSelectionBar(curln)

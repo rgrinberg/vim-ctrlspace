@@ -48,45 +48,45 @@ function! ctrlspace#keys#file#ZoomMode(k) abort
 endfunction
 
 function! ctrlspace#keys#file#LoadFile(k) abort
-    call ctrlspace#files#LoadFile()
+    call ctrlspace#files#LoadFile([])
 endfunction
 
 function! ctrlspace#keys#file#LoadManyFiles(k) abort
-    call ctrlspace#files#LoadManyFiles()
+    call ctrlspace#files#LoadManyFiles([], [])
 endfunction
 
 function! ctrlspace#keys#file#LoadFileVS(k) abort
-    call ctrlspace#files#LoadFile("vs")
+    call ctrlspace#files#LoadFile(["vs"])
 endfunction
 
 function! ctrlspace#keys#file#LoadManyFilesVS(k) abort
-    call ctrlspace#files#LoadManyFiles("vs")
+    call ctrlspace#files#LoadManyFiles(["vs"], [])
 endfunction
 
 function! ctrlspace#keys#file#LoadFileSP(k) abort
-    call ctrlspace#files#LoadFile("sp")
+    call ctrlspace#files#LoadFile(["sp"])
 endfunction
 
 function! ctrlspace#keys#file#LoadManyFilesSP(k) abort
-    call ctrlspace#files#LoadManyFiles("sp")
+    call ctrlspace#files#LoadManyFiles(["sp"], [])
 endfunction
 
 function! ctrlspace#keys#file#LoadFileT(k) abort
-    call ctrlspace#files#LoadFile("tabnew")
+    call ctrlspace#files#LoadFile(["tabnew"])
 endfunction
 
 function! ctrlspace#keys#file#LoadManyFilesT(k) abort
     if s:modes.NextTab.Enabled
-        call ctrlspace#files#LoadManyFiles("tabnext", "tabprevious")
+        call ctrlspace#files#LoadManyFiles(["tabnext"], ["tabprevious"])
     else
         call s:modes.NextTab.Enable()
-        call ctrlspace#files#LoadManyFiles("tabnew", "tabprevious")
+        call ctrlspace#files#LoadManyFiles(["tabnew"], ["tabprevious"])
     endif
 endfunction
 
 function! ctrlspace#keys#file#LoadManyFilesCT(k) abort
     call s:modes.NextTab.Enable()
-    call ctrlspace#files#LoadManyFiles("tabnew", "tabprevious")
+    call ctrlspace#files#LoadManyFiles(["tabnew"], ["tabprevious"])
 endfunction
 
 function! ctrlspace#keys#file#Refresh(k) abort
