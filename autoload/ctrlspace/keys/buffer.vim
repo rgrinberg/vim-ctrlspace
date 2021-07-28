@@ -89,9 +89,7 @@ function! ctrlspace#keys#buffer#VisibleMode(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#ZoomMode(k) abort
-    if !s:modes.Zoom.Enabled
-        call ctrlspace#buffers#ZoomBuffer(0)
-    else
+    if s:modes.Zoom.Enabled
         call ctrlspace#window#Kill(1)
         call ctrlspace#window#Toggle(0)
         call ctrlspace#window#Kill(0)
@@ -103,6 +101,8 @@ function! ctrlspace#keys#buffer#ZoomMode(k) abort
         call s:modes.Search.SetData("Letters", copy(s:modes.Zoom.Data.Letters))
         call ctrlspace#window#Toggle(1)
         call ctrlspace#window#MoveSelectionBar(s:modes.Zoom.Data.Line)
+    else
+        call ctrlspace#buffers#ZoomBuffer(0)
     endif
 endfunction
 
