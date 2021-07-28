@@ -157,13 +157,15 @@ endfunction
 
 function! ctrlspace#keys#SetDefaultMapping(key, action) abort
     let s:defaultKey = a:key
-    if !empty(s:defaultKey)
-        if s:defaultKey ==? "<C-Space>" && !has("gui_running") && !has("win32")
-            let s:defaultKey = "<Nul>"
-        endif
-
-        silent! exe 'nnoremap <unique><silent>' . s:defaultKey . ' ' . a:action
+    if empty(s:defaultKey)
+        return
     endif
+
+    if s:defaultKey ==? "<C-Space>" && !has("gui_running") && !has("win32")
+        let s:defaultKey = "<Nul>"
+    endif
+
+    silent! exe 'nnoremap <unique><silent>' . s:defaultKey . ' ' . a:action
 endfunction
 
 function! ctrlspace#keys#IsDefaultKey() abort
