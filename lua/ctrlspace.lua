@@ -74,8 +74,9 @@ files.collect = function ()
   return files_cache
 end
 
+local getbufvar = vim.fn.getbufvar
+
 local function managed_buf(buf)
-  local getbufvar = vim.fn.getbufvar
   return getbufvar(buf, "&buflisted") or getbufvar(buf, "&ft") ~= "ctrlspace"
 end
 
@@ -114,6 +115,16 @@ end
 
 local function tab_buffers(tabnr)
   return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
+end
+
+buffers.unsaved = function()
+  local res = {}
+  for _, b in ipairs(buffers.all()) do
+    if getbufvar(b, "&modified") and managed_buf(b) then
+      table.insert(res, b)
+    end
+  end
+  return res
 end
 
 -- TODO this should exist in the tabs module

@@ -59,13 +59,7 @@ function! ctrlspace#tabs#CloseTab() abort
 endfunction
 
 function! ctrlspace#tabs#CollectUnsavedBuffers() abort
-    let buffers = []
-
-    for i in range(1, bufnr("$"))
-        if getbufvar(i, "&modified") && getbufvar(i, "&buflisted")
-            call add(buffers, i)
-        endif
-    endfor
+    let buffers = luaeval('require("ctrlspace").buffers.unsaved()')
 
     if empty(buffers)
         call ctrlspace#ui#Msg("There are no unsaved buffers.")
