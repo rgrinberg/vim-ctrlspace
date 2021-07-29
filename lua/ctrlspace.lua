@@ -32,3 +32,50 @@ function _G.ctrlspace_filter(candidates, query, max)
   end
   return top
 end
+
+local files = {}
+local buffers = {}
+
+local files_cache = nil
+
+files.clear = function ()
+  files = nil
+end
+
+-- introduce customization for this eventually
+local function glob_cmd()
+  return "rg --color=never --files --sort path"
+end
+
+files.collect = function ()
+  if files_cache then
+    return files_cache
+  end
+  local output = vim.fn["ctrlspace#util#system"](glob_cmd())
+  local res = {}
+  local i = 0
+  for s in string.gmatch(output, "[^\r\n]+") do
+    local m = {
+      text = vim.fn.fnamemodify(s, ":."),
+      index = i,
+      indicators = "",
+    }
+    table.insert(res, m)
+    i = i + 1
+  end
+  files_cache = res
+  return files_cache
+end
+
+buffers.in_tab = function ()
+
+end
+
+buffers.all = function ()
+
+end
+
+local M = {}
+M.files = files
+M.buffers = buffers
+return M

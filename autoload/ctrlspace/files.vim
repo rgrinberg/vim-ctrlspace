@@ -1,6 +1,5 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
-let s:files = v:null
 
 function! s:file_obj_init() abort
     let s:File = {}
@@ -33,7 +32,7 @@ function! s:isValidFilePath(path) abort
 endfunction
 
 function! ctrlspace#files#ClearAll() abort
-  let s:files = v:null
+    return luaeval('require("ctrlspace").files.clear()')
 endfunction
 
 function! ctrlspace#files#SelectedFileName() abort
@@ -72,17 +71,7 @@ endfunction
 let [s:glob_cmd, s:glob_bin] = s:set_globber()
 
 function! ctrlspace#files#CollectFiles() abort
-    if type(s:files) != type(v:null)
-      return s:files
-    endif
-    
-    let files = empty(s:glob_cmd) ?
-                \ globpath('.', '**') : ctrlspace#util#system(s:glob_cmd)
-    let s:files = map(split(files, '\n'), { index, fname ->
-                \ { "text": fnamemodify(fname, ":."),
-                \   "index": index,
-                \   "indicators" : "" }})
-    return s:files
+    return luaeval('require("ctrlspace").files.collect()')
 endfunction
 
 function! ctrlspace#files#LoadFile(commands) abort
@@ -119,7 +108,7 @@ function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
 endfunction
 
 function! ctrlspace#files#RefreshFiles() abort
-    let s:files = v:null
+    return luaeval('require("ctrlspace").files.clear()')
     call ctrlspace#window#refresh()
 endfunction
 
@@ -380,7 +369,7 @@ function! s:loadFileOrBuffer(file) abort
 endfunction
 
 function! s:updateFileList(path, newPath) abort
-  s:files = v:null
+    return luaeval('require("ctrlspace").files.clear()')
 endfunction
 
 function! s:ensurePath(file) abort
