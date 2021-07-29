@@ -117,9 +117,19 @@ local function tab_buffers(tabnr)
   return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
 end
 
+local function all_buffers()
+  local res = {}
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if managed_buf(buf) then
+      res[buf] = true
+    end
+  end
+  return res
+end
+
 buffers.unsaved = function()
   local res = {}
-  for _, b in ipairs(buffers.all()) do
+  for b, _ in ipairs(all_buffers()) do
     if getbufvar(b, "&modified") and managed_buf(b) then
       table.insert(res, b)
     end
@@ -132,16 +142,6 @@ buffers.in_tab = function (tabnr)
   local res = {}
   for k, _ in pairs(tab_buffers(tabnr)) do
     table.insert(res, tonumber(k))
-  end
-  return res
-end
-
-local function all_buffers()
-  local res = {}
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    if managed_buf(buf) then
-      res[buf] = true
-    end
   end
   return res
 end
