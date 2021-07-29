@@ -86,19 +86,7 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
 endfunction
 
 function! ctrlspace#tabs#CollectForeignBuffers() abort
-    let buffers = {}
-
-    for t in range(1, tabpagenr("$"))
-        silent! call extend(buffers, ctrlspace#util#GettabvarWithDefault(t, "CtrlSpaceList", {}))
-    endfor
-
-    let foreignBuffers = []
-
-    for b in ctrlspace#buffers#Buffers()
-        if !has_key(buffers, b)
-            call add(foreignBuffers, b)
-        endif
-    endfor
+    let foreignBuffers = luaeval('require("ctrlspace").buffers.foreign()')
 
     if empty(foreignBuffers)
         call ctrlspace#ui#Msg("There are no foreign buffers.")
