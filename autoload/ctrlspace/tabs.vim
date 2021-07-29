@@ -41,7 +41,7 @@ function! ctrlspace#tabs#CloseTab() abort
     if exists("t:CtrlSpaceAutotab") && (t:CtrlSpaceAutotab != 0)
         " do nothing
     elseif exists("t:CtrlSpaceLabel") && !empty(t:CtrlSpaceLabel)
-        let bufCount = len(ctrlspace#buffers#Buffers(tabpagenr()))
+        let bufCount = len(ctrlspace#buffers#TabBuffers(tabpagenr()))
 
         if (bufCount > 1) && !ctrlspace#ui#Confirmed("Close tab named '" . t:CtrlSpaceLabel . "' with " . bufCount . " buffers?")
             return
@@ -94,7 +94,7 @@ function! ctrlspace#tabs#CollectForeignBuffers() abort
 
     let foreignBuffers = []
 
-    for b in keys(ctrlspace#buffers#Buffers(0))
+    for b in ctrlspace#buffers#Buffers()
         if !has_key(buffers, b)
             call add(foreignBuffers, b)
         endif

@@ -1,69 +1,24 @@
 let s:modes      = ctrlspace#modes#Modes()
-let s:allBuffers = {}
 
 function! ctrlspace#buffers#SelectedBufferName() abort
     return s:modes.Buffer.Enabled ? bufname(ctrlspace#window#SelectedIndex()) : ""
 endfunction
 
 function! ctrlspace#buffers#Init() abort
-    for current in range(1, bufnr("$"))
-        if !getbufvar(current, "&buflisted") || getbufvar(current, "&ft") ==? "ctrlspace"
-            break
-        endif
-
-        if !has_key(s:allBuffers, current)
-            let s:allBuffers[current] = len(s:allBuffers) + 1
-        endif
-    endfor
 endfunction
 
 function! ctrlspace#buffers#AddBuffer() abort
-    let current = bufnr('%')
-
-    if !getbufvar(current, "&buflisted") || getbufvar(current, "&ft") ==? "ctrlspace"
-        return
-    endif
-
-    if !has_key(s:allBuffers, current)
-        let s:allBuffers[current] = len(s:allBuffers) + 1
-    endif
-
-    if s:modes.Zoom.Enabled
-        return
-    endif
-
-    let b:CtrlSpaceJumpCounter = ctrlspace#jumps#IncrementJumpCounter()
-
-    if !exists("t:CtrlSpaceList")
-        let t:CtrlSpaceList = {}
-    endif
-
-    if !has_key(t:CtrlSpaceList, current)
-        let t:CtrlSpaceList[current] = len(t:CtrlSpaceList) + 1
-    endif
+    call luaeval('require("ctrlspace").buffers.add_current()')
 endfunction
 
-function! ctrlspace#buffers#Buffers(tabnr) abort
-    if a:tabnr
-        let buffers = gettabvar(a:tabnr, "CtrlSpaceList")
+function! ctrlspace#buffers#Buffers() abort
+    return luaeval('require("ctrlspace").buffers.all()')
+endfunction
 
-        " Workaround for a Vim bug after :only and e.g. help window:
-        " for the first time after :only gettabvar cannot properly ready any tab variable
-        " More info: https://github.com/vim/vim/issues/394
-        " TODO Remove when decided to drop support for Vim 7.3
-        if type(buffers) == 1
-            unlet buffers
-            let buffers = gettabvar(a:tabnr, "CtrlSpaceList")
-        endif
-
-        if type(buffers) != 4
-            return {}
-        endif
-    else
-        let buffers = s:allBuffers
-    endif
-
-    return filter(buffers, "buflisted(str2nr(v:key))") " modify proper dictionary and return it
+function! ctrlspace#buffers#TabBuffers(tabnr) abort
+    let In_tab = luaeval('require("ctrlspace").buffers.in_tab')
+    let foo = In_tab(a:tabnr)
+    return foo
 endfunction
 
 function! ctrlspace#buffers#LoadBuffer(...) abort

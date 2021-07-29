@@ -17,10 +17,10 @@ endfunction
 
 function! ctrlspace#api#BufferList(tabnr) abort
     let bufferList     = []
-    let singleList     = ctrlspace#buffers#Buffers(a:tabnr)
+    let singleList     = ctrlspace#buffers#TabBuffers(a:tabnr)
     let visibleBuffers = tabpagebuflist(a:tabnr)
 
-    for i in keys(singleList)
+    for i in singleList
         let i = str2nr(i)
 
         let bufname = bufname(i)
@@ -43,10 +43,10 @@ endfunction
 
 function! ctrlspace#api#Buffers(tabnr) abort
     let bufferList     = {}
-    let ctrlspaceList  = ctrlspace#buffers#Buffers(a:tabnr)
+    let ctrlspaceList  = ctrlspace#buffers#TabBuffers(a:tabnr)
     let visibleBuffers = tabpagebuflist(a:tabnr)
 
-    for i in keys(ctrlspaceList)
+    for i in ctrlspaceList
         let i = str2nr(i)
 
         let bufname = bufname(i)
@@ -64,7 +64,7 @@ function! ctrlspace#api#Buffers(tabnr) abort
 endfunction
 
 function! ctrlspace#api#TabModified(tabnr) abort
-    for b in map(keys(ctrlspace#buffers#Buffers(a:tabnr)), "str2nr(v:val)")
+    for b in ctrlspace#buffers#TabBuffers(a:tabnr)
         if getbufvar(b, '&modified')
             return 1
         endif

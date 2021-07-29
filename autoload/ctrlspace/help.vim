@@ -153,7 +153,7 @@ function! ctrlspace#help#CloseExternalWindow() abort
     let curtab = tabpagenr()
 
     for t in range(1, tabpagenr("$"))
-        let bufs = map(keys(ctrlspace#buffers#Buffers(t)), "str2nr(v:val)")
+        let bufs = ctrlspace#buffers#TabBuffers(t)
 
         if index(bufs, s:externalBufnr) != -1 && len(bufs) > 1
             silent! exe "normal! " . t . "gt"

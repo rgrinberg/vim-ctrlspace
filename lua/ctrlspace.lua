@@ -33,8 +33,11 @@ function _G.ctrlspace_filter(candidates, query, max)
   return top
 end
 
+local M = {}
 local files = {}
 local buffers = {}
+M.files = files
+M.buffers = buffers
 
 local files_cache = nil
 
@@ -67,15 +70,60 @@ files.collect = function ()
   return files_cache
 end
 
-buffers.in_tab = function ()
+local function managed_buf(buf)
+  local getbufvar = vim.fn.getbufvar
+  return getbufvar(buf, "&buflisted") or getbufvar(buf, "&ft") ~= "ctrlspace"
+end
 
+buffers.add_current = function ()
+  local current = vim.fn.bufnr('%')
+
+  if not managed_buf(current) then
+    return
+  end
+
+  local modes = vim.fn["ctrlspace#modes#Modes"]()
+  if modes.Zoom.Enabled == 1 then
+    return
+  end
+
+  vim.b.CtrlSpaceJumpCounter = vim.fn["ctrlspace#jumps#IncrementJumpCounter"]()
+
+  if not vim.t.CtrlSpaceList then
+    vim.t.CtrlSpaceList = {}
+  end
+
+  local tmp = vim.t.CtrlSpaceList
+  tmp[tostring(current)] = true
+  vim.t.CtrlSpaceList = tmp
+end
+
+local function filter_unlisted_buffers(bufs)
+  local res = {}
+  for _, b in ipairs(bufs) do
+    if vim.fn.buflisted(b) then
+      table.insert(res, b)
+    end
+  end
+  return res
+end
+
+buffers.in_tab = function (tabnr)
+  local res = {}
+  for k, _ in pairs(vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})) do
+    table.insert(res, tonumber(k))
+  end
+  return res
 end
 
 buffers.all = function ()
-
+  local res = {}
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if managed_buf(buf) then
+      table.insert(res, buf)
+    end
+  end
+  return filter_unlisted_buffers(res)
 end
 
-local M = {}
-M.files = files
-M.buffers = buffers
 return M

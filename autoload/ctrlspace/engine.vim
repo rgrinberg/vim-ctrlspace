@@ -111,11 +111,11 @@ function! s:bufferListContent(clv) abort
     let content = []
 
     if a:clv.Data.SubMode ==# "single"
-        let buffers = map(keys(ctrlspace#buffers#Buffers(tabpagenr())), "str2nr(v:val)")
+        let buffers =ctrlspace#buffers#TabBuffers(tabpagenr())
     elseif a:clv.Data.SubMode ==# "all"
-        let buffers = map(keys(ctrlspace#buffers#Buffers(0)), "str2nr(v:val)")
+        let buffers =ctrlspace#buffers#Buffers()
     elseif a:clv.Data.SubMode ==# "visible"
-        let buffers = filter(map(keys(ctrlspace#buffers#Buffers(tabpagenr())), "str2nr(v:val)"), "bufwinnr(v:val) != -1")
+        let buffers = filter(ctrlspace#buffers#TabBuffers(tabpagenr()), "bufwinnr(v:val) != -1")
     endif
 
     for i in buffers
