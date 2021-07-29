@@ -34,10 +34,14 @@ function _G.ctrlspace_filter(candidates, query, max)
 end
 
 local M = {}
+
 local files = {}
 local buffers = {}
+local tabs = {}
+
 M.files = files
 M.buffers = buffers
+M.tabs = tabs
 
 local files_cache = nil
 
@@ -108,9 +112,13 @@ local function filter_unlisted_buffers(bufs)
   return res
 end
 
+local function tab_buffers(tabnr)
+  return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
+end
+
 buffers.in_tab = function (tabnr)
   local res = {}
-  for k, _ in pairs(vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})) do
+  for k, _ in pairs(tab_buffers(tabnr)) do
     table.insert(res, tonumber(k))
   end
   return res
@@ -124,6 +132,23 @@ buffers.all = function ()
     end
   end
   return filter_unlisted_buffers(res)
+end
+
+tabs.forget_buffers = function (bufs)
+  for tabnr=1,vim.fn.tabpagenr("$") do
+    local bufs_in_tab = tab_buffers(tabnr)
+    local modified = false
+    for _, b in ipairs(bufs) do
+      local key = tostring(b)
+      if bufs_in_tab[key] then
+        modified = true
+        bufs_in_tab[key] = nil
+      end
+    end
+    if modified then
+      vim.t.CtrlSpaceList = bufs_in_tab
+    end
+  end
 end
 
 return M
