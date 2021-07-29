@@ -136,6 +136,16 @@ buffers.in_tab = function (tabnr)
   return res
 end
 
+local function all_buffers()
+  local res = {}
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if managed_buf(buf) then
+      res[buf] = true
+    end
+  end
+  return res
+end
+
 buffers.all = function ()
   local res = {}
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
@@ -161,6 +171,49 @@ buffers.foreign = function ()
     table.insert(res, i)
   end
   return res
+end
+
+buffers.delete = function (bufs)
+  for b, _ in pairs(bufs) do
+    vim.cmd('exe "bwipeout" ' .. b)
+  end
+  tabs.forget_buffers(bufs)
+end
+
+buffers.visible = function ()
+  local res = {}
+  for tabnr=1,vim.fn.tabpagenr("$") do
+    for _, b in ipairs(vim.fn.tabpagebuflist(tabnr)) do
+      if managed_buf(b) then
+        res[b] = true
+      end
+    end
+  end
+  return res
+end
+
+buffers.unnamed = function ()
+  local res = {}
+  for _, b in ipairs(buffers.all()) do
+    if managed_buf(b)
+      and vim.fn.bufexists(b)
+      and (not getbufvar(b, "&buftype")
+      or vim.fn.filereadable(vim.fn.bufname(b))) then
+      res[b] = true
+    end
+  end
+  return res
+end
+
+buffers.delete_hidden_noname = function ()
+  local bufs = all_buffers()
+  for u, _ in pairs(buffers.unnamed()) do
+    bufs[u] = nil
+  end
+  for u, _ in pairs(buffers.visible()) do
+    bufs[u] = nil
+  end
+  buffers.delete(bufs)
 end
 
 tabs.forget_buffers = function (bufs)

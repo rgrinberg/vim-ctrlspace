@@ -72,6 +72,7 @@ function! s:insertContent() abort
     normal! zb
 endfunction
 
+" should be called when the contents of the window changes
 function! ctrlspace#window#refresh() abort
     setlocal modifiable
     call nvim_buf_set_lines(0, 0, line("$"), 0, [])
@@ -87,6 +88,8 @@ function! s:saveTabConfig() abort
     let t:CtrlSpaceActivebuf   = bufnr("")
 endfunction
 
+" using this function still closes the buffer. because bufhidden=delete for
+" the ctrlspace buffer
 function! ctrlspace#window#hide() abort
     silent! exe "noautocmd winc c"
 endfunction

@@ -300,31 +300,11 @@ function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
 endfunction
 
 function! ctrlspace#buffers#DeleteHiddenNonameBuffers(internal) abort
-    let keep = {}
-
-    " keep visible ones
-    for t in range(1, tabpagenr("$"))
-        for b in tabpagebuflist(t)
-            let keep[b] = 1
-        endfor
-    endfor
-
-    " keep all but nonames
-    for b in range(1, bufnr("$"))
-        if bufexists(b) && (!empty(getbufvar(b, "&buftype")) || filereadable(bufname(b)))
-            let keep[b] = 1
-        endif
-    endfor
-
     if !a:internal
         call ctrlspace#window#Kill(0)
     endif
 
-    let removed = s:keepBuffersForKeys(keep)
-
-    if !empty(removed)
-        call s:forgetBuffersInAllTabs(removed)
-    endif
+    call luaeval('require("ctrlspace").buffers.delete_hidden_noname()')
 
     if !a:internal
         call ctrlspace#window#Toggle(1)
@@ -333,6 +313,7 @@ function! ctrlspace#buffers#DeleteHiddenNonameBuffers(internal) abort
 endfunction
 
 " deletes all foreign buffers
+" TODO remove this 'internal' parameter
 function! ctrlspace#buffers#DeleteForeignBuffers(internal) abort
     let buffers = {}
 

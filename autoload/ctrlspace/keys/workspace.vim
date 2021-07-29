@@ -102,6 +102,7 @@ function! s:loadWorkspace(bang, name) abort
     endif
 
     if a:bang
+        " XXX Why are we doing this? The callers can just do it themselves
         call s:modes.Workspace.Enable()
         call ctrlspace#window#Kill(0)
         call ctrlspace#window#Toggle(1)
