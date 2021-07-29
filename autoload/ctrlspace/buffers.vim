@@ -129,7 +129,10 @@ function! ctrlspace#buffers#DeleteBuffer() abort
     let selBufWin = bufwinnr(str2nr(nr))
     let curln     = line(".")
 
-    if selBufWin != -1
+    if selBufWin == -1
+        let curln = line(".")
+        call ctrlspace#window#Kill(0)
+    else
         call ctrlspace#window#MoveSelectionBar("down")
         if ctrlspace#window#SelectedIndex() == nr
             call ctrlspace#window#MoveSelectionBar("up")
@@ -149,9 +152,6 @@ function! ctrlspace#buffers#DeleteBuffer() abort
         else
             call s:loadBufferIntoWindow(selBufWin)
         endif
-    else
-        let curln = line(".")
-        call ctrlspace#window#Kill(0)
     endif
 
     let curtab = tabpagenr()
@@ -174,10 +174,10 @@ function! ctrlspace#buffers#DeleteBuffer() abort
 
                 silent! exe tabWin . "wincmd w"
 
-                if !empty(cslist)
-                    silent! exe "b" . keys(cslist)[0]
-                else
+                if empty(cslist)
                     enew
+                else
+                    silent! exe "b" . keys(cslist)[0]
                 endif
             endif
         endfor
