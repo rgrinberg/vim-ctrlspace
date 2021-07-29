@@ -411,19 +411,6 @@ function! s:loadBufferIntoWindow(winnr) abort
 endfunction
 
 function! s:forgetBuffersInAllTabs(numbers) abort
-    for t in range(1, tabpagenr("$"))
-        let cslist = copy(ctrlspace#util#GettabvarWithDefault(t, "CtrlSpaceList", {}))
-
-        if empty(cslist)
-            continue
-        endif
-
-        for nr in a:numbers
-            if exists("CtrlSpaceList[nr]")
-                call remove(cslist, nr)
-            endif
-        endfor
-
-        call settabvar(t, "CtrlSpaceList", cslist)
-    endfor
+    let F = luaeval('require("ctrlspace").tabs.forget_buffers()')
+    call F(a:numbers)
 endfunction
