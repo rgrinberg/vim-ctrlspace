@@ -315,17 +315,11 @@ endfunction
 " deletes all foreign buffers
 " TODO remove this 'internal' parameter
 function! ctrlspace#buffers#DeleteForeignBuffers(internal) abort
-    let buffers = {}
-
-    for t in range(1, tabpagenr("$"))
-        silent! call extend(buffers, ctrlspace#util#GettabvarWithDefault(t, "CtrlSpaceList", {}))
-    endfor
-
     if !a:internal
         call ctrlspace#window#Kill(0)
     endif
 
-    call s:keepBuffersForKeys(buffers)
+    call luaeval('require("ctrlspace").buffers.delete_foreign()')
 
     if !a:internal
         call ctrlspace#window#Toggle(1)
