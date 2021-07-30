@@ -23,7 +23,7 @@ endfunction
 
 function! ctrlspace#buffers#LoadBuffer(...) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
 
     let commands = len(a:000)
 
