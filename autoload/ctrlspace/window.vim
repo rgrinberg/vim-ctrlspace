@@ -45,31 +45,7 @@ function! ctrlspace#window#run(...) abort
 endfunction
 
 function! s:insertContent() abort
-    silent! exe "resize" s:config.Height
-
-    if s:modes.Help.Enabled
-        call ctrlspace#help#DisplayHelp(s:filler())
-        call ctrlspace#util#SetStatusline()
-        return
-    endif
-
-    let [b:items, text] = ctrlspace#engine#Content()
-    let b:size = len(b:items)
-
-    " set up window height
-    if b:size > s:config.Height
-        let maxHeight = ctrlspace#window#MaxHeight()
-        silent! exe "resize " . (b:size < maxHeight ? b:size : maxHeight)
-    endif
-
-    silent! exe "set updatetime=" . s:config.SearchTiming
-
-    call s:displayContent(text)
-    call ctrlspace#util#SetStatusline()
-
-    call s:setActiveLine()
-
-    normal! zb
+    call luaeval('require("ctrlspace").drawer.insert_content()')
 endfunction
 
 " should be called when the contents of the window changes
@@ -517,7 +493,7 @@ function! s:setUpBuffer() abort
     endfor
 endfunction
 
-function! s:setActiveLine() abort
+function! ctrlspace#window#setActiveLine() abort
     if !empty(s:modes.Search.Data.Letters) && s:modes.Search.Data.NewSearchPerformed
         call ctrlspace#window#MoveSelectionBar(line("$"))
 
@@ -620,14 +596,15 @@ function! s:filler() abort
     return s:filler[string(&columns)]
 endfunction
 
-function! s:displayContent(text) abort
+function! ctrlspace#window#displayContent(items, text) abort
     setlocal modifiable
-
-    if b:size > 0
+    let size = len(a:items)
+    if size > 0
         silent! put! =a:text
 
         let lineNumber = 0
-        for item in b:items
+
+        for item in a:items
             if has_key(item, "positions")
                 for highlightLetter in item.positions
                     call nvim_buf_add_highlight(0, -1, "CtrlSpaceSearch", lineNumber, highlightLetter + 1, highlightLetter + 2)

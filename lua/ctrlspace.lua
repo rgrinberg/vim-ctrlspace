@@ -280,4 +280,53 @@ drawer.buffer = function()
   return -1
 end
 
+
+-- TODO implement this function properly
+local function help_filler()
+  local fill = "\n"
+  local i = 0
+  while i < vim.o.columns do
+    i = i + 1
+    fill = ' ' .. fill
+  end
+  return fill
+end
+
+drawer.insert_content = function ()
+  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local modes = vim.fn["ctrlspace#modes#Modes"]()
+  vim.cmd('silent! exe "resize" ' .. config.Height)
+  if modes.Help.Enabled == 1 then
+    vim.fn["ctrlspace#help#DisplayHelp"](help_filler())
+    vim.fn["ctrlspace#util#SetStatusline"]()
+    return
+  end
+
+  local content = vim.fn["ctrlspace#engine#Content"]()
+  local items = content[1]
+  local text = content[2]
+
+  -- for backwards compat
+  vim.b.items = items
+  vim.b.size = #items
+
+  if #items > config.Height then
+    local max_height = vim.fn["ctrlspace#window#MaxHeight"]()
+    local size
+    if #items < max_height then
+      size = #items
+    else
+      size = max_height
+    end
+    vim.cmd('silent! exe "resize "' .. size)
+  end
+
+  vim.cmd('silent! exe "set updatetime="' .. config.SearchTiming)
+
+  vim.fn["ctrlspace#window#displayContent"](items, text)
+  vim.fn["ctrlspace#util#SetStatusline"]()
+  vim.fn["ctrlspace#window#setActiveLine"]()
+  vim.cmd("normal! zb")
+end
+
 return M
