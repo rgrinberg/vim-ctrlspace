@@ -186,7 +186,8 @@ function! ctrlspace#buffers#DeleteBuffer() abort
     silent! exe "tabn " . curtab
     silent! exe "bdelete! " . nr
 
-    call s:forgetBuffersInAllTabs([nr])
+    let F = luaeval('require("ctrlspace").tabs.forget_buffers')
+    call F([nr])
     call ctrlspace#window#Toggle(1)
     call ctrlspace#window#MoveSelectionBar(curln)
 endfunction
@@ -382,9 +383,4 @@ function! s:loadBufferIntoWindow(winnr) abort
     let t:CtrlSpaceStartWindow = a:winnr
     call ctrlspace#buffers#LoadBuffer()
     let t:CtrlSpaceStartWindow = old
-endfunction
-
-function! s:forgetBuffersInAllTabs(numbers) abort
-    let F = luaeval('require("ctrlspace").tabs.forget_buffers()')
-    call F(a:numbers)
 endfunction
