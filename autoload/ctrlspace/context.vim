@@ -94,12 +94,7 @@ endfunction
 call s:init()
 
 function! ctrlspace#context#PluginBuffer() abort
-    return s:pluginBuffer
-endfunction
-
-function! ctrlspace#context#SetPluginBuffer(value) abort
-    let s:pluginBuffer = a:value
-    return s:pluginBuffer
+    return luaeval('require("ctrlspace").drawer.buffer()')
 endfunction
 
 function! ctrlspace#context#SymbolSizes() abort

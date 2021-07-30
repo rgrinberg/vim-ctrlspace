@@ -38,10 +38,12 @@ local M = {}
 local files = {}
 local buffers = {}
 local tabs = {}
+local drawer = {}
 
 M.files = files
 M.buffers = buffers
 M.tabs = tabs
+M.drawer = drawer
 
 local files_cache = nil
 
@@ -76,8 +78,12 @@ end
 
 local getbufvar = vim.fn.getbufvar
 
+local function plugin_buffer(buf)
+  return getbufvar(buf, "&ft") == "ctrlspace"
+end
+
 local function managed_buf(buf)
-  return vim.fn.buflisted(buf) and getbufvar(buf, "&ft") ~= "ctrlspace"
+  return vim.fn.buflisted(buf) and not plugin_buffer(buf)
 end
 
 buffers.add_current = function ()
@@ -263,6 +269,15 @@ tabs.add_buffer = function (tabnr, buf)
   end
   btabs[key] = true
   vim.fn.settabvar(tabnr, "CtrlSpaceList", btabs)
+end
+
+drawer.buffer = function()
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    if plugin_buffer(buf) then
+      return buf
+    end
+  end
+  return -1
 end
 
 return M
