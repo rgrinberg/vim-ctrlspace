@@ -329,8 +329,9 @@ endfunction
 
 function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
     let nr = ctrlspace#window#SelectedIndex()
+    let bname = bufname(nr)
 
-    if !getbufvar(str2nr(nr), "&buflisted") || empty(bufname(str2nr(nr)))
+    if !getbufvar(nr, "&buflisted") || empty(bname)
         return
     endif
 
@@ -348,13 +349,11 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
         let map[nr] = len(map) + 1
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
 
     silent! exe "normal! " . a:tab . "gt"
 
-    call ctrlspace#window#Toggle(0)
-
-    let bname = bufname(str2nr(nr))
+    call ctrlspace#window#restore()
 
     for i in range(b:size)
         if bufname(b:items[i].index) ==# bname
