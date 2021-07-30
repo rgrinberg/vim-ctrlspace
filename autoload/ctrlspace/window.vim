@@ -53,7 +53,7 @@ function! s:insertContent() abort
         return
     endif
 
-    let [b:items, b:text] = ctrlspace#engine#Content()
+    let [b:items, text] = ctrlspace#engine#Content()
     let b:size = len(b:items)
 
     " set up window height
@@ -64,7 +64,7 @@ function! s:insertContent() abort
 
     silent! exe "set updatetime=" . s:config.SearchTiming
 
-    call s:displayContent()
+    call s:displayContent(text)
     call ctrlspace#util#SetStatusline()
 
     call s:setActiveLine()
@@ -620,11 +620,11 @@ function! s:filler() abort
     return s:filler[string(&columns)]
 endfunction
 
-function! s:displayContent() abort
+function! s:displayContent(text) abort
     setlocal modifiable
 
     if b:size > 0
-        silent! put! =b:text
+        silent! put! =a:text
 
         let lineNumber = 0
         for item in b:items
