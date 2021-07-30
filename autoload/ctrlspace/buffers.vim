@@ -365,19 +365,6 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
     endfor
 endfunction
 
-function! s:keepBuffersForKeys(dict) abort
-    let removed = []
-
-    for b in range(1, bufnr("$"))
-        if buflisted(b) && !has_key(a:dict, b) && !getbufvar(b, "&modified")
-            exe "bwipeout" b
-            call add(removed, b)
-        endif
-    endfor
-
-    return removed
-endfunction
-
 function! s:loadBufferIntoWindow(winnr) abort
     let old = t:CtrlSpaceStartWindow
     let t:CtrlSpaceStartWindow = a:winnr
