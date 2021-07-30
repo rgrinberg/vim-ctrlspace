@@ -130,7 +130,6 @@ function! ctrlspace#buffers#DeleteBuffer() abort
     let curln     = line(".")
 
     if selBufWin == -1
-        let curln = line(".")
         call ctrlspace#window#Kill(0)
     else
         call ctrlspace#window#MoveSelectionBar("down")
@@ -200,7 +199,6 @@ function! ctrlspace#buffers#DetachBuffer() abort
         let curln     = line(".")
 
         if selBufWin == -1
-            let curln = line(".")
             call ctrlspace#window#Kill(0)
         else
             call ctrlspace#window#MoveSelectionBar("down")
