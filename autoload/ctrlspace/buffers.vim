@@ -101,7 +101,7 @@ endfunction
 " It means, this function doesn't leave buffers without tabs.
 function! ctrlspace#buffers#CloseBuffer() abort
     let nr = ctrlspace#window#SelectedIndex()
-    let F = luaeval('require("ctrlspace").buffer_present_count')
+    let F = luaeval('require("ctrlspace").tabs.buffer_present_count')
     let foundTabs = F(nr)
 
     if foundTabs > 1
