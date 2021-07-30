@@ -103,10 +103,6 @@ buffers.add_current = function ()
   vim.t.CtrlSpaceList = tmp
 end
 
-local function tab_buffers(tabnr)
-  return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
-end
-
 -- TODO sort
 local function all_buffers()
   local res = {}
@@ -128,11 +124,16 @@ buffers.unsaved = function()
   return res
 end
 
+local function raw_buffers_in_tab(tabnr)
+  return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
+end
+
 -- TODO this should exist in the tabs module
 -- TODO sort
 buffers.in_tab = function (tabnr)
   local res = {}
-  for k, _ in pairs(tab_buffers(tabnr)) do
+  local t = raw_buffers_in_tab(tabnr)
+  for k, _ in pairs(t) do
     table.insert(res, tonumber(k))
   end
   return res
@@ -227,16 +228,17 @@ end
 
 tabs.forget_buffers = function (bufs)
   for tabnr=1,vim.fn.tabpagenr("$") do
-    local bufs_in_tab = buffers.in_tab(tabnr)
+    local bufs_in_tab = raw_buffers_in_tab(tabnr)
     local modified = false
-    for _, key in ipairs(bufs) do
+    for _, key_int in ipairs(bufs) do
+      local key = tostring(key_int)
       if bufs_in_tab[key] then
         modified = true
         bufs_in_tab[key] = nil
       end
     end
     if modified then
-      vim.t.CtrlSpaceList = bufs_in_tab
+      vim.fn.settabvar(tabnr, "CtrlSpaceList", bufs_in_tab)
     end
   end
 end
