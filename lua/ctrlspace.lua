@@ -226,6 +226,18 @@ buffers.delete_foreign = function ()
   delete_buffers(foreign_buffers())
 end
 
+tabs.buffer_present_count = function (buf)
+  local res = 0
+  local b = tostring(buf)
+  for tabnr=1,vim.fn.tabpagenr("$") do
+    local btabs = raw_buffers_in_tab(tabnr)
+    if btabs[b] then
+      res = res + 1
+    end
+  end
+  return res
+end
+
 tabs.forget_buffers = function (bufs)
   for tabnr=1,vim.fn.tabpagenr("$") do
     local bufs_in_tab = raw_buffers_in_tab(tabnr)
