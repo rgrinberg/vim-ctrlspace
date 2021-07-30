@@ -107,6 +107,7 @@ local function tab_buffers(tabnr)
   return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
 end
 
+-- TODO sort
 local function all_buffers()
   local res = {}
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
@@ -128,6 +129,7 @@ buffers.unsaved = function()
 end
 
 -- TODO this should exist in the tabs module
+-- TODO sort
 buffers.in_tab = function (tabnr)
   local res = {}
   for k, _ in pairs(tab_buffers(tabnr)) do
