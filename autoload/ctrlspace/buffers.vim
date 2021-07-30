@@ -198,7 +198,10 @@ function! ctrlspace#buffers#DetachBuffer() abort
         let selBufWin = bufwinnr(nr)
         let curln     = line(".")
 
-        if selBufWin != -1
+        if selBufWin == -1
+            let curln = line(".")
+            call ctrlspace#window#Kill(0)
+        else
             call ctrlspace#window#MoveSelectionBar("down")
             if ctrlspace#window#SelectedIndex() == nr
                 call ctrlspace#window#MoveSelectionBar("up")
@@ -218,9 +221,6 @@ function! ctrlspace#buffers#DetachBuffer() abort
             else
                 call s:loadBufferIntoWindow(selBufWin)
             endif
-        else
-            let curln = line(".")
-            call ctrlspace#window#Kill(0)
         endif
         call remove(t:CtrlSpaceList, nr)
         call ctrlspace#window#Toggle(1)
