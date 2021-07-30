@@ -120,13 +120,13 @@ endfunction
 " deletes the selected buffer
 function! ctrlspace#buffers#DeleteBuffer() abort
     let nr = ctrlspace#window#SelectedIndex()
-    let modified = getbufvar(str2nr(nr), "&modified")
+    let modified = getbufvar(nr, "&modified")
 
     if modified && !ctrlspace#ui#Confirmed("The buffer contains unsaved changes. Proceed anyway?")
         return
     endif
 
-    let selBufWin = bufwinnr(str2nr(nr))
+    let selBufWin = bufwinnr(nr)
     let curln     = line(".")
 
     if selBufWin == -1
