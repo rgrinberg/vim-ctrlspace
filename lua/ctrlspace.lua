@@ -77,7 +77,7 @@ end
 local getbufvar = vim.fn.getbufvar
 
 local function managed_buf(buf)
-  return vim.fn.buflisted(buf) or getbufvar(buf, "&ft") ~= "ctrlspace"
+  return vim.fn.buflisted(buf) and getbufvar(buf, "&ft") ~= "ctrlspace"
 end
 
 buffers.add_current = function ()
