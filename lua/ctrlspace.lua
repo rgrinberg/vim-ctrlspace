@@ -255,4 +255,14 @@ tabs.forget_buffers = function (bufs)
   end
 end
 
+tabs.add_buffer = function (tabnr, buf)
+  local btabs = raw_buffers_in_tab(tabnr)
+  local key = tostring(buf)
+  if btabs[key] then
+    return
+  end
+  btabs[key] = true
+  vim.fn.settabvar(tabnr, "CtrlSpaceList", btabs)
+end
+
 return M

@@ -332,13 +332,8 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
         call ctrlspace#buffers#DetachBuffer()
     endif
 
-    if empty(map)
-        let newMap = {}
-        let newMap[nr] = 1
-        call settabvar(a:tab, "CtrlSpaceList", newMap)
-    elseif !exists("map[nr]")
-        let map[nr] = len(map) + 1
-    endif
+    let AddBuffer = luaeval('require("ctrlspace").tabs.add_buffer')
+    call AddBuffer(a:tab, nr)
 
     call ctrlspace#window#kill()
 
