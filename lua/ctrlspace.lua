@@ -77,7 +77,7 @@ end
 local getbufvar = vim.fn.getbufvar
 
 local function managed_buf(buf)
-  return getbufvar(buf, "&buflisted") or getbufvar(buf, "&ft") ~= "ctrlspace"
+  return vim.fn.buflisted(buf) or getbufvar(buf, "&ft") ~= "ctrlspace"
 end
 
 buffers.add_current = function ()
@@ -101,16 +101,6 @@ buffers.add_current = function ()
   local tmp = vim.t.CtrlSpaceList
   tmp[tostring(current)] = true
   vim.t.CtrlSpaceList = tmp
-end
-
-local function filter_unlisted_buffers(bufs)
-  local res = {}
-  for _, b in ipairs(bufs) do
-    if vim.fn.buflisted(b) then
-      table.insert(res, b)
-    end
-  end
-  return res
 end
 
 local function tab_buffers(tabnr)
@@ -158,12 +148,10 @@ end
 
 buffers.all = function ()
   local res = {}
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    if managed_buf(buf) then
-      table.insert(res, buf)
-    end
+  for buf, _ in pairs(all_buffers()) do
+    table.insert(res, buf)
   end
-  return filter_unlisted_buffers(res)
+  return res
 end
 
 local function foreign_buffers()
