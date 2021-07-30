@@ -225,8 +225,6 @@ function! ctrlspace#buffers#DetachBuffer() abort
         call ctrlspace#window#Toggle(1)
         call ctrlspace#window#MoveSelectionBar(curln)
     endif
-
-    return nr
 endfunction
 
 function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
