@@ -53,7 +53,7 @@ function! ctrlspace#keys#buffer#SearchParentDirectoryInFile(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadBuffer(k) abort
-    call ctrlspace#buffers#LoadBuffer()
+    call ctrlspace#buffers#LoadBuffer([])
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffers(k) abort
@@ -107,7 +107,7 @@ function! ctrlspace#keys#buffer#ZoomMode(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadBufferVS(k) abort
-    call ctrlspace#buffers#LoadBuffer("vs")
+    call ctrlspace#buffers#LoadBuffer(["vs"])
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersVS(k) abort
@@ -115,7 +115,7 @@ function! ctrlspace#keys#buffer#LoadManyBuffersVS(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadBufferSP(k) abort
-    call ctrlspace#buffers#LoadBuffer("sp")
+    call ctrlspace#buffers#LoadBuffer(["sp"])
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersSP(k) abort
@@ -141,7 +141,7 @@ function! ctrlspace#keys#buffer#CloseManyWindows(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadBufferT(k) abort
-    call ctrlspace#buffers#LoadBuffer("tabnew")
+    call ctrlspace#buffers#LoadBuffer(["tabnew"])
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersT(k) abort

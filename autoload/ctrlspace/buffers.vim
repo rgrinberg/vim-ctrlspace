@@ -21,21 +21,9 @@ function! ctrlspace#buffers#TabBuffers(tabnr) abort
     return foo
 endfunction
 
-function! ctrlspace#buffers#LoadBuffer(...) abort
-    let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#kill()
-
-    let commands = len(a:000)
-
-    if commands > 0
-        silent! exe ":" . a:1
-    endif
-
-    silent! exe ":b " . nr
-
-    if commands > 1
-        silent! exe ":" . a:2
-    endif
+function! ctrlspace#buffers#LoadBuffer(cmds) abort
+    let F = luaeval('require("ctrlspace").buffers.load')
+    call F(a:cmds)
 endfunction
 
 function! ctrlspace#buffers#LoadManyBuffers(...) abort
@@ -353,6 +341,6 @@ endfunction
 function! s:loadBufferIntoWindow(winnr) abort
     let old = t:CtrlSpaceStartWindow
     let t:CtrlSpaceStartWindow = a:winnr
-    call ctrlspace#buffers#LoadBuffer()
+    call ctrlspace#buffers#LoadBuffer([])
     let t:CtrlSpaceStartWindow = old
 endfunction

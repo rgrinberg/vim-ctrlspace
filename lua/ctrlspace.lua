@@ -288,6 +288,15 @@ drawer.buffer = function()
   return -1
 end
 
+function buffers.load(pre)
+  local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  vim.fn["ctrlspace#window#kill"]()
+  for _, c in ipairs(pre) do
+    vim.cmd('silent! exe ":"' .. c)
+  end
+  vim.cmd('silent! exe ":b"' .. nr)
+end
+
 
 -- TODO implement this function properly
 local function help_filler()
