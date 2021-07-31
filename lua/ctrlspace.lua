@@ -533,4 +533,12 @@ drawer.insert_content = function ()
   vim.cmd("normal! zb")
 end
 
+function drawer.refresh ()
+  local last_line = vim.fn.line("$")
+  vim.cmd('setlocal modifiable')
+  vim.api.nvim_buf_set_lines(0, 0, last_line, 0, {})
+  vim.cmd('setlocal nomodifiable')
+  drawer.insert_content()
+end
+
 return M

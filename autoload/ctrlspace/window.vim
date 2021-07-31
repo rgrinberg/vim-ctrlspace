@@ -50,10 +50,7 @@ endfunction
 
 " should be called when the contents of the window changes
 function! ctrlspace#window#refresh() abort
-    setlocal modifiable
-    call nvim_buf_set_lines(0, 0, line("$"), 0, [])
-    setlocal nomodifiable
-    call s:insertContent()
+    call luaeval('require("ctrlspace").drawer.refresh()')
 endfunction
 
 " this is necessary to restore the user's original configuration when
