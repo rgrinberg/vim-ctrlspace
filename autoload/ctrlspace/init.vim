@@ -60,8 +60,6 @@ function! ctrlspace#init#Init() abort
 
     command! -nargs=* -count -bang -complete=customlist,CompleteCtrlSpace
                 \ CtrlSpace :call s:run(s:parser.parse(<q-args>, <count>, <q-bang>))
-    command! -nargs=0 -range CtrlSpaceGoUp :call ctrlspace#window#GoToBufferListPosition("up")
-    command! -nargs=0 -range CtrlSpaceGoDown :call ctrlspace#window#GoToBufferListPosition("down")
     command! -nargs=0 -range CtrlSpaceTabLabel :call ctrlspace#tabs#NewTabLabel(0)
     command! -nargs=0 -range CtrlSpaceClearTabLabel :call ctrlspace#tabs#RemoveTabLabel(0)
     command! -nargs=* -range CtrlSpaceSaveWorkspace :call ctrlspace#workspaces#SaveWorkspace(<q-args>)

@@ -105,6 +105,21 @@ function! ctrlspace#window#revive() abort
     call s:insertContent()
 endfunction
 
+" restore the ctrlspace window and buffer to the previous invocation
+function! ctrlspace#window#restore() abort
+    let pbuf = ctrlspace#context#PluginBuffer()
+    " silent! exe "pclose"
+    if bufexists(pbuf)
+        throw "ctrlspace buffer already exists"
+    endif
+    if s:modes.Zoom.Enabled
+        let t:CtrlSpaceActivebuf = bufnr("")
+    endif
+    call ctrlspace#window#show()
+    call s:setUpBuffer()
+    call s:insertContent()
+endfunction
+
 function! ctrlspace#window#Toggle(internal) abort
     if !a:internal
         call s:resetWindow()
@@ -145,40 +160,6 @@ function! ctrlspace#window#Toggle(internal) abort
 
     call s:setUpBuffer()
     call s:insertContent()
-endfunction
-
-function! ctrlspace#window#GoToBufferListPosition(direction) abort
-    let bufferList    = ctrlspace#api#BufferList(tabpagenr())
-    let currentBuffer = bufnr("%")
-    let currentIndex  = -1
-    let bufferListLen = len(bufferList)
-
-    for index in range(bufferListLen)
-        if bufferList[index]["index"] == currentBuffer
-            let currentIndex = index
-            break
-        endif
-    endfor
-
-    if currentIndex == -1
-        return
-    endif
-
-    if a:direction == "down"
-        let targetIndex = currentIndex + 1
-
-        if targetIndex == bufferListLen
-            let targetIndex = 0
-        endif
-    else
-        let targetIndex = currentIndex - 1
-
-        if targetIndex < 0
-            let targetIndex = bufferListLen - 1
-        endif
-    endif
-
-    silent! exe ":b " . bufferList[targetIndex]["index"]
 endfunction
 
 function! ctrlspace#window#GoToStartWindow() abort
@@ -359,8 +340,19 @@ endfunction
 
 function! ctrlspace#window#SelectedIndex() abort
     let pbuf = ctrlspace#context#PluginBuffer()
+    if !bufexists(pbuf)
+        throw "ctrlspace plugin buffer does not exist"
+    endif
     let items = getbufvar(pbuf, "items")
-    return items[line(".") - 1].index
+    " idiotic hackery to make sure this function works correctly from all
+    " buffers
+    if bufnr() == pbuf
+        let idx = line(".") - 1
+    elseif
+        let selected = getbufinfo(pbuf)[0].lnum
+    end
+    let selected = items[idx]
+    return str2nr(selected.index)
 endfunction
 
 function! ctrlspace#window#GoToWindow() abort
@@ -370,7 +362,7 @@ function! ctrlspace#window#GoToWindow() abort
         return 0
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
     silent! exe bufwinnr(nr) . "wincmd w"
     return 1
 endfunction
@@ -440,8 +432,6 @@ function! s:setUpBuffer() abort
     setlocal cc=
     setlocal filetype=ctrlspace
     setlocal foldmethod=manual
-
-    call ctrlspace#context#SetPluginBuffer(bufnr("%"))
 
     let root = ctrlspace#roots#CurrentProjectRoot()
 
