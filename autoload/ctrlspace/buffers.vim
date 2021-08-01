@@ -26,28 +26,9 @@ function! ctrlspace#buffers#LoadBuffer(cmds) abort
     call F(a:cmds)
 endfunction
 
-function! ctrlspace#buffers#LoadManyBuffers(...) abort
-    let nr    = ctrlspace#window#SelectedIndex()
-    let curln = line(".")
-
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#GoToStartWindow()
-
-    let commands = len(a:000)
-
-    if commands > 0
-        silent! exe ":" . a:1
-    endif
-
-    exec ":b " . nr
-    normal! zb
-
-    if commands > 1
-        silent! exe ":" . a:2
-    endif
-
-    call ctrlspace#window#Toggle(1)
-    call ctrlspace#window#MoveSelectionBar(curln)
+function! ctrlspace#buffers#LoadManyBuffers(pre, post) abort
+    let F = luaeval('require("ctrlspace").buffers.load_keep')
+    call F(a:pre, a:post)
 endfunction
 
 function! ctrlspace#buffers#ZoomBuffer(nr, ...) abort
