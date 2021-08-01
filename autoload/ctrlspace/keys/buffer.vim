@@ -57,7 +57,7 @@ function! ctrlspace#keys#buffer#LoadBuffer(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffers(k) abort
-    call ctrlspace#buffers#LoadManyBuffers()
+    call ctrlspace#buffers#LoadManyBuffers([], [])
 endfunction
 
 function! ctrlspace#keys#buffer#GoToWindow(k) abort
@@ -111,7 +111,7 @@ function! ctrlspace#keys#buffer#LoadBufferVS(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersVS(k) abort
-    call ctrlspace#buffers#LoadManyBuffers("vs")
+    call ctrlspace#buffers#LoadManyBuffers(["vs"], [])
 endfunction
 
 function! ctrlspace#keys#buffer#LoadBufferSP(k) abort
@@ -119,7 +119,7 @@ function! ctrlspace#keys#buffer#LoadBufferSP(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersSP(k) abort
-    call ctrlspace#buffers#LoadManyBuffers("sp")
+    call ctrlspace#buffers#LoadManyBuffers(["sp"], [])
 endfunction
 
 function! ctrlspace#keys#buffer#CloseWindow(k) abort
@@ -146,16 +146,16 @@ endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersT(k) abort
     if s:modes.NextTab.Enabled
-        call ctrlspace#buffers#LoadManyBuffers("tabnext", "tabprevious")
+        call ctrlspace#buffers#LoadManyBuffers(["tabnext"], ["tabprevious"])
     else
         call s:modes.NextTab.Enable()
-        call ctrlspace#buffers#LoadManyBuffers("tabnew", "tabprevious")
+        call ctrlspace#buffers#LoadManyBuffers(["tabnew"], ["tabprevious"])
     endif
 endfunction
 
 function! ctrlspace#keys#buffer#LoadManyBuffersCT(k) abort
     call s:modes.NextTab.Enable()
-    call ctrlspace#buffers#LoadManyBuffers("tabnew", "tabprevious")
+    call ctrlspace#buffers#LoadManyBuffers(["tabnew"], ["tabprevious"])
 endfunction
 
 function! ctrlspace#keys#buffer#NewTabLabel(k) abort

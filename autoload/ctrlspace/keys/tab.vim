@@ -57,7 +57,7 @@ function! ctrlspace#keys#tab#CopyTab(k) abort
 
     call ctrlspace#buffers#CloseBuffer()
     call ctrlspace#jumps#Jump("previous")
-    call ctrlspace#buffers#LoadBuffer()
+    call ctrlspace#buffers#LoadBuffer([])
     call ctrlspace#window#Kill(0)
     call s:modes.Tab.Enable()
     call ctrlspace#window#Toggle(1)
