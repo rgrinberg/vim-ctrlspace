@@ -4,7 +4,7 @@ let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#api#Buffers(tabnr) abort
-    let F = require('require("ctrlspace").buffers.api')
+    let F = luaeval('require("ctrlspace").buffers.api')
     return F(a:tabnr)
 endfunction
 
