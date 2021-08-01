@@ -68,9 +68,7 @@ function! ctrlspace#window#hide() abort
 endfunction
 
 function! ctrlspace#window#show() abort
-    call s:saveTabConfig()
-    silent! exe "noautocmd botright pedit CtrlSpace"
-    silent! exe "noautocmd wincmd P"
+    call luaeval('require("ctrlspace").drawer.show()')
 endfunction
 
 function! ctrlspace#window#kill() abort
