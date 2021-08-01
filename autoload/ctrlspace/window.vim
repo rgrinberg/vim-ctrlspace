@@ -561,28 +561,6 @@ function! ctrlspace#window#setActiveLine() abort
     endif
 endfunction
 
-function! s:filler() abort
-    " generate a variable to fill the buffer afterwards
-    " (we need this for "full window" color :)
-    if !exists("s:filler['" . &columns . "']")
-        let fill = "\n"
-        let i    = 0
-
-        while i < &columns
-            let i += 1
-            let fill = ' ' . fill
-        endwhile
-
-        if !exists("s:filler")
-            let s:filler = {}
-        endif
-
-        let s:filler[string(&columns)] = fill
-    endif
-
-    return s:filler[string(&columns)]
-endfunction
-
 function! ctrlspace#window#displayContent(items, text) abort
     setlocal modifiable
     let size = len(a:items)
