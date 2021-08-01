@@ -3,44 +3,6 @@ scriptencoding utf-8
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
-function! s:CompareByText(a, b) abort
-    let lhs = fnamemodify(a:a.text, ':p')
-    let rhs = fnamemodify(a:b.text, ':p')
-    if lhs < rhs
-        return -1
-    elseif lhs > rhs
-        return 1
-    else
-        return 0
-    endif
-endfunction
-
-function! ctrlspace#api#BufferList(tabnr) abort
-    let bufferList     = []
-    let singleList     = ctrlspace#buffers#TabBuffers(a:tabnr)
-    let visibleBuffers = tabpagebuflist(a:tabnr)
-
-    for i in singleList
-        let i = str2nr(i)
-
-        let bufname = bufname(i)
-        let bufVisible = index(visibleBuffers, i) != -1
-        let bufModified = (getbufvar(i, '&modified'))
-
-        if !strlen(bufname) && (bufModified || bufVisible)
-            let bufname = '[' . i . '*No Name]'
-        endif
-
-        if strlen(bufname)
-            call add(bufferList, { "index": i, "text": bufname, "visible": bufVisible, "modified": bufModified })
-        endif
-    endfor
-
-    call sort(bufferList, function("s:CompareByText"))
-
-    return bufferList
-endfunction
-
 function! ctrlspace#api#Buffers(tabnr) abort
     let bufferList     = {}
     let ctrlspaceList  = ctrlspace#buffers#TabBuffers(a:tabnr)
@@ -245,22 +207,6 @@ function! ctrlspace#api#Guitablabel() abort
     return label
 endfunction
 
-function! ctrlspace#api#TabList() abort
-    let tabList     = []
-    let lastTab    = tabpagenr("$")
-    let currentTab = tabpagenr()
-
-    for t in range(1, lastTab)
-        let tabTitle    = ctrlspace#api#TabTitle(t)
-        let tabModified = ctrlspace#api#TabModified(t)
-        let tabCurrent  = t == currentTab
-
-        call add(tabList, { "index": t, "title": tabTitle, "current": tabCurrent, "modified": tabModified })
-        endfor
-
-        return tabList
-endfunction
-
 function! ctrlspace#api#Tabline() abort
     let lastTab    = tabpagenr("$")
     let currentTab = tabpagenr()
@@ -293,8 +239,4 @@ function! ctrlspace#api#Tabline() abort
     endif
 
     return tabline
-endfunction
-
-function! ctrlspace#api#BufNr() abort
-    return bufexists(ctrlspace#context#PluginBuffer()) ? ctrlspace#context#PluginBuffer() : -1
 endfunction
