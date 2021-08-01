@@ -26,12 +26,8 @@ function! ctrlspace#api#Buffers(tabnr) abort
 endfunction
 
 function! ctrlspace#api#TabModified(tabnr) abort
-    for b in ctrlspace#buffers#TabBuffers(a:tabnr)
-        if getbufvar(b, '&modified')
-            return 1
-        endif
-    endfor
-    return 0
+    let F = luaeval('require("ctrlspace").tabs.modified')
+    return F(a:tabnr)
 endfunction
 
 function! ctrlspace#api#Statusline() abort

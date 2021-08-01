@@ -120,10 +120,14 @@ local function all_buffers()
   return res
 end
 
+local function buffer_modified(bufnr)
+  return getbufvar(bufnr, "&modified") == 1
+end
+
 buffers.unsaved = function()
   local res = {}
   for b, _ in ipairs(all_buffers()) do
-    if getbufvar(b, "&modified") and managed_buf(b) then
+    if buffer_modified(b) and managed_buf(b) then
       table.insert(res, b)
     end
   end
@@ -252,6 +256,15 @@ tabs.buffer_present_count = function (buf)
   return res
 end
 
+function tabs.modified(tabnr)
+  for b, _ in pairs(buffers_in_tab(tabnr)) do
+    if buffer_modified(b) then
+      return true
+    end
+  end
+  return false
+end
+
 tabs.forget_buffers = function (bufs)
   for tabnr=1,vim.fn.tabpagenr("$") do
     local bufs_in_tab = raw_buffers_in_tab(tabnr)
@@ -289,19 +302,32 @@ drawer.buffer = function()
 end
 
 -- TODO use this helper consistently
-local function exe(cmd)
-  vim.cmd('silent! exe :' .. cmd)
+local function exe(cmds)
+  for _, cmd in ipairs(cmds) do
+    vim.cmd('silent! ' .. cmd)
+  end
 end
 
 function buffers.load(pre)
   local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
   vim.fn["ctrlspace#window#kill"]()
-  for _, c in ipairs(pre) do
-    exe(c)
-  end
-  exe("b " .. nr)
+  exe(pre)
+  exe({"b " .. nr})
 end
 
+function buffers.load_keep(pre, post)
+  local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local curln = vim.fn.line(".")
+
+  vim.fn["ctrlspace#window#hide"]()
+  vim.fn["ctrlspace#window#GoToStartWindow"]()
+  exe(pre)
+  exe({"b " .. nr})
+  vim.cmd("normal! zb")
+  exe(post)
+  vim.fn["ctrlspace#window#restore"]()
+  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+end
 
 -- TODO implement this function properly
 local function help_filler()
@@ -409,7 +435,7 @@ local function buffer_items(clv)
 
   for bufnr, _ in pairs(bufs) do
     local name = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":.")
-    local modified = getbufvar(bufnr, "&modified") == 1
+    local modified = buffer_modified(bufnr)
     local winnr = vim.fn.bufwinnr(bufnr)
 
     if name == "" and (modified or winnr ~= -1) then
@@ -510,10 +536,25 @@ drawer.content = function ()
   return {candidates, content}
 end
 
+local function save_tab_config()
+  -- TODO assert that we aren't in ctrlspace
+  vim.t.CtrlSpaceStartWindow = vim.fn.winnr()
+  vim.t.CtrlSpaceWinrestcmd  = vim.fn.winrestcmd()
+  vim.t.CtrlSpaceActivebuf   = vim.fn.bufnr("")
+end
+
+function drawer.show()
+  save_tab_config()
+  exe({
+    "noautocmd botright pedit CtrlSpace",
+    "noautocmd wincmd P"
+  })
+end
+
 drawer.insert_content = function ()
   local config = vim.fn["ctrlspace#context#Configuration"]()
   local modes = vim.fn["ctrlspace#modes#Modes"]()
-  vim.cmd('silent! exe "resize" ' .. config.Height)
+  exe({'resize ' .. config.Height})
   if modes.Help.Enabled == 1 then
     vim.fn["ctrlspace#help#DisplayHelp"](help_filler())
     vim.fn["ctrlspace#util#SetStatusline"]()
@@ -536,7 +577,7 @@ drawer.insert_content = function ()
     else
       size = max_height
     end
-    vim.cmd('silent! exe "resize "' .. size)
+    exe({'resize ' .. size})
   end
 
   vim.o.updatetime = config.SearchTiming
