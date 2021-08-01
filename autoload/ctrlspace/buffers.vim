@@ -80,78 +80,8 @@ function! ctrlspace#buffers#CloseBuffer() abort
     endif
 endfunction
 
-" deletes the selected buffer
 function! ctrlspace#buffers#DeleteBuffer() abort
-    let nr = ctrlspace#window#SelectedIndex()
-    let modified = getbufvar(nr, "&modified")
-
-    if modified && !ctrlspace#ui#Confirmed("The buffer contains unsaved changes. Proceed anyway?")
-        return
-    endif
-
-    let selBufWin = bufwinnr(nr)
-    let curln     = line(".")
-
-    if selBufWin == -1
-        call ctrlspace#window#Kill(0)
-    else
-        call ctrlspace#window#MoveSelectionBar("down")
-        if ctrlspace#window#SelectedIndex() == nr
-            call ctrlspace#window#MoveSelectionBar("up")
-
-            if ctrlspace#window#SelectedIndex() == nr
-                if bufexists(nr) && (!empty(getbufvar(nr, "&buftype")) || filereadable(bufname(nr)) || modified)
-                    let curln = line(".")
-                    call ctrlspace#window#Kill(0)
-                    silent! exe selBufWin . "wincmd w"
-                    enew
-                else
-                    return
-                endif
-            else
-                call s:loadBufferIntoWindow(selBufWin)
-            endif
-        else
-            call s:loadBufferIntoWindow(selBufWin)
-        endif
-    endif
-
-    let curtab = tabpagenr()
-
-    for t in range(1, tabpagenr('$'))
-        if t == curtab
-            continue
-        endif
-
-        for b in tabpagebuflist(t)
-            if b == nr
-                silent! exe "tabn " . t
-
-                let tabWin = bufwinnr(b)
-                let cslist = copy(ctrlspace#util#GettabvarWithDefault(t, "CtrlSpaceList", {}))
-
-                call remove(cslist, nr)
-
-                call settabvar(t, "CtrlSpaceList", cslist)
-
-                silent! exe tabWin . "wincmd w"
-
-                if empty(cslist)
-                    enew
-                else
-                    silent! exe "b" . keys(cslist)[0]
-                endif
-            endif
-        endfor
-    endfor
-
-    silent! exe "tabn " . curtab
-    silent! exe "bdelete! " . nr
-
-    let F = luaeval('require("ctrlspace").tabs.forget_buffers')
-    call F([nr])
-    call ctrlspace#window#Toggle(1)
-    call ctrlspace#window#MoveSelectionBar(curln)
+  call luaeval('require("ctrlspace").buffers.delete()')
 endfunction
 
 function! ctrlspace#buffers#DetachBuffer() abort
