@@ -372,15 +372,8 @@ function buffers.load_keep(pre, post)
   vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
--- TODO implement this function properly
 local function help_filler()
-  local fill = "\n"
-  local i = 0
-  while i < vim.o.columns do
-    i = i + 1
-    fill = ' ' .. fill
-  end
-  return fill
+  return string.rep(" ", vim.o.columns) .. "\n"
 end
 
 local item = {}
