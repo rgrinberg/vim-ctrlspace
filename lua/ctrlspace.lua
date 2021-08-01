@@ -36,7 +36,7 @@ end
 local M = {}
 
 local files = {}
-local buffers = {}
+local buffers = { api = {} }
 local tabs = {}
 local drawer = {}
 
@@ -49,6 +49,15 @@ local files_cache = nil
 
 files.clear = function ()
   files = nil
+end
+
+local function buffer_name(bufnr)
+  local name = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":.")
+  if name == "" then
+    return "[" .. bufnr .. "*No Name]"
+  else
+    return name
+  end
 end
 
 -- introduce customization for this eventually
@@ -157,6 +166,14 @@ buffers.in_tab = function (tabnr)
   return res
 end
 
+function buffers.api.in_tab(tabnr)
+  local res = {}
+  for k, _ in pairs(raw_buffers_in_tab(tabnr)) do
+    res[tostring(k)] = buffer_name(k)
+  end
+  return res
+end
+
 buffers.in_all_tabs = function()
   local res = {}
   for tabnr=1,vim.fn.tabpagenr("$") do
@@ -257,11 +274,11 @@ tabs.buffer_present_count = function (buf)
 end
 
 local function number_of_buffers_in_tab(tabnr)
-  local buffers = 0
+  local bufs = 0
   for _, _ in pairs(buffers_in_tab(tabnr)) do
-    buffers = buffers + 1
+    bufs = bufs + 1
   end
-  return buffers
+  return bufs
 end
 
 function tabs.buffers_number(tabnr)
@@ -460,13 +477,9 @@ local function buffer_items(clv)
   end
 
   for bufnr, _ in pairs(bufs) do
-    local name = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":.")
+    local name = buffer_name(bufnr)
     local modified = buffer_modified(bufnr)
     local winnr = vim.fn.bufwinnr(bufnr)
-
-    if name == "" and (modified or winnr ~= -1) then
-      name = "[" .. bufnr .. "*No Name]"
-    end
 
     local indicators = ""
     if modified then

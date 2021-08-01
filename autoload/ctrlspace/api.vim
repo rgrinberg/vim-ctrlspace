@@ -4,25 +4,8 @@ let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#api#Buffers(tabnr) abort
-    let bufferList     = {}
-    let ctrlspaceList  = ctrlspace#buffers#TabBuffers(a:tabnr)
-    let visibleBuffers = tabpagebuflist(a:tabnr)
-
-    for i in ctrlspaceList
-        let i = str2nr(i)
-
-        let bufname = bufname(i)
-
-        if !strlen(bufname) && (getbufvar(i, '&modified') || (index(visibleBuffers, i) != -1))
-            let bufname = '[' . i . '*No Name]'
-        endif
-
-        if strlen(bufname)
-            let bufferList[i] = bufname
-        endif
-    endfor
-
-    return bufferList
+    let F = require('require("ctrlspace").buffers.api')
+    return F(a:tabnr)
 endfunction
 
 function! ctrlspace#api#TabModified(tabnr) abort
@@ -134,23 +117,8 @@ function! ctrlspace#api#StatuslineModeSegment(...) abort
 endfunction
 
 function! ctrlspace#api#TabBuffersNumber(tabnr) abort
-    let buffersNumber = len(ctrlspace#api#Buffers(a:tabnr))
-    let numberToShow  = ""
-
-    if buffersNumber > 1
-        if s:config.UseUnicode
-            let smallNumbers = ["⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"]
-            let numberStr    = string(buffersNumber)
-
-            for i in range(len(numberStr))
-                let numberToShow .= smallNumbers[str2nr(numberStr[i])]
-            endfor
-        else
-            let numberToShow = string(buffersNumber)
-        endif
-    endif
-
-    return numberToShow
+    let Bn = luaeval('require("ctrlspace").tabs.buffers_number')
+    return Bn(a:tabnr)
 endfunction
 
 function! ctrlspace#api#TabTitle(tabnr) abort
