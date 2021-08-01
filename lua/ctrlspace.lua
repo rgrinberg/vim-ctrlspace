@@ -544,12 +544,12 @@ local function render_candidates(items)
     if i.indicators ~= "" then
       line = line .. " " .. i.indicators
     end
-    line = "  " .. line .. "\n"
+    line = "  " .. line
 
     table.insert(res, line)
   end
 
-  return table.concat(res, "")
+  return res
 end
 
 drawer.content = function ()
@@ -571,8 +571,7 @@ drawer.content = function ()
     candidates = ctrlspace_filter(candidates, query, max)
   end
 
-  local content = render_candidates(candidates)
-  return {candidates, content}
+  return candidates
 end
 
 local function save_tab_config()
@@ -590,6 +589,31 @@ function drawer.show()
   })
 end
 
+local function drawer_display(items)
+  vim.cmd('setlocal modifiable')
+  local buf = drawer.buffer()
+  if #items > 0 then
+    local line = 0
+    local text = render_candidates(items)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, true, text)
+    for _, i in ipairs(items) do
+      if i.positions then
+        for _, hl in ipairs(i.positions) do
+          vim.api.nvim_buf_add_highlight(0, -1, "CtrlSpaceSearch", line, hl + 1, hl + 2)
+        end
+      end
+      line = line + 1
+    end
+  else
+    vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"  List empty"})
+    vim.cmd("normal! GkJ")
+    vim.cmd("normal! 0")
+    local modes = vim.fn["ctrlspace#modes#Modes"]()
+    modes.Nop.Enable()
+  end
+  vim.cmd('setlocal nomodifiable')
+end
+
 drawer.insert_content = function ()
   local config = vim.fn["ctrlspace#context#Configuration"]()
   local modes = vim.fn["ctrlspace#modes#Modes"]()
@@ -600,9 +624,7 @@ drawer.insert_content = function ()
     return
   end
 
-  local content = drawer.content()
-  local items = content[1]
-  local text = content[2]
+  local items = drawer.content()
 
   -- for backwards compat
   vim.b.items = items
@@ -621,7 +643,7 @@ drawer.insert_content = function ()
 
   vim.o.updatetime = config.SearchTiming
 
-  vim.fn["ctrlspace#window#displayContent"](items, text)
+  drawer_display(items)
   vim.fn["ctrlspace#util#SetStatusline"]()
   vim.fn["ctrlspace#window#setActiveLine"]()
   vim.cmd("normal! zb")
