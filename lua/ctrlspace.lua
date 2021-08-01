@@ -256,6 +256,32 @@ tabs.buffer_present_count = function (buf)
   return res
 end
 
+local function number_of_buffers_in_tab(tabnr)
+  local buffers = 0
+  for _, _ in pairs(buffers_in_tab(tabnr)) do
+    buffers = buffers + 1
+  end
+  return buffers
+end
+
+function tabs.buffers_number(tabnr)
+  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local count = number_of_buffers_in_tab(tabnr)
+  local superscripts = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"}
+  if config.UseUnicode == 1 then
+    count = tostring(count)
+    local res = {}
+    for i = 1, #count do
+      local char = tonumber(string.sub(count, i, i))
+      local super_char = superscripts[char - 1]
+      table.insert(res, super_char)
+    end
+    return table.concat(res, "")
+  else
+    return tostring(count)
+  end
+end
+
 function tabs.modified(tabnr)
   for b, _ in pairs(buffers_in_tab(tabnr)) do
     if buffer_modified(b) then
