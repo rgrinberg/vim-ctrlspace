@@ -87,6 +87,13 @@ end
 
 local getbufvar = vim.fn.getbufvar
 
+-- TODO use this helper consistently
+local function exe(cmds)
+  for _, cmd in ipairs(cmds) do
+    vim.cmd('silent! ' .. cmd)
+  end
+end
+
 local function plugin_buffer(buf)
   return getbufvar(buf, "&ft") == "ctrlspace"
 end
@@ -164,6 +171,52 @@ buffers.in_tab = function (tabnr)
     table.insert(res, tonumber(k))
   end
   return res
+end
+
+local function find_buffer_in_tabs(bufnr)
+  local res = {}
+  for tabnr=1,vim.fn.tabpagenr("$") do
+    local tab_buffers = vim.fn.tabpagebuflist(tabnr)
+    for _, b in ipairs(tab_buffers) do
+      if b == bufnr then
+        res[tabnr] = true
+      end
+    end
+  end
+  return res
+end
+
+function buffers.delete ()
+  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local modified = buffer_modified(bufnr)
+  if modified and not vim.fn['ctrlspace#ui#Confirmed'](
+    "The buffer contains unsaved changes. Proceed anyway?") then
+    return
+  end
+
+  local curln = vim.fn.line(".")
+
+  vim.fn["ctrlspace#window#Kill"](0)
+
+  -- we make sure to never delete tabs
+  local in_tabs = find_buffer_in_tabs(bufnr)
+  local curtab = vim.fn.tabpagenr()
+  for t, _ in pairs(in_tabs) do
+    if #vim.fn.tabpagebuflist(t) == 1 then
+      if curtab ~= t then
+        exe({"tabn " .. t})
+      end
+      exe({vim.fn.bufwinnr(bufnr) .. "wincmd w"})
+      vim.cmd("enew")
+    end
+    tabs.remove_buffers(t, {bufnr})
+  end
+  exe({
+    "tabn " .. curtab,
+    "bdelete! " .. bufnr,
+  })
+  vim.fn["ctrlspace#window#Toggle"](1)
+  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
 function buffers.api.in_tab(tabnr)
@@ -308,20 +361,24 @@ function tabs.modified(tabnr)
   return false
 end
 
+function tabs.remove_buffers(tabnr, bufs)
+  local bufs_in_tab = raw_buffers_in_tab(tabnr)
+  local modified = false
+  for _, key_int in ipairs(bufs) do
+    local key = tostring(key_int)
+    if bufs_in_tab[key] then
+      modified = true
+      bufs_in_tab[key] = nil
+    end
+  end
+  if modified then
+    vim.fn.settabvar(tabnr, "CtrlSpaceList", bufs_in_tab)
+  end
+end
+
 tabs.forget_buffers = function (bufs)
   for tabnr=1,vim.fn.tabpagenr("$") do
-    local bufs_in_tab = raw_buffers_in_tab(tabnr)
-    local modified = false
-    for _, key_int in ipairs(bufs) do
-      local key = tostring(key_int)
-      if bufs_in_tab[key] then
-        modified = true
-        bufs_in_tab[key] = nil
-      end
-    end
-    if modified then
-      vim.fn.settabvar(tabnr, "CtrlSpaceList", bufs_in_tab)
-    end
+    tabs.remove_buffers(tabnr, bufs)
   end
 end
 
@@ -342,13 +399,6 @@ drawer.buffer = function()
     end
   end
   return -1
-end
-
--- TODO use this helper consistently
-local function exe(cmds)
-  for _, cmd in ipairs(cmds) do
-    vim.cmd('silent! ' .. cmd)
-  end
 end
 
 function buffers.load(pre)
