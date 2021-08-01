@@ -76,31 +76,7 @@ function! ctrlspace#window#kill() abort
 endfunction
 
 function! ctrlspace#window#revive() abort
-    " call s:resetWindow()
-
-    " if we get called and the list is open --> close it
-    let pbuf = ctrlspace#context#PluginBuffer()
-
-    " make sure zoom window is closed
-    silent! exe "pclose"
-    call s:saveTabConfig()
-
-    if s:modes.Zoom.Enabled
-        let t:CtrlSpaceActivebuf = bufnr("")
-    endif
-
-    " create the buffer first & set it up
-    call ctrlspace#window#show()
-
-    " zoom start window in Zoom Mode
-    if s:modes.Zoom.Enabled
-        silent! exe t:CtrlSpaceStartWindow . "wincmd w"
-        vert resize | resize
-        silent! exe "noautocmd wincmd P"
-    endif
-
-    call s:setUpBuffer()
-    call s:insertContent()
+    call ctrlspace#window#restore()
 endfunction
 
 " restore the ctrlspace window and buffer to the previous invocation
