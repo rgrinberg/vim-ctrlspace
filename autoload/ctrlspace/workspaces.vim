@@ -249,9 +249,7 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
 
         let bufs = []
 
-        for [nr, bname] in items(ctrlspaceList)
-            let bufname = fnamemodify(bname, ":.")
-
+        for [nr, bufname] in items(ctrlspaceList)
             if !filereadable(bufname)
                 continue
             endif
