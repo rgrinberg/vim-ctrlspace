@@ -39,37 +39,6 @@ function! ctrlspace#files#SelectedFileName() abort
     return s:modes.File.Enabled ? s:File.raw_fname() : ""
 endfunction
 
-function! s:set_globber() abort
-  if !empty(s:config.GlobCommand)
-      let glob_cmd = s:config.GlobCommand
-  elseif executable('rg')
-      let glob_cmd = 'rg --color=never --files --sort path'
-  elseif executable('fd')
-      let glob_cmd = 'fd --color=never --type=file'
-  elseif executable('ag')
-      let glob_cmd = 'ag -l --nocolor -g ""'
-  else
-      let glob_cmd = ''
-  endif
-  return [glob_cmd, s:get_glob_bin_name(glob_cmd)]
-endfunction
-
-function! s:get_glob_bin_name(glob_cmd) abort
-  if empty(a:glob_cmd)
-      return "Vim's globpath()"
-  elseif len(a:glob_cmd) > 1
-      let bin = a:glob_cmd[:1]
-      if index(['rg', 'fd', 'ag'], bin) >= 0
-          return { 'rg': 'rg (ripgrep)',
-                 \ 'fd': 'fd (fd-find)',
-                 \ 'ag': 'ag (The Silver Searcher)', }[bin]
-      endif
-  endif
-  return "unknown grepper/finder"
-endfunction
-
-let [s:glob_cmd, s:glob_bin] = s:set_globber()
-
 function! ctrlspace#files#CollectFiles() abort
     return luaeval('require("ctrlspace").files.collect()')
 endfunction
