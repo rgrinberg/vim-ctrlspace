@@ -79,10 +79,6 @@ function! ctrlspace#modes#Modes() abort
     return s:collection
 endfunction
 
-function! ctrlspace#modes#ListViews() abort
-    return s:lists
-endfunction
-
 function! ctrlspace#modes#CurrentListView() abort
     return s:currentListView
 endfunction
