@@ -173,50 +173,135 @@ buffers.in_tab = function (tabnr)
   return res
 end
 
+-- local function find_buffer_visible_in_tabs(bufnr)
+--   local res = {}
+--   for tabnr=1,vim.fn.tabpagenr("$") do
+--     local tab_buffers = vim.fn.tabpagebuflist(tabnr)
+--     for _, b in ipairs(tab_buffers) do
+--       if b == bufnr then
+--         res[tabnr] = true
+--       end
+--     end
+--   end
+--   return res
+-- end
+
+-- returns a table keyed by the tabs containing the buffer. the values of the
+-- table are a boolean that tells if the buffer is actualyl being displayed
 local function find_buffer_in_tabs(bufnr)
   local res = {}
   for tabnr=1,vim.fn.tabpagenr("$") do
-    local tab_buffers = vim.fn.tabpagebuflist(tabnr)
-    for _, b in ipairs(tab_buffers) do
-      if b == bufnr then
-        res[tabnr] = true
+    local in_tab_list = buffers_in_tab(tabnr)[bufnr]
+    if in_tab_list then
+      local visible_buffers = vim.fn.tabpagebuflist(tabnr)
+      local visible = false
+      for _, b in ipairs(visible_buffers) do
+        if b == bufnr then
+          visible = true
+        end
       end
+      res[tabnr] = visible
     end
   end
   return res
 end
 
-function buffers.delete ()
-  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+local function assert_drawer_off()
+  -- TODO implement
+end
+
+local function assert_drawer_on()
+  -- TODO implement
+end
+
+-- you must restore the view after calling this function
+local function forget_buffer_in_tab(tabnr, bufnr)
+  assert_drawer_off()
+  local curtab = vim.fn.tabpagenr()
+  if curtab ~= tabnr then
+    exe({"tabn " .. tabnr})
+  end
+  local winnr = vim.fn.bufwinnr(bufnr)
+  local new_buf = nil
+  while winnr ~= -1 do
+    exe({winnr .. "wincmd w"})
+
+    -- this ensures that we create at most one new buffer per forget
+    local next_buf = new_buf or tabs.next_buf(tabnr, bufnr)
+
+    if next_buf then
+      exe({"b! " .. next_buf})
+    else
+      exe({"enew"})
+      new_buf = vim.fn.bufnr()
+    end
+    winnr = vim.fn.bufwinnr(bufnr)
+  end
+  tabs.remove_buffers(tabnr, {bufnr})
+end
+
+local function with_restore_drawer(f)
+  assert_drawer_on()
+  local curln = vim.fn.line(".")
+  vim.fn["ctrlspace#window#Kill"](0)
+  f()
+  vim.fn["ctrlspace#window#Toggle"](1)
+  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+end
+
+local function delete_buffer(bufnr)
   local modified = buffer_modified(bufnr)
   if modified and not vim.fn['ctrlspace#ui#Confirmed'](
     "The buffer contains unsaved changes. Proceed anyway?") then
     return
   end
 
-  local curln = vim.fn.line(".")
-
-  vim.fn["ctrlspace#window#Kill"](0)
-
-  -- we make sure to never delete tabs
-  local in_tabs = find_buffer_in_tabs(bufnr)
-  local curtab = vim.fn.tabpagenr()
-  for t, _ in pairs(in_tabs) do
-    if #vim.fn.tabpagebuflist(t) == 1 then
-      if curtab ~= t then
-        exe({"tabn " .. t})
-      end
-      exe({vim.fn.bufwinnr(bufnr) .. "wincmd w"})
-      vim.cmd("enew")
+  with_restore_drawer(function ()
+    local in_tabs = find_buffer_in_tabs(bufnr)
+    local curtab = vim.fn.tabpagenr()
+    for t, _ in pairs(in_tabs) do
+      forget_buffer_in_tab(t, bufnr)
     end
-    tabs.remove_buffers(t, {bufnr})
+
+    -- why aren't we using wipeout like elsewhere?
+    exe({
+      "bdelete! " .. bufnr,
+      "tabn " .. curtab,
+    })
+  end)
+end
+
+function buffers.delete ()
+  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  delete_buffer(bufnr)
+end
+
+local function detach_buffer(bufnr)
+  local modified = buffer_modified(bufnr)
+  if modified and not vim.fn['ctrlspace#ui#Confirmed'](
+    "The buffer contains unsaved changes. Proceed anyway?") then
+    return
   end
-  exe({
-    "tabn " .. curtab,
-    "bdelete! " .. bufnr,
-  })
-  vim.fn["ctrlspace#window#Toggle"](1)
-  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+
+  with_restore_drawer(function ()
+    local curtab = vim.fn.tabpagenr()
+    forget_buffer_in_tab(curtab, bufnr)
+  end)
+end
+
+function buffers.detach()
+  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  detach_buffer(bufnr)
+end
+
+function buffers.close_buffer()
+  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local found_tabs = tabs.buffer_present_count(bufnr)
+  if found_tabs > 1 then
+    buffers.detach()
+  else
+    buffers.delete()
+  end
 end
 
 function buffers.api.in_tab(tabnr)
@@ -332,6 +417,32 @@ local function number_of_buffers_in_tab(tabnr)
     bufs = bufs + 1
   end
   return bufs
+end
+
+function tabs.next_buf(tabnr, buf)
+  local bufs = buffers_in_tab(tabnr)
+  local next = nil
+  local prev = nil
+  for candidate, _ in pairs(bufs) do
+    if candidate > buf then
+      if next then
+        if candidate - buf < next - buf then
+          next = candidate
+        end
+      else
+        next = candidate
+      end
+    elseif candidate < buf then
+      if prev then
+        if candidate < prev then
+          prev = candidate
+        end
+      else
+        prev = candidate
+      end
+    end
+  end
+  return (next or prev)
 end
 
 function tabs.buffers_number(tabnr)

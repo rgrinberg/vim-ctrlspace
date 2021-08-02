@@ -69,15 +69,7 @@ endfunction
 " Detach a buffer if it belongs to other tabs or delete it otherwise.
 " It means, this function doesn't leave buffers without tabs.
 function! ctrlspace#buffers#CloseBuffer() abort
-    let nr = ctrlspace#window#SelectedIndex()
-    let F = luaeval('require("ctrlspace").tabs.buffer_present_count')
-    let foundTabs = F(nr)
-
-    if foundTabs > 1
-        call ctrlspace#buffers#DetachBuffer()
-    else
-        call ctrlspace#buffers#DeleteBuffer()
-    endif
+  call luaeval('require("ctrlspace").tabs.close_buffer()')
 endfunction
 
 function! ctrlspace#buffers#DeleteBuffer() abort
@@ -85,39 +77,7 @@ function! ctrlspace#buffers#DeleteBuffer() abort
 endfunction
 
 function! ctrlspace#buffers#DetachBuffer() abort
-    let nr = ctrlspace#window#SelectedIndex()
-
-    if exists("t:CtrlSpaceList[nr]")
-        let selBufWin = bufwinnr(nr)
-        let curln     = line(".")
-
-        if selBufWin == -1
-            call ctrlspace#window#Kill(0)
-        else
-            call ctrlspace#window#MoveSelectionBar("down")
-            if ctrlspace#window#SelectedIndex() == nr
-                call ctrlspace#window#MoveSelectionBar("up")
-
-                if ctrlspace#window#SelectedIndex() == nr
-                    if bufexists(nr) && (!empty(getbufvar(nr, "&buftype")) || filereadable(bufname(nr)))
-                        let curln = line(".")
-                        call ctrlspace#window#Kill(0)
-                        silent! exe selBufWin . "wincmd w"
-                        enew
-                    else
-                        return
-                    endif
-                else
-                    call s:loadBufferIntoWindow(selBufWin)
-                endif
-            else
-                call s:loadBufferIntoWindow(selBufWin)
-            endif
-        endif
-        call remove(t:CtrlSpaceList, nr)
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#window#MoveSelectionBar(curln)
-    endif
+  call luaeval('require("ctrlspace").buffers.detach()')
 endfunction
 
 function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
@@ -224,8 +184,6 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
     if !getbufvar(nr, "&buflisted") || empty(bname)
         return
     endif
-
-    let map = ctrlspace#util#GettabvarWithDefault(a:tab, "CtrlSpaceList", {})
 
     if a:move
         call ctrlspace#buffers#DetachBuffer()
