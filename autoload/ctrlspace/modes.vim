@@ -1,5 +1,4 @@
 let s:collection      = {}
-let s:noLists         = []
 let s:lists           = []
 let s:currentListView = {}
 
@@ -20,8 +19,6 @@ function! s:mode.new(name, listView, data) dict abort
 
     if a:listView
         call add(s:lists, instance)
-    else
-        call add(s:noLists, instance)
     endif
 
     return instance
