@@ -73,11 +73,8 @@ function files.collect ()
   local res = {}
   local i = 0
   for s in string.gmatch(output, "[^\r\n]+") do
-    local m = {
-      text = vim.fn.fnamemodify(s, ":."),
-      index = i,
-      indicators = "",
-    }
+    local text = vim.fn.fnamemodify(s, ":.")
+    local m = item.create(i, text, "")
     table.insert(res, m)
     i = i + 1
   end
@@ -530,16 +527,6 @@ end
 
 local function help_filler()
   return string.rep(" ", vim.o.columns) .. "\n"
-end
-
-local item = {}
-
-function item.create(index, text, indicators)
-  return {
-    index = index,
-    text = text,
-    indicators = indicators,
-  }
 end
 
 local function bookmark_items()
