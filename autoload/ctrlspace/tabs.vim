@@ -73,22 +73,5 @@ function! ctrlspace#tabs#CollectUnsavedBuffers() abort
 endfunction
 
 function! ctrlspace#tabs#CollectForeignBuffers() abort
-    let foreignBuffers = luaeval('require("ctrlspace").buffers.foreign()')
-
-    if empty(foreignBuffers)
-        call ctrlspace#ui#Msg("There are no foreign buffers.")
-    endif
-
-    call ctrlspace#window#kill()
-
-    tabnew
-
-    call ctrlspace#tabs#SetTabLabel(tabpagenr(), "Foreign Buffers", 1)
-
-    for fb in foreignBuffers
-        silent! exe ":b " . fb
-    endfor
-
-    call s:modes.Tab.Enable()
-    call ctrlspace#window#revive()
+  call luaeval('require("ctrlspace").tabs.collect_foreign()')
 endfunction

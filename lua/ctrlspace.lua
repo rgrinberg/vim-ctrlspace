@@ -918,4 +918,22 @@ function tabs.set_label(tabnr, label, auto)
   vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceAutotab", auto)
 end
 
+
+function tabs.collect_foreign()
+  local foreign = buffers.foreign()
+  if #foreign == 0 then
+    vim.cmd("echoerr 'There are no foreign buffers'")
+  end
+
+  drawer.toggle(0)
+  vim.cmd('silent! tabnew')
+  local tab = vim.fn.tabepagenr()
+  tabs.set_label(tab, "Foreign Buffers", 1)
+
+  for fb, _ in ipairs(foreign) do
+    vim.cmd("silent! :b " .. fb)
+  end
+  drawer.restore()
+end
+
 return M
