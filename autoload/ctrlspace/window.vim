@@ -266,10 +266,6 @@ function! s:goto(line) abort
     endif
 endfunction
 
-function! s:setUpBuffer() abort
-    call luaeval('require("ctrlspace").drawer.setup_buffer()')
-endfunction
-
 function! ctrlspace#window#setActiveLine() abort
     if !empty(s:modes.Search.Data.Letters) && s:modes.Search.Data.NewSearchPerformed
         call ctrlspace#window#MoveSelectionBar(line("$"))
