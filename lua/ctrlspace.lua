@@ -793,8 +793,6 @@ drawer.insert_content = function ()
     exe({'resize ' .. size})
   end
 
-  vim.o.updatetime = config.SearchTiming
-
   drawer_display(items)
   vim.fn["ctrlspace#util#SetStatusline"]()
   vim.fn["ctrlspace#window#setActiveLine"]()
