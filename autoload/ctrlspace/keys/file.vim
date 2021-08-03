@@ -20,9 +20,6 @@ function! ctrlspace#keys#file#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#EditFile",                "File", ["e"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#ExploreDirectory",        "File", ["E"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#GoToDirectory",           "File", ["i", "I"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#RemoveFile",              "File", ["R"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#RenameFileOrBuffer",      "File", ["m"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#CopyFileOrBuffer",        "File", ["y"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#GoToBufferOrFile",      "File", ["g", "G"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#CollectUnsavedBuffers", "File", ["U"])
 endfunction
@@ -87,16 +84,4 @@ endfunction
 
 function! ctrlspace#keys#file#GoToDirectory(k) abort
     call ctrlspace#files#GoToDirectory(a:k ==# "I")
-endfunction
-
-function! ctrlspace#keys#file#RemoveFile(k) abort
-    call ctrlspace#files#RemoveFile()
-endfunction
-
-function! ctrlspace#keys#file#RenameFileOrBuffer(k) abort
-    call ctrlspace#files#RenameFileOrBuffer()
-endfunction
-
-function! ctrlspace#keys#file#CopyFileOrBuffer(k) abort
-    call ctrlspace#files#CopyFileOrBuffer()
 endfunction
