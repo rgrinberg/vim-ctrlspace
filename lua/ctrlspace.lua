@@ -1,6 +1,6 @@
 local fzy = require("fzy_lua")
 
-function _G.ctrlspace_filter(candidates, query, max)
+local function ctrlspace_filter(candidates, query, max)
   local results = {}
   for _, n in ipairs(candidates) do
     if fzy.has_match(query, n.text) then
