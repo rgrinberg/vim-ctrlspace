@@ -109,8 +109,6 @@ buffers.add_current = function ()
     return
   end
 
-  local modes = vim.fn["ctrlspace#modes#Modes"]()
-
   vim.b.CtrlSpaceJumpCounter = vim.fn["ctrlspace#jumps#IncrementJumpCounter"]()
 
   if not vim.t.CtrlSpaceList then
