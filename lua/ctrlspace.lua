@@ -952,6 +952,62 @@ function tabs.set_label(tabnr, label, auto)
   vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceAutotab", auto)
 end
 
+function tabs.remove_label(tabnr)
+  tabs.set_label(tabnr, "", 0)
+  return true
+end
+
+function tabs.new_label(tabnr)
+  local old_name = vim.fn.gettabvar(tabnr, "CtrlSpaceLabel", nil)
+  if not old_name or old_name == vim.NIL then
+    old_name = ""
+  end
+  local new_label = vim.fn["ctrlspace#ui#GetInput"](
+    "Label for tab " .. tabnr .. ": " .. old_name)
+
+  if not new_label or new_label == "" then
+    return false
+  end
+
+  tabs.set_label(tabnr, new_label, 0)
+  return true
+end
+
+function tabs.close()
+  -- we don't close the last tab
+  if vim.fn.tabpagenr("$") == 1 then
+    vim.cmd('echoerr "unable to delete last buffer"')
+    return
+  end
+
+  local auto_tab = vim.t.CtrlSpaceAutotab
+
+  if auto_tab and auto_tab ~= 0 then
+    return
+  end
+
+  local label = vim.t.CtrlSpaceLabel
+  if label and string.len(label) > 0 then
+    local bufs = buffers_in_tab(vim.fn.tabpagenr())
+    local count = 0
+    for _, _ in pairs(bufs) do
+      count = count + 1
+    end
+    local prompt =
+      "Close tab named '" .. label .. "' with " .. count .. " buffers?"
+    if not vim.fn["ctrlspace#ui#Confirmed"](prompt) then
+      return
+    end
+  end
+
+  vim.fn["ctrlspace#window#kill"]()
+
+  vim.cmd("silent! tabclose")
+
+  vim.fn["ctrlspace#buffers#DeleteHiddenNonameBuffers"](1)
+  vim.fn["ctrlspace#buffers#DeleteForeignBuffers"](1)
+  vim.fn["ctrlspace#window#revive"]()
+end
 
 function tabs.collect_unsaved()
   local unsaved = buffers.unsaved()
