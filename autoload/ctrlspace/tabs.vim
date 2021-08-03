@@ -18,13 +18,11 @@ function! ctrlspace#tabs#NewTabLabel(tabnr) abort
 endfunction
 
 function! ctrlspace#tabs#RemoveTabLabel(tabnr) abort
-    let tabnr = a:tabnr > 0 ? a:tabnr : tabpagenr()
-
-    if empty(ctrlspace#util#Gettabvar(tabnr, "CtrlSpaceLabel"))
+    if empty(ctrlspace#util#Gettabvar(a:tabnr, "CtrlSpaceLabel"))
         return 0
     endif
 
-    call ctrlspace#tabs#SetTabLabel(tabnr, "", 0)
+    call ctrlspace#tabs#SetTabLabel(a:tabnr, "", 0)
     return 1
 endfunction
 

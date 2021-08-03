@@ -149,7 +149,7 @@ function! ctrlspace#keys#buffer#MoveTab(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#RemoveTabLabel(k) abort
-    call ctrlspace#tabs#RemoveTabLabel(0)
+    call ctrlspace#tabs#RemoveTabLabel(tabpagenr())
     call ctrlspace#util#SetStatusline()
     redraw!
 endfunction
