@@ -73,6 +73,11 @@ function! ctrlspace#window#revive() abort
     call ctrlspace#window#restore()
 endfunction
 
+" restore the ctrlspace window and buffer to the previous invocation
+function! ctrlspace#window#restore() abort
+    call luaeval('require("ctrlspace").drawer.restore()')
+endfunction
+
 function! ctrlspace#window#Toggle(internal) abort
     if !a:internal
         call s:resetWindow()
