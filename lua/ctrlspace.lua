@@ -51,6 +51,16 @@ function files.clear ()
   files = nil
 end
 
+local item = {}
+
+function item.create(index, text, indicators)
+  return {
+    index = index,
+    text = text,
+    indicators = indicators,
+  }
+end
+
 local function buffer_name(bufnr)
   local name = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":.")
   if name == "" then
