@@ -361,67 +361,7 @@ function! s:resetWindow() abort
 endfunction
 
 function! s:setUpBuffer() abort
-    setlocal noswapfile
-    setlocal buftype=nofile
-    setlocal bufhidden=delete
-    setlocal nobuflisted
-    setlocal nomodifiable
-    setlocal nowrap
-    setlocal nonumber
-    setlocal norelativenumber
-    setlocal nocursorcolumn
-    setlocal nocursorline
-    setlocal nospell
-    setlocal nolist
-    setlocal cc=
-    setlocal filetype=ctrlspace
-    setlocal foldmethod=manual
-
-    let root = ctrlspace#roots#CurrentProjectRoot()
-
-    if !empty(root)
-        silent! exe "lcd " . fnameescape(root)
-    endif
-
-    if &timeout
-        let b:timeoutlenSave = &timeoutlen
-        set timeoutlen=10
-    endif
-
-    let b:updatetimeSave = &updatetime
-
-    " shellslash support for win32
-    if has("win32") && !&ssl
-        let b:nosslSave = 1
-        set ssl
-    endif
-
-    augroup CtrlSpaceUpdateSearch
-        au!
-        au CursorHold <buffer> call ctrlspace#search#UpdateSearchResults()
-    augroup END
-
-    augroup CtrlSpaceLeave
-        au!
-        au BufLeave <buffer> call ctrlspace#window#Kill(1)
-    augroup END
-
-    if !s:config.UseMouseAndArrowsInTerm && !has("gui_running")
-        " Block unnecessary escape sequences!
-        noremap <silent><buffer><esc>[ :call ctrlspace#keys#MarkKeyEscSequence()<CR>
-        let b:mouseSave = &mouse
-        set mouse=
-    endif
-
-    for k in ctrlspace#keys#KeyNames()
-        let key = strlen(k) > 1 ? ("<" . k . ">") : k
-
-        if k == '"'
-            let k = '\' . k
-        endif
-
-        silent! exe "nnoremap <silent><buffer> " . key . " :call ctrlspace#keys#Keypressed(\"" . k . "\")<CR>"
-    endfor
+    call luaeval('require("ctrlspace").drawer.setup_buffer()')
 endfunction
 
 function! ctrlspace#window#setActiveLine() abort

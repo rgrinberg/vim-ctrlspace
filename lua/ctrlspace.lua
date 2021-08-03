@@ -809,6 +809,75 @@ function drawer.refresh ()
   drawer.insert_content()
 end
 
+function drawer.setup_buffer ()
+  assert_drawer_on()
+  vim.cmd([[
+    setlocal noswapfile
+    setlocal buftype=nofile
+    setlocal bufhidden=delete
+    setlocal nobuflisted
+    setlocal nomodifiable
+    setlocal nowrap
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal nocursorcolumn
+    setlocal nocursorline
+    setlocal nospell
+    setlocal nolist
+    setlocal cc=
+    setlocal filetype=ctrlspace
+    setlocal foldmethod=manual
+
+    augroup CtrlSpaceUpdateSearch
+        au!
+        au CursorHold <buffer> call ctrlspace#search#UpdateSearchResults()
+    augroup END
+
+    augroup CtrlSpaceLeave
+        au!
+        au BufLeave <buffer> call ctrlspace#window#Kill(1)
+    augroup END
+  ]])
+  local root = vim.fn["ctrlspace#roots#CurrentProjectRoot"]()
+
+  if root then
+    exe({"lcd " .. vim.fn.fnameescape(root)})
+  end
+
+  if vim.o.timeout then
+    vim.b.timeout_save = vim.o.timeoutlen
+    vim.o.timeoutlen = 10
+  end
+
+  local config = vim.fn["ctrlspace#context#Configuration"]()
+
+  vim.b.updatetime_save = vim.o.updatetime
+  vim.o.updatetime = config.SearchTiming
+
+  if not config.UseMouseAndArrowsInTerm and not vim.fn.has("gui_running") then
+    vim.cmd([[
+        " Block unnecessary escape sequences!
+        noremap <silent><buffer><esc>[ :call ctrlspace#keys#MarkKeyEscSequence()<CR>
+        let b:mouseSave = &mouse
+        set mouse=
+    ]])
+  end
+
+  for _, k in ipairs(vim.fn["ctrlspace#keys#KeyNames"]()) do
+    local key = k
+    if string.len(k) > 1 then
+      key = "<" .. k .. ">"
+    end
+
+    if k == '"' then
+      k = '\\' .. k
+    end
+
+    exe(
+      {"nnoremap <silent><buffer> " .. key .. ' :call ctrlspace#keys#Keypressed("' .. k .. '")<CR>'})
+  end
+end
+
 function drawer.max_height()
   local config = vim.fn["ctrlspace#context#Configuration"]()
   local config_max = config.MaxHeight
