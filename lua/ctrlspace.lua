@@ -515,7 +515,7 @@ function buffers.load_keep(pre, post)
   local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
   local curln = vim.fn.line(".")
 
-  vim.fn["ctrlspace#window#hide"]()
+  vim.fn["ctrlspace#window#Kill"](0)
   vim.fn["ctrlspace#window#GoToStartWindow"]()
   exe(pre)
   exe({"b " .. nr})

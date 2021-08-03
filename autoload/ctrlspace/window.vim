@@ -43,12 +43,6 @@ function! ctrlspace#window#refresh() abort
     call luaeval('require("ctrlspace").drawer.refresh()')
 endfunction
 
-" using this function still closes the buffer. because bufhidden=delete for
-" the ctrlspace buffer
-function! ctrlspace#window#hide() abort
-    silent! exe "noautocmd winc c"
-endfunction
-
 function! ctrlspace#window#kill() abort
     call ctrlspace#window#Kill(1)
 endfunction
