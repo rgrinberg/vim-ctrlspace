@@ -9,7 +9,6 @@ function! ctrlspace#keys#buffer#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#GoToWindow",                  "Buffer", ["Tab"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#GoToWindowAndBack",           "Buffer", ["S-Tab"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#VisibleMode",                 "Buffer", ["*"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#ZoomMode",                    "Buffer", ["z"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#LoadBufferVS",                "Buffer", ["v"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#LoadManyBuffersVS",           "Buffer", ["V"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#LoadBufferSP",                "Buffer", ["s"])
@@ -86,24 +85,6 @@ function! ctrlspace#keys#buffer#VisibleMode(k) abort
     endif
 
     call ctrlspace#window#refresh()
-endfunction
-
-function! ctrlspace#keys#buffer#ZoomMode(k) abort
-    if s:modes.Zoom.Enabled
-        call ctrlspace#window#Kill(1)
-        call ctrlspace#window#Toggle(0)
-        call ctrlspace#window#Kill(0)
-        if s:modes.Zoom.Data.Mode ==# "File"
-            call s:modes.File.Enable()
-        else
-            call s:modes.Buffer.SetData("SubMode", s:modes.Zoom.Data.SubMode)
-        endif
-        call s:modes.Search.SetData("Letters", copy(s:modes.Zoom.Data.Letters))
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#window#MoveSelectionBar(s:modes.Zoom.Data.Line)
-    else
-        call ctrlspace#buffers#ZoomBuffer(0)
-    endif
 endfunction
 
 function! ctrlspace#keys#buffer#LoadBufferVS(k) abort

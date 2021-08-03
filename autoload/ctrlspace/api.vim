@@ -89,10 +89,6 @@ function! ctrlspace#api#StatuslineModeSegment(...) abort
         endif
 
         call add(statuslineElements, symbol)
-
-        if s:modes.Zoom.Enabled
-            call add(statuslineElements, s:config.Symbols.Zoom)
-        endif
     endif
 
     if !empty(s:modes.Search.Data.Letters) || s:modes.Search.Enabled
@@ -133,14 +129,7 @@ function! ctrlspace#api#TabTitle(tabnr) abort
     endif
 
     if getbufvar(bufnr, "&ft") == "ctrlspace"
-        if s:modes.Zoom.Enabled
-            if s:modes.Zoom.Data.Buffer
-                let bufnr = s:modes.Zoom.Data.Buffer
-            endif
-        else
-            let bufnr = winbufnr(t:CtrlSpaceStartWindow)
-        endif
-
+        let bufnr = winbufnr(t:CtrlSpaceStartWindow)
         let bufname = bufname(bufnr)
     endif
 

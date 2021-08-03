@@ -56,7 +56,6 @@ let s:descriptions = {
     \ "ctrlspace#keys#buffer#GoToWindow":                   "Jump to the window containing selected buffer",
     \ "ctrlspace#keys#buffer#GoToWindowAndBack":            "Change the target window to one containing selected buffer",
     \ "ctrlspace#keys#buffer#VisibleMode":                  "Toggle Visible Mode",
-    \ "ctrlspace#keys#buffer#ZoomMode":                     "Toggle Zoom Mode",
     \ "ctrlspace#keys#buffer#LoadBufferVS":                 "Open selected buffer in a new vertical split",
     \ "ctrlspace#keys#buffer#LoadManyBuffersVS":            "Open selected buffer in a new vertical split but stay in the plugin window",
     \ "ctrlspace#keys#buffer#LoadBufferSP":                 "Open selected buffer in a new horizontal split",
@@ -99,7 +98,6 @@ let s:descriptions = {
     \ "ctrlspace#keys#file#LoadManyFilesT":                 "Open selected file in a new (or next) tab but stay in the plugin window",
     \ "ctrlspace#keys#file#LoadManyFilesCT":                "Open selected file always in a new tab but stay in the plugin window",
     \ "ctrlspace#keys#file#Refresh":                        "Refresh the file list (force reloading)",
-    \ "ctrlspace#keys#file#ZoomMode":                       "Toggle Zoom Mode",
     \ "ctrlspace#keys#bookmark#GoToBookmark":               "Jump to selected bookmark (Tab - close, Space - stay)",
     \ "ctrlspace#keys#bookmark#Rename":                     "Change selected bookmark name",
     \ "ctrlspace#keys#bookmark#Edit":                       "Edit selected bookmark directory",
@@ -371,10 +369,6 @@ function! s:modeInfo() abort
 
     if s:modes.Search.Enabled
         call add(info, "SEARCH")
-    endif
-
-    if s:modes.Zoom.Enabled
-        call add(info, "ZOOM")
     endif
 
     if s:modes.Nop.Enabled

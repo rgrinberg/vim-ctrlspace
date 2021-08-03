@@ -99,27 +99,6 @@ function! ctrlspace#files#RemoveFile() abort
     call ctrlspace#window#Toggle(1)
 endfunction
 
-function! ctrlspace#files#ZoomFile() abort
-    if !s:modes.Zoom.Enabled
-        call s:modes.Zoom.Enable()
-        call s:modes.Zoom.SetData("Buffer", winbufnr(t:CtrlSpaceStartWindow))
-        call s:modes.Zoom.SetData("Mode", "File")
-        call s:modes.Zoom.SetData("Line", line("."))
-        call s:modes.Zoom.SetData("Letters", copy(s:modes.Search.Data.Letters))
-    endif
-
-    let nr = ctrlspace#window#SelectedIndex()
-    let curln = line(".")
-
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#GoToStartWindow()
-    call s:loadFileOrBuffer(fnamemodify(ctrlspace#files#CollectFiles()[nr].text, ":p"))
-
-    silent! exe "normal! zb"
-
-    call ctrlspace#window#Toggle(1)
-    call ctrlspace#window#MoveSelectionBar(curln)
-endfunction
 
 function! ctrlspace#files#CopyFileOrBuffer() abort
     let root = ctrlspace#roots#CurrentProjectRoot()

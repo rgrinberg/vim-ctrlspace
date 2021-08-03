@@ -2,7 +2,6 @@ let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#keys#file#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#SearchParentDirectory",   "File", ["BSlash", "Bar"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#ZoomMode",                "File", ["z"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#LoadFile",                "File", ["CR"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#LoadManyFiles",           "File", ["Space"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#LoadFileVS",              "File", ["v"])
@@ -30,21 +29,6 @@ endfunction
 
 function! ctrlspace#keys#file#SearchParentDirectory(k) abort
     call ctrlspace#search#SearchParentDirectoryCycle()
-endfunction
-
-function! ctrlspace#keys#file#ZoomMode(k) abort
-    if s:modes.Zoom.Enabled
-        if s:modes.Zoom.Data.Mode ==# "File"
-            call s:modes.File.Enable()
-        else
-            call s:modes.Buffer.SetData("SubMode", s:modes.Zoom.Data.SubMode)
-        endif
-        call s:modes.Search.SetData("Letters", copy(s:modes.Zoom.Data.Letters))
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#window#MoveSelectionBar(s:modes.Zoom.Data.Line)
-    else
-        call ctrlspace#files#ZoomFile()
-    endif
 endfunction
 
 function! ctrlspace#keys#file#LoadFile(k) abort

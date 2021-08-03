@@ -31,33 +31,6 @@ function! ctrlspace#buffers#LoadManyBuffers(pre, post) abort
     call F(a:pre, a:post)
 endfunction
 
-function! ctrlspace#buffers#ZoomBuffer(nr, ...) abort
-    if !s:modes.Zoom.Enabled
-        call s:modes.Zoom.Enable()
-        call s:modes.Zoom.SetData("Buffer", winbufnr(t:CtrlSpaceStartWindow))
-        call s:modes.Zoom.SetData("Mode", "Buffer")
-        call s:modes.Zoom.SetData("SubMode", s:modes.Buffer.Data.SubMode)
-        call s:modes.Zoom.SetData("Line", line("."))
-        call s:modes.Zoom.SetData("Letters", copy(s:modes.Search.Data.Letters))
-    endif
-
-    let nr = a:nr ? a:nr : ctrlspace#window#SelectedIndex()
-
-    call ctrlspace#window#hide()
-    call ctrlspace#window#GoToStartWindow()
-
-    silent! exe ":b " . nr
-
-    let customCommands = !empty(a:000) ? a:1 : ["normal! zb"]
-
-    for c in customCommands
-        silent! exe c
-    endfor
-
-    call ctrlspace#window#show()
-    call ctrlspace#window#refresh()
-endfunction
-
 function! ctrlspace#buffers#CopyBufferToTab(tab) abort
     return s:copyOrMoveSelectedBufferIntoTab(a:tab, 0)
 endfunction

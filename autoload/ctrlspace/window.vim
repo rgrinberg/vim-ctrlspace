@@ -86,9 +86,6 @@ function! ctrlspace#window#restore() abort
     if bufexists(pbuf)
         throw "ctrlspace buffer already exists"
     endif
-    if s:modes.Zoom.Enabled
-        let t:CtrlSpaceActivebuf = bufnr("")
-    endif
     call ctrlspace#window#show()
     call s:setUpBuffer()
     call s:insertContent()
@@ -118,19 +115,8 @@ function! ctrlspace#window#Toggle(internal) abort
         call s:saveTabConfig()
     endif
 
-    if s:modes.Zoom.Enabled
-        let t:CtrlSpaceActivebuf = bufnr("")
-    endif
-
     " create the buffer first & set it up
     call ctrlspace#window#show()
-
-    " zoom start window in Zoom Mode
-    if s:modes.Zoom.Enabled
-        silent! exe t:CtrlSpaceStartWindow . "wincmd w"
-        vert resize | resize
-        silent! exe "noautocmd wincmd P"
-    endif
 
     call s:setUpBuffer()
     call s:insertContent()
@@ -184,14 +170,6 @@ function! ctrlspace#window#Kill(final) abort
         endif
 
         call ctrlspace#window#GoToStartWindow()
-
-        if s:modes.Zoom.Enabled
-            exec ":b " . s:modes.Zoom.Data.Buffer
-            call s:modes.Zoom.SetData("Buffer", 0)
-            call s:modes.Zoom.Disable()
-            call ctrlspace#buffers#DeleteForeignBuffers(1)
-            call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)
-        endif
 
         set guicursor-=n:block-CtrlSpaceSelected-blinkon0
     endif
