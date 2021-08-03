@@ -52,24 +52,7 @@ function! ctrlspace#tabs#CloseTab() abort
 endfunction
 
 function! ctrlspace#tabs#CollectUnsavedBuffers() abort
-    let buffers = luaeval('require("ctrlspace").buffers.unsaved()')
-
-    if empty(buffers)
-        call ctrlspace#ui#Msg("There are no unsaved buffers.")
-    endif
-
-    call ctrlspace#window#revive()
-
-    tabnew
-
-    call ctrlspace#tabs#SetTabLabel(tabpagenr(), "Unsaved Buffers", 1)
-
-    for b in buffers
-        silent! exe ":b " . b
-    endfor
-
-    call s:modes.Tab.Enable()
-    call ctrlspace#window#revive()
+  call luaeval('require("ctrlspace").tabs.collect_unsaved()')
 endfunction
 
 function! ctrlspace#tabs#CollectForeignBuffers() abort

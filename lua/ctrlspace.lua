@@ -919,6 +919,23 @@ function tabs.set_label(tabnr, label, auto)
 end
 
 
+function tabs.collect_unsaved()
+  local unsaved = buffers.unsaved()
+  if #unsaved == 0 then
+    vim.cmd('echomsg "there are no unsaved buffers"')
+    return
+  end
+
+  drawer.toggle(0)
+  vim.cmd('silent! tabnew')
+  local tab = vim.fn.tabpagenr()
+  tabs.set_label(tab, "Unsaved Buffers", 1)
+  for _, b in ipairs(unsaved) do
+    vim.cmd("silent! :b " .. b)
+  end
+  drawer.restore()
+end
+
 function tabs.collect_foreign()
   local foreign = buffers.foreign()
   if #foreign == 0 then
