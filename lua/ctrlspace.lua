@@ -808,4 +808,13 @@ function drawer.refresh ()
   drawer.insert_content()
 end
 
+function drawer.max_height()
+  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config_max = config.MaxHeight
+  if config_max <= 0 then
+    config_max = nil
+  end
+  return config_max or vim.o.lines / 3
+end
+
 return M

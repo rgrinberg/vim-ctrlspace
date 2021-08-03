@@ -2,13 +2,7 @@ let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#window#MaxHeight() abort
-    let maxFromConfig = s:config.MaxHeight
-
-    if maxFromConfig
-        return maxFromConfig
-    else
-        return &lines / 3
-    endif
+    return luaeval('require("ctrlspace").drawer.max_height()')
 endfunction
 
 function! ctrlspace#window#run(...) abort
