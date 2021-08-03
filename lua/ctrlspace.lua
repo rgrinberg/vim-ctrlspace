@@ -905,4 +905,27 @@ function drawer.restore()
   drawer.insert_content()
 end
 
+function drawer.toggle(internal)
+  if not internal then
+    reset_window()
+  end
+  
+  local pbuf = drawer.buffer()
+  if vim.fn.bufexists(pbuf) then
+    if vim.fn.winnr(pbuf) == -1 then
+      vim.fn["ctrlspace#window#Kill"](0)
+      if not internal then
+        save_tab_config()
+      end
+    end
+  elseif not internal then
+    vim.cmd("silent! pclose")
+    save_tab_config()
+  end
+
+  drawer.show()
+  drawer.setup_buffer()
+  drawer.insert_content()
+end
+
 return M

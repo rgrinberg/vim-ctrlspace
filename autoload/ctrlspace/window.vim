@@ -79,34 +79,9 @@ function! ctrlspace#window#restore() abort
 endfunction
 
 function! ctrlspace#window#Toggle(internal) abort
-    if !a:internal
-        call s:resetWindow()
-    endif
-
-    " if we get called and the list is open --> close it
-    let pbuf = ctrlspace#context#PluginBuffer()
-
-    if bufexists(pbuf)
-        if bufwinnr(pbuf) == -1
-            call ctrlspace#window#Kill(0)
-            if !a:internal
-                call s:saveTabConfig()
-            endif
-        else
-            call ctrlspace#window#Kill(1)
-            return
-        endif
-    elseif !a:internal
-        " make sure zoom window is closed
-        silent! exe "pclose"
-        call s:saveTabConfig()
-    endif
-
-    " create the buffer first & set it up
-    call ctrlspace#window#show()
-
-    call s:setUpBuffer()
-    call s:insertContent()
+  let F = luaeval('require("ctrlspace").drawer.toggle')
+  let arg = a:internal == 0 then v:false else v:true
+  F(arg)
 endfunction
 
 function! ctrlspace#window#GoToStartWindow() abort
