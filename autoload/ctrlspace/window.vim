@@ -53,10 +53,6 @@ function! ctrlspace#window#hide() abort
     silent! exe "noautocmd winc c"
 endfunction
 
-function! ctrlspace#window#show() abort
-    call luaeval('require("ctrlspace").drawer.show()')
-endfunction
-
 function! ctrlspace#window#kill() abort
     call ctrlspace#window#Kill(1)
 endfunction
