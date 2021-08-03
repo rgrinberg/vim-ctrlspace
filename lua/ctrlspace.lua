@@ -890,6 +890,40 @@ function drawer.restore()
   drawer.insert_content()
 end
 
+local function reset_window()
+  vim.cmd([[
+    call s:modes.Help.Disable()
+    call s:modes.Nop.Disable()
+    call s:modes.Search.Disable()
+    call s:modes.NextTab.Disable()
+
+    call s:modes.Buffer.Enable()
+    call s:modes.Buffer.SetData("SubMode", "single")
+
+    call s:modes.Search.SetData("NewSearchPerformed", 0)
+    call s:modes.Search.SetData("Restored", 0)
+    call s:modes.Search.SetData("Letters", [])
+    call s:modes.Search.SetData("HistoryIndex", -1)
+
+    call s:modes.Workspace.SetData("LastBrowsed", 0)
+
+    call ctrlspace#roots#SetCurrentProjectRoot(ctrlspace#roots#FindProjectRoot())
+    call s:modes.Bookmark.SetData("Active", ctrlspace#bookmarks#FindActiveBookmark())
+
+    call s:modes.Search.RemoveData("LastSearchedDirectory")
+
+    if ctrlspace#roots#LastProjectRoot() != ctrlspace#roots#CurrentProjectRoot()
+        call ctrlspace#files#ClearAll()
+        call ctrlspace#roots#SetLastProjectRoot(ctrlspace#roots#CurrentProjectRoot())
+        call ctrlspace#workspaces#SetWorkspaceNames()
+    endif
+
+    set guicursor+=n:block-CtrlSpaceSelected-blinkon0
+
+    call ctrlspace#util#HandleVimSettings("start")
+  ]])
+end
+
 function drawer.toggle(internal)
   if not internal then
     reset_window()
