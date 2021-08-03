@@ -63,15 +63,7 @@ function! ctrlspace#window#Toggle(internal) abort
 endfunction
 
 function! ctrlspace#window#GoToStartWindow() abort
-    silent! exe t:CtrlSpaceStartWindow . "wincmd w"
-
-    if winrestcmd() != t:CtrlSpaceWinrestcmd
-        silent! exe t:CtrlSpaceWinrestcmd
-
-        if winrestcmd() != t:CtrlSpaceWinrestcmd
-            wincmd =
-        endif
-    endif
+  call luaeval('require("ctrlspace").drawer.go_start_window()')
 endfunction
 
 function! ctrlspace#window#Kill(final) abort

@@ -957,6 +957,17 @@ function drawer.toggle(internal)
   drawer.insert_content()
 end
 
+function drawer.go_start_window()
+  exe({vim.t.CtrlSpaceStartWindow .. "wincmd w"})
+  if vim.fn.winrestcmd() == vim.t.CtrlSpaceWinrestcmd then
+    return
+  end
+  exe({vim.t.CtrlSpaceWinrestcmd})
+  if vim.fn.winrestcmd() ~= vim.t.CtrlSpaceWinrestcmd then
+    exe("wincmd =")
+  end
+end
+
 function tabs.set_label(tabnr, label, auto)
   vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceLabel", label)
   vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceAutotab", auto)
