@@ -58,7 +58,7 @@ endfunction
 
 function! ctrlspace#window#Toggle(internal) abort
   let F = luaeval('require("ctrlspace").drawer.toggle')
-  let arg = a:internal == 0 then v:false else v:true
+  let arg = a:internal == 0 ? v:false : v:true
   F(arg)
 endfunction
 
