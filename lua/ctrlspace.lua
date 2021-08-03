@@ -240,7 +240,7 @@ local function with_restore_drawer(f)
   local curln = vim.fn.line(".")
   vim.fn["ctrlspace#window#Kill"](0)
   f()
-  vim.fn["ctrlspace#window#Toggle"](1)
+  drawer.toggle(true)
   vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
@@ -524,7 +524,7 @@ function buffers.load_keep(pre, post)
   exe({"b " .. nr})
   vim.cmd("normal! zb")
   exe(post)
-  vim.fn["ctrlspace#window#restore"]()
+  drawer.restore()
   vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
@@ -653,7 +653,7 @@ local function content_source()
   if clv.Name == "Buffer" then
     return buffer_items(clv)
   elseif clv.Name == "File" then
-    return vim.fn["ctrlspace#files#CollectFiles"]()
+    return files.collect()
   elseif clv.Name == "Tab" then
     return tab_items()
   elseif clv.Name == "Workspace" then
@@ -713,7 +713,7 @@ function drawer.content ()
   else
     local max
     if modes.Search.Enabled == 1 then
-      max = vim.fn["ctrlspace#window#MaxHeight"]()
+      max = drawer.max_height()
     else
       max = absolute_max
     end
@@ -781,7 +781,7 @@ drawer.insert_content = function ()
   vim.b.size = #items
 
   if #items > config.Height then
-    local max_height = vim.fn["ctrlspace#window#MaxHeight"]()
+    local max_height = drawer.max_height()
     local size
     if #items < max_height then
       size = #items
