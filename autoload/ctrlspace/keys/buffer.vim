@@ -137,7 +137,7 @@ function! ctrlspace#keys#buffer#LoadManyBuffersCT(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#NewTabLabel(k) abort
-    call ctrlspace#tabs#NewTabLabel(0)
+    call ctrlspace#tabs#NewTabLabel(tabpagenr())
     call ctrlspace#util#SetStatusline()
     redraws
 endfunction
