@@ -885,4 +885,15 @@ function drawer.max_height()
   return config_max or vim.o.lines / 3
 end
 
+function drawer.go_to_window()
+  local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local win = vim.fn.bufwinnr(nr)
+  if win == -1 then
+    return false
+  end
+
+  vim.fn["ctrlspace#window#kill"]()
+  vim.cmd("silent! " .. win .. "wincmd w")
+  return true
+end
 return M

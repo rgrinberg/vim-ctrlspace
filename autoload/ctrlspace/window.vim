@@ -302,15 +302,7 @@ function! ctrlspace#window#SelectedIndex() abort
 endfunction
 
 function! ctrlspace#window#GoToWindow() abort
-    let nr = ctrlspace#window#SelectedIndex()
-
-    if bufwinnr(nr) == -1
-        return 0
-    endif
-
-    call ctrlspace#window#kill()
-    silent! exe bufwinnr(nr) . "wincmd w"
-    return 1
+    return luaeval('require("ctrlspace").drawer.go_to_window()')
 endfunction
 
 " tries to set the cursor to a line of the buffer list
