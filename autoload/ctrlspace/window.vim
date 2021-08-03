@@ -374,9 +374,7 @@ function! s:setUpBuffer() abort
     setlocal nomodifiable
     setlocal nowrap
     setlocal nonumber
-    if exists('+relativenumber')
-        setlocal norelativenumber
-    endif
+    setlocal norelativenumber
     setlocal nocursorcolumn
     setlocal nocursorline
     setlocal nospell
