@@ -38,10 +38,6 @@ function! ctrlspace#window#run(...) abort
     call ctrlspace#window#revive()
 endfunction
 
-function! s:insertContent() abort
-    call luaeval('require("ctrlspace").drawer.insert_content()')
-endfunction
-
 " should be called when the contents of the window changes
 function! ctrlspace#window#refresh() abort
     call luaeval('require("ctrlspace").drawer.refresh()')
