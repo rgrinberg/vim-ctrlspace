@@ -73,18 +73,6 @@ function! ctrlspace#window#revive() abort
     call ctrlspace#window#restore()
 endfunction
 
-" restore the ctrlspace window and buffer to the previous invocation
-function! ctrlspace#window#restore() abort
-    let pbuf = ctrlspace#context#PluginBuffer()
-    " silent! exe "pclose"
-    if bufexists(pbuf)
-        throw "ctrlspace buffer already exists"
-    endif
-    call ctrlspace#window#show()
-    call s:setUpBuffer()
-    call s:insertContent()
-endfunction
-
 function! ctrlspace#window#Toggle(internal) abort
     if !a:internal
         call s:resetWindow()

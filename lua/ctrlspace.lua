@@ -896,4 +896,13 @@ function drawer.go_to_window()
   vim.cmd("silent! " .. win .. "wincmd w")
   return true
 end
+
+function drawer.restore()
+  vim.cmd("silent! pclose")
+  assert_drawer_off()
+  drawer.show()
+  drawer.setup_buffer()
+  drawer.insert_content()
+end
+
 return M
