@@ -726,7 +726,6 @@ drawer.content = function ()
 end
 
 local function save_tab_config()
-  -- TODO assert that we aren't in ctrlspace
   vim.t.CtrlSpaceStartWindow = vim.fn.winnr()
   vim.t.CtrlSpaceWinrestcmd  = vim.fn.winrestcmd()
   vim.t.CtrlSpaceActivebuf   = vim.fn.bufnr("")
@@ -759,8 +758,10 @@ local function drawer_display(items)
     vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"  List empty"})
     vim.cmd("normal! GkJ")
     vim.cmd("normal! 0")
-    local modes = vim.fn["ctrlspace#modes#Modes"]()
-    modes.Nop.Enable()
+    vim.cmd([[
+      let modes = ctrlspace#modes#Modes()
+      call modes.Nop.Enable()
+    ]])
   end
   vim.cmd('setlocal nomodifiable')
 end
