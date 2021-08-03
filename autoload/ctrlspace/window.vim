@@ -47,14 +47,6 @@ function! ctrlspace#window#refresh() abort
     call luaeval('require("ctrlspace").drawer.refresh()')
 endfunction
 
-" this is necessary to restore the user's original configuration when
-" ctrlspace is turned off
-function! s:saveTabConfig() abort
-    let t:CtrlSpaceStartWindow = winnr()
-    let t:CtrlSpaceWinrestcmd  = winrestcmd()
-    let t:CtrlSpaceActivebuf   = bufnr("")
-endfunction
-
 " using this function still closes the buffer. because bufhidden=delete for
 " the ctrlspace buffer
 function! ctrlspace#window#hide() abort
