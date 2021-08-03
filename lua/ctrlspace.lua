@@ -110,9 +110,6 @@ buffers.add_current = function ()
   end
 
   local modes = vim.fn["ctrlspace#modes#Modes"]()
-  if modes.Zoom.Enabled == 1 then
-    return
-  end
 
   vim.b.CtrlSpaceJumpCounter = vim.fn["ctrlspace#jumps#IncrementJumpCounter"]()
 
