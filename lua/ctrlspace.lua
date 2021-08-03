@@ -47,7 +47,7 @@ M.drawer = drawer
 
 local files_cache = nil
 
-files.clear = function ()
+function files.clear ()
   files = nil
 end
 
@@ -65,7 +65,7 @@ local function glob_cmd()
   return "rg --color=never --files --sort path"
 end
 
-files.collect = function ()
+function files.collect ()
   if files_cache then
     return files_cache
   end
@@ -102,7 +102,7 @@ local function managed_buf(buf)
   return vim.fn.buflisted(buf) and not plugin_buffer(buf)
 end
 
-buffers.add_current = function ()
+function buffers.add_current()
   local current = vim.fn.bufnr('%')
 
   if not managed_buf(current) then
@@ -135,7 +135,7 @@ local function buffer_modified(bufnr)
   return getbufvar(bufnr, "&modified") == 1
 end
 
-buffers.unsaved = function()
+function buffers.unsaved()
   local res = {}
   for b, _ in ipairs(all_buffers()) do
     if buffer_modified(b) and managed_buf(b) then
@@ -307,7 +307,7 @@ function buffers.api.in_tab(tabnr)
   return res
 end
 
-buffers.in_all_tabs = function()
+function buffers.in_all_tabs ()
   local res = {}
   for tabnr=1,vim.fn.tabpagenr("$") do
     for _, b in ipairs(buffers.in_tab(tabnr)) do
@@ -317,7 +317,7 @@ buffers.in_all_tabs = function()
   return res
 end
 
-buffers.all = function ()
+function buffers.all ()
   local res = {}
   for buf, _ in pairs(all_buffers()) do
     table.insert(res, buf)
@@ -338,7 +338,7 @@ local function foreign_buffers()
   return bufs
 end
 
-buffers.foreign = function ()
+function buffers.foreign ()
   local bufs = foreign_buffers()
   local res = {}
   for i, _ in pairs(bufs) do
@@ -354,7 +354,7 @@ local function delete_buffers (bufs)
   tabs.forget_buffers(bufs)
 end
 
-buffers.visible = function ()
+function buffers.visible ()
   local res = {}
   for tabnr=1,vim.fn.tabpagenr("$") do
     for _, b in ipairs(vim.fn.tabpagebuflist(tabnr)) do
@@ -366,7 +366,7 @@ buffers.visible = function ()
   return res
 end
 
-buffers.unnamed = function ()
+function buffers.unnamed ()
   local res = {}
   for _, b in ipairs(buffers.all()) do
     if managed_buf(b)
@@ -498,7 +498,7 @@ tabs.add_buffer = function (tabnr, buf)
   vim.fn.settabvar(tabnr, "CtrlSpaceList", btabs)
 end
 
-drawer.buffer = function()
+function drawer.buffer()
   for _, buf in pairs(vim.api.nvim_list_bufs()) do
     if plugin_buffer(buf) then
       return buf
@@ -534,7 +534,7 @@ end
 
 local item = {}
 
-item.create = function(index, text, indicators)
+function item.create(index, text, indicators)
   return {
     index = index,
     text = text,
@@ -701,7 +701,7 @@ local function render_candidates(items)
   return res
 end
 
-drawer.content = function ()
+function drawer.content ()
   local absolute_max = 500
   local candidates = content_source()
   local modes = vim.fn["ctrlspace#modes#Modes"]()
