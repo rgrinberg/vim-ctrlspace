@@ -35,9 +35,6 @@ function! ctrlspace#keys#buffer#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#EditFile",                      "Buffer", ["e"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#ExploreDirectory",              "Buffer", ["E"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#file#GoToDirectory",                 "Buffer", ["i", "I"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#RemoveFile",                    "Buffer", ["R"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#RenameFileOrBuffer",            "Buffer", ["m"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#file#CopyFileOrBuffer",              "Buffer", ["y"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#GoToBufferOrFile",            "Buffer", ["g", "G"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#NewWorkspace",                "Buffer", ["N"])
 endfunction
