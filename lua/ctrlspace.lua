@@ -926,4 +926,9 @@ function drawer.toggle(internal)
   drawer.insert_content()
 end
 
+function tabs.set_label(tabnr, label, auto)
+  vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceLabel", label)
+  vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceAutotab", auto)
+end
+
 return M
