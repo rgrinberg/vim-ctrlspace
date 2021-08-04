@@ -110,7 +110,8 @@ local function managed_buf(buf)
 end
 
 function files.load_file_or_buffer(file)
-  if vim.fn.buflisted(file) then
+  local listed = vim.fn.buflisted(file) == 1
+  if listed then
     exe({"b " .. vim.fn.bufnr(file)})
   else
     exe("e " .. vim.fn.fnameescape(file))
