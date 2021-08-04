@@ -957,6 +957,22 @@ function drawer.toggle(internal)
   drawer.insert_content()
 end
 
+function drawer.last_selected_index()
+  local pbuf = drawer.buffer()
+  if pbuf == -1 then
+    error("ctrlspace plugin buffer does not exist")
+  end
+
+  local items = vim.api.nvim_buf_get_var(pbuf, "items")
+  local idx
+  if vim.fn.bufnr() == pbuf then
+    idx = vim.fn.line(".") - 1
+  else
+    idx = vim.fn.getbufinfo(pbuf)[0].lnum
+  end
+  return items[idx].index
+end
+
 function drawer.go_start_window()
   exe({vim.t.CtrlSpaceStartWindow .. "wincmd w"})
   if vim.fn.winrestcmd() == vim.t.CtrlSpaceWinrestcmd then

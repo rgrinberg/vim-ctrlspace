@@ -223,20 +223,7 @@ function! ctrlspace#window#MoveCursor(where) abort
 endfunction
 
 function! ctrlspace#window#SelectedIndex() abort
-    let pbuf = ctrlspace#context#PluginBuffer()
-    if !bufexists(pbuf)
-        throw "ctrlspace plugin buffer does not exist"
-    endif
-    let items = getbufvar(pbuf, "items")
-    " idiotic hackery to make sure this function works correctly from all
-    " buffers
-    if bufnr() == pbuf
-        let idx = line(".") - 1
-    elseif
-        let selected = getbufinfo(pbuf)[0].lnum
-    end
-    let selected = items[idx]
-    return str2nr(selected.index)
+  return luaeval('require("ctrlspace").drawer.last_selected_index()')
 endfunction
 
 function! ctrlspace#window#GoToWindow() abort
