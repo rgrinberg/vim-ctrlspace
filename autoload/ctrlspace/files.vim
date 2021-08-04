@@ -1,18 +1,6 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
-function! s:file_obj_init() abort
-    let s:File = {}
-    let s:File.raw_fname = function('s:get_selected_file')          " filename from Cache's files list
-    let s:File.abs_fpath = function('s:get_selected_file', [':p'])  " absolute filepath
-    let s:File.rel_fpath = function('s:get_selected_file', [':.'])  " relative filepath
-    let s:File.abs_fob_p = function('s:get_selected_file_or_buff', [':p'])   " absolute filepath of selected file or buffer
-    let s:File.rel_fob_p = function('s:get_selected_file_or_buff', [':.'])   " relative filepath of selected file or buffer
-    let s:File.abs_fob_d = function('s:get_selected_file_or_buff', [':p:h']) " absolute path of directory containing file or buffer
-    let s:File.rel_fob_d = function('s:get_selected_file_or_buff', [':.:h']) " relative path of directory containing file or buffer
-    return s:File
-endfunction
-
 function! s:get_selected_file(...) abort
     let idx = ctrlspace#window#SelectedIndex()
     let file = ctrlspace#files#CollectFiles()[idx].text
@@ -23,9 +11,6 @@ function! s:get_selected_file_or_buff(mod) abort
     let target = s:modes.File.Enabled ? s:get_selected_file(':p') : resolve(bufname(ctrlspace#window#SelectedIndex()))
     return fnamemodify(target, a:mod)
 endfunction
-
-let s:File = s:file_obj_init()
-
 
 function! ctrlspace#files#ClearAll() abort
     return luaeval('require("ctrlspace").files.clear()')
@@ -40,7 +25,7 @@ function! ctrlspace#files#CollectFiles() abort
 endfunction
 
 function! ctrlspace#files#LoadFile(commands) abort
-    let file = s:File.abs_fpath()
+    let file = s:get_selected_file(":p")
     call ctrlspace#window#Kill(1)
 
     for command in a:commands
@@ -51,7 +36,7 @@ function! ctrlspace#files#LoadFile(commands) abort
 endfunction
 
 function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
-    let file = s:File.abs_fpath()
+    let file = fnamemodify(ctrlspace#files#SelectedFileName(), ":p")
     let curln = line(".")
 
     call ctrlspace#window#Kill(0)
@@ -89,7 +74,7 @@ function! ctrlspace#files#GoToDirectory(back) abort
             let path = s:goToDirectorySave[-1]
         endif
     else
-        let path = s:File.abs_fob_p()
+        let path = s:get_selected_file_or_buff(":p")
     endif
 
     let oldBufferSubMode = s:modes.Buffer.Data.SubMode
@@ -125,7 +110,7 @@ function! ctrlspace#files#GoToDirectory(back) abort
 endfunction
 
 function! ctrlspace#files#ExploreDirectory() abort
-    let path = s:File.abs_fob_d()
+    let path = s:get_selected_file_or_buff(":p:h")
     if !isdirectory(path)
         return
     endif
@@ -135,7 +120,7 @@ function! ctrlspace#files#ExploreDirectory() abort
 endfunction
 
 function! ctrlspace#files#EditFile() abort
-    let path = s:File.rel_fob_d()
+    let path = s:get_selected_file_or_buff(":p:h")
     if !isdirectory(path)
         return
     endif
