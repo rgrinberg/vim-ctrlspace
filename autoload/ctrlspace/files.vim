@@ -1,10 +1,9 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
-function! s:get_selected_file(...) abort
-    let idx = ctrlspace#window#SelectedIndex()
-    let file = ctrlspace#files#CollectFiles()[idx].text
-    return a:0 == 0 ? file : fnamemodify(file, a:1)
+function! s:get_selected_file(format) abort
+    let file = luaeval('require("ctrlspace").drawer.selected_file_path()')
+    return fnamemodify(file, a:format)
 endfunction
 
 function! s:get_selected_file_or_buff(mod) abort
@@ -17,7 +16,7 @@ function! ctrlspace#files#ClearAll() abort
 endfunction
 
 function! ctrlspace#files#SelectedFileName() abort
-    return s:modes.File.Enabled ? s:File.raw_fname() : ""
+    return luaeval('require("ctrlspace").drawer.selected_file_path()')
 endfunction
 
 function! ctrlspace#files#CollectFiles() abort
@@ -25,39 +24,13 @@ function! ctrlspace#files#CollectFiles() abort
 endfunction
 
 function! ctrlspace#files#LoadFile(commands) abort
-    let file = s:get_selected_file(":p")
-    call ctrlspace#window#Kill(1)
-
-    for command in a:commands
-        exec ":" . command
-    endfor
-
-    let F = luaeval('require("ctrlspace").files.load_file_or_buffer')
-    call F(file)
+    let F = luaeval('require("ctrlspace").files.load_file')
+    call F(a:commands)
 endfunction
 
-function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
-    let file = fnamemodify(ctrlspace#files#SelectedFileName(), ":p")
-    let curln = line(".")
-
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#GoToStartWindow()
-
-    for command in a:preCommands
-        exec ":" . command
-    endfor
-
-    let F = luaeval('require("ctrlspace").files.load_file_or_buffer')
-    call F(file)
-
-    normal! zb
-
-    for command in a:postCommands
-        silent! exe ":" . command
-    endfor
-
-    call ctrlspace#window#Toggle(1)
-    call ctrlspace#window#MoveSelectionBar(curln)
+function! ctrlspace#files#LoadManyFiles(pre, post) abort
+  let F = luaeval('require("ctrlspace").files.load_many_files')
+  call F(a:pre, a:post)
 endfunction
 
 function! ctrlspace#files#GoToDirectory(back) abort
@@ -145,14 +118,6 @@ function! ctrlspace#files#EditFile() abort
 
     call ctrlspace#window#Kill(1)
     silent! exe "e " . fnameescape(newFile)
-endfunction
-
-function! s:loadFileOrBuffer(file) abort
-    if buflisted(a:file)
-        silent! exe ":b " . bufnr(a:file)
-    else
-        exec ":e " . fnameescape(a:file)
-    endif
 endfunction
 
 function! s:updateFileList(path, newPath) abort

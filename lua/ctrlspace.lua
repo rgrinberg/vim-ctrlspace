@@ -117,6 +117,37 @@ function files.load_file_or_buffer(file)
   end
 end
 
+function files.load_file(commands)
+  local file = drawer.selected_file_path()
+  file = vim.fn.fnamemodify(file, ":p")
+  vim.fn["ctrlspace#window#Kill"](1)
+  exe(commands)
+  files.load_file_or_buffer(file)
+end
+
+local function assert_drawer_off()
+  -- TODO implement
+end
+
+local function assert_drawer_on()
+  -- TODO implement
+end
+
+
+function files.load_many_files(pre, post)
+  assert_drawer_on()
+  local file = vim.fn.fnamemodify(drawer.selected_file_path(), ":p")
+  local curln = vim.api.nvim_get_current_line()
+  vim.fn["ctrlspace#window#Kill"](0)
+  drawer.go_start_window()
+  exe(pre)
+  files.load_file_or_buffer(file)
+  exe({"normal! zb"})
+  exe(post)
+  drawer.restore()
+  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+end
+
 function buffers.add_current()
   local current = vim.fn.bufnr('%')
 
@@ -214,14 +245,6 @@ local function find_buffer_in_tabs(bufnr)
     end
   end
   return res
-end
-
-local function assert_drawer_off()
-  -- TODO implement
-end
-
-local function assert_drawer_on()
-  -- TODO implement
 end
 
 -- you must restore the view after calling this function
@@ -1090,6 +1113,16 @@ function tabs.collect_foreign()
     vim.cmd("silent! :b " .. fb)
   end
   drawer.restore()
+end
+
+function drawer.selected_file_path()
+  local modes = vim.fn["ctrlspace#modes#Modes"]()
+  if modes.File.Enabled ~= 1 then
+    -- TODO this should also work for buffers
+    error("only available in file file mode")
+  end
+  local idx = drawer.last_selected_index()
+  return files.collect()[idx].text
 end
 
 function drawer.kill(final)
