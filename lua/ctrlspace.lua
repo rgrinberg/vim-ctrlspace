@@ -967,7 +967,7 @@ function drawer.last_selected_index()
   local items = vim.api.nvim_buf_get_var(pbuf, "items")
   local idx
   if vim.fn.bufnr() == pbuf then
-    idx = vim.fn.line(".") - 1
+    idx = vim.fn.line(".")
   else
     idx = vim.fn.getbufinfo(pbuf)[0].lnum
   end
