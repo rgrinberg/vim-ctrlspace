@@ -247,6 +247,7 @@ local function with_restore_drawer(f)
   local curln = vim.fn.line(".")
   vim.fn["ctrlspace#window#Kill"](0)
   f()
+  assert_drawer_off()
   drawer.toggle(true)
   vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
