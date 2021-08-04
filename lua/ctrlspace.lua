@@ -127,11 +127,16 @@ function files.load_file(commands)
 end
 
 local function assert_drawer_off()
-  -- TODO implement
+  local pbuf = drawer.buffer()
+  if pbuf ~= -1 then
+    error("plugin buffer exists")
+  end
 end
 
 local function assert_drawer_on()
-  -- TODO implement
+  if vim.bo.filetype ~= "ctrlspace" then
+    error("the current buffer isn't ctrlspace")
+  end
 end
 
 
