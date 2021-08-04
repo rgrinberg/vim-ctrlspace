@@ -1,16 +1,6 @@
 let s:config = ctrlspace#context#Configuration()
 let s:modes  = ctrlspace#modes#Modes()
 
-function! s:get_selected_file(format) abort
-    let file = luaeval('require("ctrlspace").drawer.selected_file_path()')
-    return fnamemodify(file, a:format)
-endfunction
-
-function! s:get_selected_file_or_buff(mod) abort
-    let target = s:modes.File.Enabled ? s:get_selected_file(':p') : resolve(bufname(ctrlspace#window#SelectedIndex()))
-    return fnamemodify(target, a:mod)
-endfunction
-
 function! ctrlspace#files#ClearAll() abort
     return luaeval('require("ctrlspace").files.clear()')
 endfunction
@@ -45,7 +35,7 @@ function! ctrlspace#files#GoToDirectory(back) abort
             let path = s:goToDirectorySave[-1]
         endif
     else
-        let path = s:get_selected_file_or_buff(":p")
+        let path = fnamemdify(luaeval('require("ctrlspace").selected_file_path()'), ":p")
     endif
 
     let oldBufferSubMode = s:modes.Buffer.Data.SubMode
@@ -78,63 +68,4 @@ function! ctrlspace#files#GoToDirectory(back) abort
 
     call ctrlspace#window#Toggle(1)
     call ctrlspace#ui#DelayedMsg()
-endfunction
-
-function! ctrlspace#files#ExploreDirectory() abort
-    let path = s:get_selected_file_or_buff(":p:h")
-    if !isdirectory(path)
-        return
-    endif
-
-    call ctrlspace#window#Kill(1)
-    silent! exe "e " . fnameescape(path)
-endfunction
-
-function! ctrlspace#files#EditFile() abort
-    let path = s:get_selected_file_or_buff(":p:h")
-    if !isdirectory(path)
-        return
-    endif
-
-    let newFile = ctrlspace#ui#GetInput("Edit a new file: ", path . '/', "file")
-
-    if empty(newFile)
-        return
-    endif
-
-    let newFile = expand(newFile)
-
-    if isdirectory(newFile)
-        call ctrlspace#window#Kill(1)
-        enew
-        return
-    endif
-
-    if !s:ensurePath(newFile)
-        return
-    endif
-
-    let newFile = fnamemodify(newFile, ":p")
-
-    call ctrlspace#window#Kill(1)
-    silent! exe "e " . fnameescape(newFile)
-endfunction
-
-function! s:updateFileList(path, newPath) abort
-    return luaeval('require("ctrlspace").files.clear()')
-endfunction
-
-function! s:ensurePath(file) abort
-    let directory = fnamemodify(a:file, ":.:h")
-
-    if isdirectory(directory)
-        return 1
-    endif
-
-    if !ctrlspace#ui#Confirmed("Directory '" . directory . "' will be created. Continue?")
-        return 0
-    endif
-
-    call mkdir(fnamemodify(directory, ":p"), "p")
-    return 1
 endfunction
