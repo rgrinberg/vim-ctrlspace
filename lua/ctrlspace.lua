@@ -943,7 +943,7 @@ function drawer.toggle(internal)
   local pbuf = drawer.buffer()
   if vim.fn.bufexists(pbuf) then
     if vim.fn.winnr(pbuf) == -1 then
-      vim.fn["ctrlspace#window#Kill"](0)
+      drawer.kill(false)
       if not internal then
         save_tab_config()
       end
@@ -1079,6 +1079,32 @@ function tabs.collect_foreign()
     vim.cmd("silent! :b " .. fb)
   end
   drawer.restore()
+end
+
+function drawer.kill(final)
+  if vim.b.updatetime_save then
+    vim.o.updatetime = vim.b.updatetime_save
+  end
+
+  if vim.b.timeoutlen_save then
+    vim.o.timeoutlen = vim.b.timeoutlen_save
+  end
+
+  if vim.b.mouse_save then
+    vim.o.mouse = vim.b.mouse_save
+  end
+
+  vim.cmd("silent! bwipeout")
+
+  if final then
+    vim.fn["ctrlspace#util#HandleVimSettings"]("stop")
+    local modes = vim.fn["ctrlspace#modes#Modes"]()
+    if modes.Search.Data.Restored == 1 then
+      vim.fn["ctrlspace#search#AppendToSearchHistory"]()
+    end
+    drawer.go_start_window()
+    vim.cmd("set guicursor-=n:block-CtrlSpaceSelected-blinkon0")
+  end
 end
 
 return M
