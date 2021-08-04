@@ -941,7 +941,7 @@ function drawer.toggle(internal)
   end
   
   local pbuf = drawer.buffer()
-  if vim.fn.bufexists(pbuf) then
+  if pbuf ~= -1 then
     if vim.fn.winnr(pbuf) == -1 then
       drawer.kill(false)
       if not internal then
