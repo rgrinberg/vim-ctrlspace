@@ -45,10 +45,6 @@ function! ctrlspace#buffers#CloseBuffer() abort
   call luaeval('require("ctrlspace").tabs.close_buffer()')
 endfunction
 
-function! ctrlspace#buffers#DetachBuffer() abort
-  call luaeval('require("ctrlspace").buffers.detach()')
-endfunction
-
 function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
     let nr      = ctrlspace#window#SelectedIndex()
     let curTab  = tabpagenr()
@@ -155,7 +151,7 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
     endif
 
     if a:move
-        call ctrlspace#buffers#DetachBuffer()
+        call luaeval('require("ctrlspace").buffers.detach()')
     endif
 
     let AddBuffer = luaeval('require("ctrlspace").tabs.add_buffer')

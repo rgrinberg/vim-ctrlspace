@@ -188,7 +188,7 @@ endfunction
 
 function! ctrlspace#keys#buffer#DetachBuffer(k) abort
     if s:modes.Buffer.Data.SubMode ==# "single"
-        call ctrlspace#buffers#DetachBuffer()
+        call luaeval('require("ctrlspace").buffers.detach()')
     endif
 endfunction
 
