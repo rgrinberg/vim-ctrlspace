@@ -869,7 +869,6 @@ function drawer.refresh ()
 end
 
 function drawer.setup_buffer ()
-  assert_drawer_on()
   vim.cmd([[
     setlocal noswapfile
     setlocal buftype=nofile
