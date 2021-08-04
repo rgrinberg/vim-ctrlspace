@@ -114,7 +114,7 @@ function files.load_file_or_buffer(file)
   if listed then
     exe({"b " .. vim.fn.bufnr(file)})
   else
-    exe("e " .. vim.fn.fnameescape(file))
+    exe({"e " .. vim.fn.fnameescape(file)})
   end
 end
 
