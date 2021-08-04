@@ -153,7 +153,7 @@ function files.edit()
   assert_drawer_on()
   local path = vim.fn.fnamemodify(drawer.selected_file_path(), ":p:h")
   local file = vim.fn["ctrlspace#ui#GetInput"]("Edit a new file: ", path .. '/', "file")
-  if not file or string.len(file) then
+  if not file or string.len(file) == 0 then
     return
   end
 
