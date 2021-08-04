@@ -149,6 +149,29 @@ function files.load_many_files(pre, post)
   vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
+function files.edit()
+  assert_drawer_on()
+  local path = vim.fn.fnamemodify(drawer.selected_file_path(), ":p:h")
+  local file = vim.fn["ctrlspace#ui#GetInput"]("Edit a new file: ", path .. '/', "file")
+  if not file or string.len(file) then
+    return
+  end
+
+  file = vim.fn.expand(file)
+  file = vim.fn.fnamemodify(file, ":p")
+
+  vim.fn["ctrlspace#window#kill"]()
+  exe({"e " .. vim.fn.fnameescape(file)})
+end
+
+function files.edit_dir()
+  assert_drawer_on()
+  local path = vim.fn.fnamemodify(drawer.selected_file_path(), ":p:h")
+
+  vim.fn["ctrlspace#window#kill"]()
+  exe({"e " .. vim.fn.fnameescape(path)})
+end
+
 function buffers.add_current()
   local current = vim.fn.bufnr('%')
 

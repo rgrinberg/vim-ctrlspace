@@ -76,11 +76,11 @@ function! ctrlspace#keys#file#Refresh(k) abort
 endfunction
 
 function! ctrlspace#keys#file#EditFile(k) abort
-    call ctrlspace#files#EditFile()
+    call luaeval('require("ctrlspace").files.edit()')
 endfunction
 
 function! ctrlspace#keys#file#ExploreDirectory(k) abort
-    call ctrlspace#files#ExploreDirectory()
+    call luaeval('require("ctrlspace").files.edit_dir()')
 endfunction
 
 function! ctrlspace#keys#file#GoToDirectory(k) abort
