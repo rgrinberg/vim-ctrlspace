@@ -138,7 +138,7 @@ end
 function files.load_many_files(pre, post)
   assert_drawer_on()
   local file = vim.fn.fnamemodify(drawer.selected_file_path(), ":p")
-  local curln = vim.api.nvim_get_current_line()
+  local curln = vim.fn.line(".")
   vim.fn["ctrlspace#window#Kill"](0)
   drawer.go_start_window()
   exe(pre)
