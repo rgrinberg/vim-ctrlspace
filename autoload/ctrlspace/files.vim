@@ -26,10 +26,6 @@ endfunction
 
 let s:File = s:file_obj_init()
 
-" comparison check helper
-function! s:isValidFilePath(path) abort
-    return !(empty(a:path) || !filereadable(a:path) || isdirectory(a:path))
-endfunction
 
 function! ctrlspace#files#ClearAll() abort
     return luaeval('require("ctrlspace").files.clear()')
