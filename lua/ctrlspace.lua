@@ -275,7 +275,7 @@ local function delete_buffer(bufnr)
 end
 
 function buffers.delete ()
-  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local bufnr = drawer.last_selected_index()
   delete_buffer(bufnr)
 end
 
@@ -293,12 +293,12 @@ local function detach_buffer(bufnr)
 end
 
 function buffers.detach()
-  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local bufnr = drawer.last_selected_index()
   detach_buffer(bufnr)
 end
 
 function buffers.close_buffer()
-  local bufnr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local bufnr = drawer.last_selected_index()
   local found_tabs = tabs.buffer_present_count(bufnr)
   if found_tabs > 1 then
     buffers.detach()
@@ -516,14 +516,14 @@ function drawer.buffer()
 end
 
 function buffers.load(pre)
-  local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local nr = drawer.last_selected_index()
   vim.fn["ctrlspace#window#kill"]()
   exe(pre)
   exe({"b " .. nr})
 end
 
 function buffers.load_keep(pre, post)
-  local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local nr = drawer.last_selected_index()
   local curln = vim.fn.line(".")
 
   vim.fn["ctrlspace#window#Kill"](0)
@@ -882,7 +882,7 @@ function drawer.max_height()
 end
 
 function drawer.go_to_window()
-  local nr = vim.fn["ctrlspace#window#SelectedIndex"]()
+  local nr = drawer.last_selected_index()
   local win = vim.fn.bufwinnr(nr)
   if win == -1 then
     return false
@@ -949,7 +949,7 @@ function drawer.toggle(internal)
       end
     end
   elseif not internal then
-    vim.cmd("silent! pclose")
+    exe({"pclose"})
     save_tab_config()
   end
 
