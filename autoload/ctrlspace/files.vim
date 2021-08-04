@@ -32,7 +32,8 @@ function! ctrlspace#files#LoadFile(commands) abort
         exec ":" . command
     endfor
 
-    call s:loadFileOrBuffer(file)
+    let F = luaeval('require("ctrlspace").files.load_file_or_buffer')
+    call F(file)
 endfunction
 
 function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
@@ -46,7 +47,9 @@ function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
         exec ":" . command
     endfor
 
-    call s:loadFileOrBuffer(file)
+    let F = luaeval('require("ctrlspace").files.load_file_or_buffer')
+    call F(file)
+
     normal! zb
 
     for command in a:postCommands

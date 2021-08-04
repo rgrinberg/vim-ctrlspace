@@ -109,6 +109,14 @@ local function managed_buf(buf)
   return vim.fn.buflisted(buf) and not plugin_buffer(buf)
 end
 
+function files.load_file_or_buffer(file)
+  if vim.fn.buflisted(file) then
+    exe({"b " .. vim.fn.bufnr(file)})
+  else
+    exe("e " .. vim.fn.fnameescape(file))
+  end
+end
+
 function buffers.add_current()
   local current = vim.fn.bufnr('%')
 
