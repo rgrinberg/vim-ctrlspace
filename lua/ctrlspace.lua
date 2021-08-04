@@ -54,6 +54,9 @@ end
 local item = {}
 
 function item.create(index, text, indicators)
+  if index == 0 then
+    error("index must not be 0")
+  end
   return {
     index = index,
     text = text,
@@ -81,7 +84,7 @@ function files.collect ()
   end
   local output = vim.fn["ctrlspace#util#system"](glob_cmd())
   local res = {}
-  local i = 0
+  local i = 1
   for s in string.gmatch(output, "[^\r\n]+") do
     local text = vim.fn.fnamemodify(s, ":.")
     local m = item.create(i, text, "")
