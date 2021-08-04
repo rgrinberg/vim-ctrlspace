@@ -71,7 +71,8 @@ function! ctrlspace#keys#file#LoadManyFilesCT(k) abort
 endfunction
 
 function! ctrlspace#keys#file#Refresh(k) abort
-    call ctrlspace#files#RefreshFiles()
+    call luaeval('require("ctrlspace").files.clear()')
+    call ctrlspace#window#refresh()
 endfunction
 
 function! ctrlspace#keys#file#EditFile(k) abort

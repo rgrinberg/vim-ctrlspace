@@ -57,11 +57,6 @@ function! ctrlspace#files#LoadManyFiles(preCommands, postCommands) abort
     call ctrlspace#window#MoveSelectionBar(curln)
 endfunction
 
-function! ctrlspace#files#RefreshFiles() abort
-    return luaeval('require("ctrlspace").files.clear()')
-    call ctrlspace#window#refresh()
-endfunction
-
 function! ctrlspace#files#GoToDirectory(back) abort
     if !exists("s:goToDirectorySave")
         let s:goToDirectorySave = []
