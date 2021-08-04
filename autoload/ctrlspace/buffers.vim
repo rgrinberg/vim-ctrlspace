@@ -45,10 +45,6 @@ function! ctrlspace#buffers#CloseBuffer() abort
   call luaeval('require("ctrlspace").tabs.close_buffer()')
 endfunction
 
-function! ctrlspace#buffers#DeleteBuffer() abort
-  call luaeval('require("ctrlspace").buffers.delete()')
-endfunction
-
 function! ctrlspace#buffers#DetachBuffer() abort
   call luaeval('require("ctrlspace").buffers.detach()')
 endfunction

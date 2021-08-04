@@ -178,7 +178,7 @@ function! ctrlspace#keys#buffer#MoveBufferToTab(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#DeleteBuffer(k) abort
-    call ctrlspace#buffers#DeleteBuffer()
+  call luaeval('require("ctrlspace").buffers.delete()')
 endfunction
 
 function! ctrlspace#keys#buffer#DeleteHiddenNonameBuffers(k) abort
