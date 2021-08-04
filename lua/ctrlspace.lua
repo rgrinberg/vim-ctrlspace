@@ -965,6 +965,9 @@ function drawer.last_selected_index()
   end
 
   local items = vim.api.nvim_buf_get_var(pbuf, "items")
+  if not items then
+    error("no items loaded")
+  end
   local idx
   if vim.fn.bufnr() == pbuf then
     idx = vim.fn.line(".")
