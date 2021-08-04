@@ -123,7 +123,7 @@ function files.load_file(commands)
   file = vim.fn.fnamemodify(file, ":p")
   vim.fn["ctrlspace#window#Kill"](1)
   exe(commands)
-  files.load_file_or_buffer(file)
+  M.files.load_file_or_buffer(file)
 end
 
 local function assert_drawer_off()
@@ -142,7 +142,7 @@ function files.load_many_files(pre, post)
   vim.fn["ctrlspace#window#Kill"](0)
   drawer.go_start_window()
   exe(pre)
-  files.load_file_or_buffer(file)
+  M.files.load_file_or_buffer(file)
   exe({"normal! zb"})
   exe(post)
   drawer.restore()
@@ -683,7 +683,9 @@ local function content_source()
   if clv.Name == "Buffer" then
     return buffer_items(clv)
   elseif clv.Name == "File" then
-    return files.collect()
+    -- TODO why doesn't this work?
+    -- return M.files.collect()
+    return M.files.collect()
   elseif clv.Name == "Tab" then
     return tab_items()
   elseif clv.Name == "Workspace" then
@@ -1123,7 +1125,7 @@ function drawer.selected_file_path()
     error("only available in file file mode")
   end
   local idx = drawer.last_selected_index()
-  return files.collect()[idx].text
+  return M.files.collect()[idx].text
 end
 
 function drawer.kill(final)
