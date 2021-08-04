@@ -1143,12 +1143,15 @@ end
 
 function drawer.selected_file_path()
   local modes = vim.fn["ctrlspace#modes#Modes"]()
-  if modes.File.Enabled ~= 1 then
-    -- TODO this should also work for buffers
-    error("only available in file file mode")
+  if modes.File.Enabled == 1 then
+    local idx = drawer.last_selected_index()
+    return M.files.collect()[idx].text
+  elseif modes.Buffer.Enabled == 1 then
+    local idx = drawer.last_selected_index()
+    return vim.fn.resolve(vim.fn.bufname(idx))
+  else
+    error("selected_file_path doesn't work in this mode")
   end
-  local idx = drawer.last_selected_index()
-  return M.files.collect()[idx].text
 end
 
 function drawer.kill(final)
