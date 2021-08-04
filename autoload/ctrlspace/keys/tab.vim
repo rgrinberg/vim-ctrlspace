@@ -52,6 +52,8 @@ function! ctrlspace#keys#tab#CopyTab(k) abort
 
     let label = empty(sourceLabel) ? ("Copy of tab " . nr) : (sourceLabel . " (copy)")
     call ctrlspace#tabs#SetTabLabel(tabpagenr(), label, 1)
+    let F = luaeval('require("ctrlspace").tabs.set_label')
+    call F(tabpagenr(), label, 1)
 
     let t:CtrlSpaceList = sourceList
 
@@ -107,11 +109,11 @@ function! ctrlspace#keys#tab#MoveTab(k) abort
 endfunction
 
 function! ctrlspace#keys#tab#CollectUnsavedBuffers(k) abort
-    call ctrlspace#tabs#CollectUnsavedBuffers()
+    call luaeval('require("ctrlspace").tabs.collect_unsaved()')
 endfunction
 
 function! ctrlspace#keys#tab#CollectForeignBuffers(k) abort
-    call ctrlspace#tabs#CollectForeignBuffers()
+    call luaeval('require("ctrlspace").tabs.collect_foreign()')
 endfunction
 
 function! ctrlspace#keys#tab#NewWorkspace(k) abort
