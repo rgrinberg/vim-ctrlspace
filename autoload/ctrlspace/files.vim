@@ -9,10 +9,6 @@ function! ctrlspace#files#SelectedFileName() abort
     return luaeval('require("ctrlspace").drawer.selected_file_path()')
 endfunction
 
-function! ctrlspace#files#CollectFiles() abort
-    return luaeval('require("ctrlspace").files.collect()')
-endfunction
-
 function! ctrlspace#files#LoadFile(commands) abort
     let F = luaeval('require("ctrlspace").files.load_file')
     call F(a:commands)
