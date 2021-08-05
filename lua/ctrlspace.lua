@@ -179,7 +179,7 @@ end
 function files.edit()
   assert_drawer_on()
   local path = fn.fnamemodify(drawer.selected_file_path(), ":p:h")
-  local file = fn["ctrlspace#ui#GetInput"]("Edit a new file: ", path .. '/', "file")
+  local file = ui.input("Edit a new file: ", path .. '/', "file")
   if not file or string.len(file) == 0 then
     return
   end
@@ -1135,8 +1135,8 @@ function tabs.new_label(tabnr)
   if not old_name or old_name == vim.NIL then
     old_name = ""
   end
-  local new_label = fn["ctrlspace#ui#GetInput"](
-    "Label for tab " .. tabnr .. ": " .. old_name)
+
+  local new_label = ui.input("Label for tab " .. tabnr .. ": " .. old_name, nil, nil)
 
   if not new_label or new_label == "" then
     return false
