@@ -7,10 +7,6 @@ endfunction
 function! ctrlspace#buffers#Init() abort
 endfunction
 
-function! ctrlspace#buffers#Buffers() abort
-    return luaeval('require("ctrlspace").buffers.all()')
-endfunction
-
 function! ctrlspace#buffers#TabBuffers(tabnr) abort
     let In_tab = luaeval('require("ctrlspace").buffers.in_tab')
     let foo = In_tab(a:tabnr)
