@@ -1,9 +1,5 @@
 let s:modes  = ctrlspace#modes#Modes()
 
-function! ctrlspace#files#ClearAll() abort
-    return luaeval('require("ctrlspace").files.clear()')
-endfunction
-
 function! ctrlspace#files#SelectedFileName() abort
     return luaeval('require("ctrlspace").drawer.selected_file_path()')
 endfunction

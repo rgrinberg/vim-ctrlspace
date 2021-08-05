@@ -27,7 +27,7 @@ function! ctrlspace#window#run(...) abort
     call mode.Enable()
 
     call s:modes.Search.SetData("Letters", split(options.input, '\zs'))
-    call ctrlspace#files#ClearAll()
+    call luaeval('require("ctrlspace").files.clear()')
 
     if options.insert
         call modes.Search.Enable()

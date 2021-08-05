@@ -120,7 +120,7 @@ function! ctrlspace#roots#ProjectRootFound() abort
     let projectRoot = ctrlspace#ui#GetInput("No project root found. Set the project root: ", fnamemodify(".", ":p:h"), "dir")
 
     if !empty(projectRoot) && isdirectory(projectRoot)
-        call ctrlspace#files#ClearAll() " clear current files - force reload
+        call luaeval('require("ctrlspace").files.clear()')
         call s:addProjectRoot(projectRoot)
         let s:currentProjectRoot = projectRoot
         return 1

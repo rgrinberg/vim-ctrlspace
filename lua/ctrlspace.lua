@@ -1002,7 +1002,7 @@ local function reset_window()
     call s:modes.Search.RemoveData("LastSearchedDirectory")
 
     if ctrlspace#roots#LastProjectRoot() != ctrlspace#roots#CurrentProjectRoot()
-        call ctrlspace#files#ClearAll()
+        call luaeval('require("ctrlspace").files.clear()')
         call ctrlspace#roots#SetLastProjectRoot(ctrlspace#roots#CurrentProjectRoot())
         call ctrlspace#workspaces#SetWorkspaceNames()
     endif

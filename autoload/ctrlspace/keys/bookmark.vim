@@ -13,7 +13,7 @@ function! ctrlspace#keys#bookmark#GoToBookmark(k) abort
     let curline = line(".")
     let nr = ctrlspace#window#SelectedIndex()
     call ctrlspace#bookmarks#GoToBookmark(nr)
-    call ctrlspace#files#ClearAll()
+    call luaeval('require("ctrlspace").files.clear()')
     call ctrlspace#window#refresh()
     call ctrlspace#window#MoveSelectionBar(curline)
     call ctrlspace#ui#DelayedMsg()
