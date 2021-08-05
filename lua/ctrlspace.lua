@@ -617,6 +617,54 @@ function buffers.load_keep(pre, post)
   drawer.restore()
   fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
+
+function drawer.go_to_buffer_or_file(direction)
+  local start = fn.tabpagenr()
+  local limit = fn.tabpagenr("$")
+
+  local target_tab, target_buffer
+
+  local modes = fn["ctrlspace#modes#Modes"]()
+  local found
+  if modes.File.Enabled == 1 then
+    local file = drawer.selected_file_path()
+    file = fn.fnamemodify(file, ":p")
+    found = function(bufnr)
+      return file == fn.fnamemodify(fn.bufname(bufnr), ":p")
+    end
+  elseif modes.Buffer.Enabled == 1 then
+    local nr = drawer.last_selected_index()
+    found = function(bufnr)
+      return bufnr == nr
+    end
+  end
+
+  for i=0, limit-1 do
+    local j = start + (i * direction)
+    if j > limit then
+      j = j - limit
+    end
+    if j <= 0 then
+      j = limit + j
+    end
+
+    for bufnr, _ in pairs(buffers_in_tab(j)) do
+      if found(bufnr) then
+        target_tab = j
+        target_buffer = bufnr
+        goto found
+      end
+    end
+  end
+
+  ::found::
+
+  if target_tab and target_buffer then
+    with_restore_drawer(function ()
+      exe({"normal! " .. target_tab .. "gt"})
+      -- TODO restore cursor to the selected buffer
+    end)
+  end
 end
 
 local function help_filler()

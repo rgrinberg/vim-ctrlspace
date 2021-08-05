@@ -28,73 +28,9 @@ function! ctrlspace#buffers#MoveBufferToTab(tab) abort
 endfunction
 
 function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
-    let nr      = ctrlspace#window#SelectedIndex()
-    let curTab  = tabpagenr()
-    let lastTab = tabpagenr("$")
-
-    let targetTab = 0
-    let targetBuf = 0
-
-    if lastTab == 1
-        let tabsToCheck = [1]
-    elseif curTab == 1
-        if a:direction == "next"
-            let tabsToCheck = range(2, lastTab) + [1]
-        else
-            let tabsToCheck = range(lastTab, curTab, -1)
-        endif
-    elseif curTab == lastTab
-        if a:direction == "next"
-            let tabsToCheck = range(1, lastTab)
-        else
-            let tabsToCheck = range(lastTab - 1, 1, -1) + [lastTab]
-        endif
-    else
-        if a:direction == "next"
-            let tabsToCheck = range(curTab + 1, lastTab) + range(1, curTab - 1) + [curTab]
-        else
-            let tabsToCheck = range(curTab - 1, 1, -1) + range(lastTab, curTab + 1, -1) + [curTab]
-        endif
-    endif
-
-    if s:modes.File.Enabled
-        let file = ctrlspace#files#SelectedFileName()
-        file = fnamemodify(file, ":p")
-    endif
-
-    for t in tabsToCheck
-        for [bufnr, name] in items(ctrlspace#api#Buffers(t))
-            if s:modes.File.Enabled
-                if fnamemodify(name, ":p") !=# file
-                    continue
-                endif
-            elseif str2nr(bufnr) != nr
-                continue
-            endif
-
-            let targetTab = t
-            let targetBuf = str2nr(bufnr)
-            break
-        endfor
-
-        if targetTab > 0
-            break
-        endif
-    endfor
-
-    if (targetTab > 0) && (targetBuf > 0)
-        call ctrlspace#window#Kill(1)
-        silent! exe "normal! " . targetTab . "gt"
-        call ctrlspace#window#Toggle(0)
-        for i in range(b:size)
-            if b:items[i].index == targetBuf
-                call ctrlspace#window#MoveSelectionBar(i + 1)
-                break
-            endif
-        endfor
-    else
-        call ctrlspace#ui#Msg("Cannot find a tab containing selected " . (s:modes.File.Enabled ? "file." : "buffer."))
-    endif
+    let direction = a:direction == "next" ? 1 : -1
+    let F = luaeval('require("ctrlspace").drawer.go_to_buffer_or_file')
+    call F(direction)
 endfunction
 
 function! ctrlspace#buffers#DeleteHiddenNonameBuffers(internal) abort
