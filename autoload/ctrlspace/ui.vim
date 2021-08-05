@@ -16,8 +16,20 @@ function! ctrlspace#ui#DelayedMsg(...) abort
 endfunction
 
 function! ctrlspace#ui#GetInput(msg, ...) abort
+    let a1 = v:null
+    let a2 = v:null
+
+    let len = length(a:100)
+
+    if len >= 1 then
+        a1 = a:1
+    end
+    if len >= 2 then
+        a2 = a:2
+    end
+
     let F = luaeval('require("ctrlspace").ui.input')
-    return F(a:msg, a:1, a:2)
+    return F(a:msg, a1, a2)
 endfunction
 
 function! ctrlspace#ui#Confirmed(msg) abort
