@@ -67,46 +67,9 @@ function! ctrlspace#window#GoToStartWindow() abort
 endfunction
 
 function! ctrlspace#window#Kill(final) abort
-    " added workaround for strange Vim behavior when, when kill starts with some delay
-    " (in a wrong buffer). This happens in some Nop modes (in a File List view).
-    if (exists("s:killingNow") && s:killingNow) || &ft != "ctrlspace"
-        return
-    endif
-
-    let s:killingNow = 1
-
-    if exists("b:updatetimeSave")
-        silent! exe "set updatetime=" . b:updatetimeSave
-    endif
-
-    if exists("b:timeoutlenSave")
-        silent! exe "set timeoutlen=" . b:timeoutlenSave
-    endif
-
-    if exists("b:mouseSave")
-        silent! exe "set mouse=" . b:mouseSave
-    endif
-
-    " shellslash support for win32
-    if exists("b:nosslSave") && b:nosslSave
-        set nossl
-    endif
-
-    bwipeout
-
-    if a:final
-        call ctrlspace#util#HandleVimSettings("stop")
-
-        if s:modes.Search.Data.Restored
-            call ctrlspace#search#AppendToSearchHistory()
-        endif
-
-        call ctrlspace#window#GoToStartWindow()
-
-        set guicursor-=n:block-CtrlSpaceSelected-blinkon0
-    endif
-
-    unlet s:killingNow
+  let arg = a:final ? v:true : v:false
+  let F = luaeval('require("ctrlspace").drawer.kill')
+  return F(arg)
 endfunction
 
 function! ctrlspace#window#QuitVim() abort
