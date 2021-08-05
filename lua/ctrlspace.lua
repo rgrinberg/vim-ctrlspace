@@ -33,6 +33,9 @@ local function ctrlspace_filter(candidates, query, max)
   return top
 end
 
+local fn = vim.fn
+local api = vim.api
+
 local M = {}
 
 local files = {}
@@ -67,7 +70,7 @@ function item.create(index, text, indicators)
 end
 
 local function buffer_name(bufnr)
-  local name = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":.")
+  local name = fn.fnamemodify(fn.bufname(bufnr), ":.")
   if name == "" then
     return "[" .. bufnr .. "*No Name]"
   else
@@ -84,11 +87,11 @@ function files.collect ()
   if files_cache then
     return files_cache
   end
-  local output = vim.fn["ctrlspace#util#system"](glob_cmd())
+  local output = fn["ctrlspace#util#system"](glob_cmd())
   local res = {}
   local i = 1
   for s in string.gmatch(output, "[^\r\n]+") do
-    local text = vim.fn.fnamemodify(s, ":.")
+    local text = fn.fnamemodify(s, ":.")
     local m = item.create(i, text, "")
     table.insert(res, m)
     i = i + 1
@@ -97,7 +100,7 @@ function files.collect ()
   return files_cache
 end
 
-local getbufvar = vim.fn.getbufvar
+local getbufvar = fn.getbufvar
 
 -- TODO use this helper consistently
 local function exe(cmds)
@@ -107,11 +110,11 @@ local function exe(cmds)
 end
 
 function ui.input(msg, compl, prompt)
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config = fn["ctrlspace#context#Configuration"]()
   msg = config.Symbols.CS .. "  " .. msg
-  vim.fn["inputsave"]()
-  local answer = vim.fn.input(msg, compl, prompt)
-  vim.fn["inputrestore"]()
+  fn["inputsave"]()
+  local answer = fn.input(msg, compl, prompt)
+  fn["inputrestore"]()
   exe({"redraw!"})
   return answer
 end
@@ -125,22 +128,22 @@ local function plugin_buffer(buf)
 end
 
 local function managed_buf(buf)
-  return vim.fn.buflisted(buf) and not plugin_buffer(buf)
+  return fn.buflisted(buf) and not plugin_buffer(buf)
 end
 
 function files.load_file_or_buffer(file)
-  local listed = vim.fn.buflisted(file) == 1
+  local listed = fn.buflisted(file) == 1
   if listed then
-    exe({"b " .. vim.fn.bufnr(file)})
+    exe({"b " .. fn.bufnr(file)})
   else
-    exe({"e " .. vim.fn.fnameescape(file)})
+    exe({"e " .. fn.fnameescape(file)})
   end
 end
 
 function files.load_file(commands)
   local file = drawer.selected_file_path()
-  file = vim.fn.fnamemodify(file, ":p")
-  vim.fn["ctrlspace#window#Kill"](1)
+  file = fn.fnamemodify(file, ":p")
+  fn["ctrlspace#window#Kill"](1)
   exe(commands)
   M.files.load_file_or_buffer(file)
 end
@@ -161,49 +164,49 @@ end
 
 function files.load_many_files(pre, post)
   assert_drawer_on()
-  local file = vim.fn.fnamemodify(drawer.selected_file_path(), ":p")
-  local curln = vim.fn.line(".")
-  vim.fn["ctrlspace#window#Kill"](0)
+  local file = fn.fnamemodify(drawer.selected_file_path(), ":p")
+  local curln = fn.line(".")
+  fn["ctrlspace#window#Kill"](0)
   drawer.go_start_window()
   exe(pre)
   M.files.load_file_or_buffer(file)
   exe({"normal! zb"})
   exe(post)
   drawer.restore()
-  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+  fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
 function files.edit()
   assert_drawer_on()
-  local path = vim.fn.fnamemodify(drawer.selected_file_path(), ":p:h")
-  local file = vim.fn["ctrlspace#ui#GetInput"]("Edit a new file: ", path .. '/', "file")
+  local path = fn.fnamemodify(drawer.selected_file_path(), ":p:h")
+  local file = fn["ctrlspace#ui#GetInput"]("Edit a new file: ", path .. '/', "file")
   if not file or string.len(file) == 0 then
     return
   end
 
-  file = vim.fn.expand(file)
-  file = vim.fn.fnamemodify(file, ":p")
+  file = fn.expand(file)
+  file = fn.fnamemodify(file, ":p")
 
-  vim.fn["ctrlspace#window#kill"]()
-  exe({"e " .. vim.fn.fnameescape(file)})
+  fn["ctrlspace#window#kill"]()
+  exe({"e " .. fn.fnameescape(file)})
 end
 
 function files.edit_dir()
   assert_drawer_on()
-  local path = vim.fn.fnamemodify(drawer.selected_file_path(), ":p:h")
+  local path = fn.fnamemodify(drawer.selected_file_path(), ":p:h")
 
-  vim.fn["ctrlspace#window#kill"]()
-  exe({"e " .. vim.fn.fnameescape(path)})
+  fn["ctrlspace#window#kill"]()
+  exe({"e " .. fn.fnameescape(path)})
 end
 
 function buffers.add_current()
-  local current = vim.fn.bufnr('%')
+  local current = fn.bufnr('%')
 
   if not managed_buf(current) then
     return
   end
 
-  vim.b.CtrlSpaceJumpCounter = vim.fn["ctrlspace#jumps#IncrementJumpCounter"]()
+  vim.b.CtrlSpaceJumpCounter = fn["ctrlspace#jumps#IncrementJumpCounter"]()
 
   if not vim.t.CtrlSpaceList then
     vim.t.CtrlSpaceList = {}
@@ -217,7 +220,7 @@ end
 -- TODO sort
 local function all_buffers()
   local res = {}
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+  for _, buf in pairs(api.nvim_list_bufs()) do
     if managed_buf(buf) then
       res[buf] = true
     end
@@ -240,7 +243,7 @@ function buffers.unsaved()
 end
 
 local function raw_buffers_in_tab(tabnr)
-  return vim.fn.gettabvar(tabnr, "CtrlSpaceList", {})
+  return fn.gettabvar(tabnr, "CtrlSpaceList", {})
 end
 
 local function buffers_in_tab(tabnr)
@@ -264,8 +267,8 @@ end
 
 -- local function find_buffer_visible_in_tabs(bufnr)
 --   local res = {}
---   for tabnr=1,vim.fn.tabpagenr("$") do
---     local tab_buffers = vim.fn.tabpagebuflist(tabnr)
+--   for tabnr=1,fn.tabpagenr("$") do
+--     local tab_buffers = fn.tabpagebuflist(tabnr)
 --     for _, b in ipairs(tab_buffers) do
 --       if b == bufnr then
 --         res[tabnr] = true
@@ -279,10 +282,10 @@ end
 -- table are a boolean that tells if the buffer is actualyl being displayed
 local function find_buffer_in_tabs(bufnr)
   local res = {}
-  for tabnr=1,vim.fn.tabpagenr("$") do
+  for tabnr=1,fn.tabpagenr("$") do
     local in_tab_list = buffers_in_tab(tabnr)[bufnr]
     if in_tab_list then
-      local visible_buffers = vim.fn.tabpagebuflist(tabnr)
+      local visible_buffers = fn.tabpagebuflist(tabnr)
       local visible = false
       for _, b in ipairs(visible_buffers) do
         if b == bufnr then
@@ -298,11 +301,11 @@ end
 -- you must restore the view after calling this function
 local function forget_buffer_in_tab(tabnr, bufnr)
   assert_drawer_off()
-  local curtab = vim.fn.tabpagenr()
+  local curtab = fn.tabpagenr()
   if curtab ~= tabnr then
     exe({"tabn " .. tabnr})
   end
-  local winnr = vim.fn.bufwinnr(bufnr)
+  local winnr = fn.bufwinnr(bufnr)
   local new_buf = nil
   while winnr ~= -1 do
     exe({winnr .. "wincmd w"})
@@ -314,33 +317,33 @@ local function forget_buffer_in_tab(tabnr, bufnr)
       exe({"b! " .. next_buf})
     else
       exe({"enew"})
-      new_buf = vim.fn.bufnr()
+      new_buf = fn.bufnr()
     end
-    winnr = vim.fn.bufwinnr(bufnr)
+    winnr = fn.bufwinnr(bufnr)
   end
   tabs.remove_buffers(tabnr, {bufnr})
 end
 
 local function with_restore_drawer(f)
   assert_drawer_on()
-  local curln = vim.fn.line(".")
-  vim.fn["ctrlspace#window#Kill"](0)
+  local curln = fn.line(".")
+  fn["ctrlspace#window#Kill"](0)
   f()
   assert_drawer_off()
   drawer.toggle(true)
-  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+  fn["ctrlspace#window#MoveSelectionBar"](curln)
 end
 
 local function delete_buffer(bufnr)
   local modified = buffer_modified(bufnr)
-  if modified and not vim.fn['ctrlspace#ui#Confirmed'](
+  if modified and not fn['ctrlspace#ui#Confirmed'](
     "The buffer contains unsaved changes. Proceed anyway?") then
     return
   end
 
   with_restore_drawer(function ()
     local in_tabs = find_buffer_in_tabs(bufnr)
-    local curtab = vim.fn.tabpagenr()
+    local curtab = fn.tabpagenr()
     for t, _ in pairs(in_tabs) do
       forget_buffer_in_tab(t, bufnr)
     end
@@ -360,13 +363,13 @@ end
 
 local function detach_buffer(bufnr)
   local modified = buffer_modified(bufnr)
-  if modified and not vim.fn['ctrlspace#ui#Confirmed'](
+  if modified and not fn['ctrlspace#ui#Confirmed'](
     "The buffer contains unsaved changes. Proceed anyway?") then
     return
   end
 
   with_restore_drawer(function ()
-    local curtab = vim.fn.tabpagenr()
+    local curtab = fn.tabpagenr()
     forget_buffer_in_tab(curtab, bufnr)
   end)
 end
@@ -396,7 +399,7 @@ end
 
 function buffers.in_all_tabs ()
   local res = {}
-  for tabnr=1,vim.fn.tabpagenr("$") do
+  for tabnr=1,fn.tabpagenr("$") do
     for _, b in ipairs(buffers.in_tab(tabnr)) do
       res[b] = true
     end
@@ -417,7 +420,7 @@ local function foreign_buffers()
   for _, i in ipairs(buffers.all()) do
     bufs[i] = true
   end
-  for tabnr=1,vim.fn.tabpagenr("$") do
+  for tabnr=1,fn.tabpagenr("$") do
     for _, b in ipairs(buffers.in_tab(tabnr)) do
       bufs[b] = nil
     end
@@ -443,8 +446,8 @@ end
 
 function buffers.visible ()
   local res = {}
-  for tabnr=1,vim.fn.tabpagenr("$") do
-    for _, b in ipairs(vim.fn.tabpagebuflist(tabnr)) do
+  for tabnr=1,fn.tabpagenr("$") do
+    for _, b in ipairs(fn.tabpagebuflist(tabnr)) do
       if managed_buf(b) then
         res[b] = true
       end
@@ -457,9 +460,9 @@ function buffers.unnamed ()
   local res = {}
   for _, b in ipairs(buffers.all()) do
     if managed_buf(b)
-      and vim.fn.bufexists(b)
+      and fn.bufexists(b)
       and (not getbufvar(b, "&buftype")
-      or vim.fn.filereadable(vim.fn.bufname(b))) then
+      or fn.filereadable(fn.bufname(b))) then
       res[b] = true
     end
   end
@@ -484,7 +487,7 @@ end
 tabs.buffer_present_count = function (buf)
   local res = 0
   local b = tostring(buf)
-  for tabnr=1,vim.fn.tabpagenr("$") do
+  for tabnr=1,fn.tabpagenr("$") do
     local btabs = raw_buffers_in_tab(tabnr)
     if btabs[b] then
       res = res + 1
@@ -528,7 +531,7 @@ function tabs.next_buf(tabnr, buf)
 end
 
 function tabs.buffers_number(tabnr)
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config = fn["ctrlspace#context#Configuration"]()
   local count = number_of_buffers_in_tab(tabnr)
   local superscripts = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"}
   if config.UseUnicode == 1 then
@@ -565,12 +568,12 @@ function tabs.remove_buffers(tabnr, bufs)
     end
   end
   if modified then
-    vim.fn.settabvar(tabnr, "CtrlSpaceList", bufs_in_tab)
+    fn.settabvar(tabnr, "CtrlSpaceList", bufs_in_tab)
   end
 end
 
 tabs.forget_buffers = function (bufs)
-  for tabnr=1,vim.fn.tabpagenr("$") do
+  for tabnr=1,fn.tabpagenr("$") do
     tabs.remove_buffers(tabnr, bufs)
   end
 end
@@ -582,11 +585,11 @@ tabs.add_buffer = function (tabnr, buf)
     return
   end
   btabs[key] = true
-  vim.fn.settabvar(tabnr, "CtrlSpaceList", btabs)
+  fn.settabvar(tabnr, "CtrlSpaceList", btabs)
 end
 
 function drawer.buffer()
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+  for _, buf in pairs(api.nvim_list_bufs()) do
     if plugin_buffer(buf) then
       return buf
     end
@@ -596,23 +599,24 @@ end
 
 function buffers.load(pre)
   local nr = drawer.last_selected_index()
-  vim.fn["ctrlspace#window#kill"]()
+  fn["ctrlspace#window#kill"]()
   exe(pre)
   exe({"b " .. nr})
 end
 
 function buffers.load_keep(pre, post)
   local nr = drawer.last_selected_index()
-  local curln = vim.fn.line(".")
+  local curln = fn.line(".")
 
-  vim.fn["ctrlspace#window#Kill"](0)
-  vim.fn["ctrlspace#window#GoToStartWindow"]()
+  fn["ctrlspace#window#Kill"](0)
+  fn["ctrlspace#window#GoToStartWindow"]()
   exe(pre)
   exe({"b " .. nr})
   vim.cmd("normal! zb")
   exe(post)
   drawer.restore()
-  vim.fn["ctrlspace#window#MoveSelectionBar"](curln)
+  fn["ctrlspace#window#MoveSelectionBar"](curln)
+end
 end
 
 local function help_filler()
@@ -620,10 +624,10 @@ local function help_filler()
 end
 
 local function bookmark_items()
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config = fn["ctrlspace#context#Configuration"]()
 
-  local bookmarks = vim.fn['ctrlspace#bookmarks#Bookmarks']()
-  local active = vim.fn['ctrlspace#bookmarks#FindActiveBookmark']()
+  local bookmarks = fn['ctrlspace#bookmarks#Bookmarks']()
+  local active = fn['ctrlspace#bookmarks#FindActiveBookmark']()
 
   local res = {}
   for i, bm in ipairs(bookmarks) do
@@ -637,9 +641,9 @@ local function bookmark_items()
 end
 
 local function workspace_items (clv)
-  local workspaces = vim.fn["ctrlspace#workspaces#Workspaces"]()
-  local active = vim.fn["ctrlspace#workspaces#ActiveWorkspace"]()
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local workspaces = fn["ctrlspace#workspaces#Workspaces"]()
+  local active = fn["ctrlspace#workspaces#ActiveWorkspace"]()
+  local config = fn["ctrlspace#context#Configuration"]()
 
   local res = {}
   for i, ws in ipairs(workspaces) do
@@ -657,17 +661,17 @@ local function workspace_items (clv)
 end
 
 local function tab_items()
-  local config = vim.fn["ctrlspace#context#Configuration"]()
-  local current_tab = vim.fn.tabpagenr()
+  local config = fn["ctrlspace#context#Configuration"]()
+  local current_tab = fn.tabpagenr()
 
   local res = {}
-  for tabnr=1,vim.fn.tabpagenr("$") do
+  for tabnr=1,fn.tabpagenr("$") do
     local indicators = ""
 
-    local tab_buffer_number = vim.fn["ctrlspace#api#TabBuffersNumber"](tabnr)
-    local title = vim.fn["ctrlspace#api#TabTitle"](tabnr)
+    local tab_buffer_number = fn["ctrlspace#api#TabBuffersNumber"](tabnr)
+    local title = fn["ctrlspace#api#TabTitle"](tabnr)
 
-    if vim.fn["ctrlspace#api#TabModified"](tabnr) ~= 1 then
+    if fn["ctrlspace#api#TabModified"](tabnr) ~= 1 then
       indicators = indicators .. config.Symbols.IM
     end
 
@@ -685,16 +689,16 @@ local function buffer_items(clv)
   local res = {}
   local bufs
   local submode = clv.Data.SubMode
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config = fn["ctrlspace#context#Configuration"]()
 
   if submode == "single" then
-    bufs = buffers_in_tab(vim.fn.tabpagenr())
+    bufs = buffers_in_tab(fn.tabpagenr())
   elseif submode == "all" then
     bufs = all_buffers()
   elseif submode == "visible" then
     bufs = {}
-    for buf, _ in raw_buffers_in_tab(vim.fn.tabeagenr()) do
-      if vim.fn.bufwinnr(buf) ~= -1 then
+    for buf, _ in raw_buffers_in_tab(fn.tabeagenr()) do
+      if fn.bufwinnr(buf) ~= -1 then
         bufs[buf] = true
       end
     end
@@ -705,7 +709,7 @@ local function buffer_items(clv)
   for bufnr, _ in pairs(bufs) do
     local name = buffer_name(bufnr)
     local modified = buffer_modified(bufnr)
-    local winnr = vim.fn.bufwinnr(bufnr)
+    local winnr = fn.bufwinnr(bufnr)
 
     local indicators = ""
     if modified then
@@ -725,7 +729,7 @@ local function buffer_items(clv)
 end
 
 local function content_source()
-  local clv = vim.fn["ctrlspace#modes#CurrentListView"]()
+  local clv = fn["ctrlspace#modes#CurrentListView"]()
 
   if clv.Name == "Buffer" then
     return buffer_items(clv)
@@ -745,9 +749,9 @@ local function content_source()
 end
 
 local function render_candidates(items)
-  local config = vim.fn["ctrlspace#context#Configuration"]()
-  local modes = vim.fn["ctrlspace#modes#Modes"]()
-  local sizes = vim.fn["ctrlspace#context#SymbolSizes"]()
+  local config = fn["ctrlspace#context#Configuration"]()
+  local modes = fn["ctrlspace#modes#Modes"]()
+  local sizes = fn["ctrlspace#context#SymbolSizes"]()
 
   local item_space
   if modes.File.Enabled == 1 then
@@ -783,7 +787,7 @@ end
 function drawer.content ()
   local absolute_max = 500
   local candidates = content_source()
-  local modes = vim.fn["ctrlspace#modes#Modes"]()
+  local modes = fn["ctrlspace#modes#Modes"]()
   local query = table.concat(modes.Search.Data.Letters, "")
   if query == "" then
     if #candidates > absolute_max then
@@ -803,9 +807,9 @@ function drawer.content ()
 end
 
 local function save_tab_config()
-  vim.t.CtrlSpaceStartWindow = vim.fn.winnr()
-  vim.t.CtrlSpaceWinrestcmd  = vim.fn.winrestcmd()
-  vim.t.CtrlSpaceActivebuf   = vim.fn.bufnr("")
+  vim.t.CtrlSpaceStartWindow = fn.winnr()
+  vim.t.CtrlSpaceWinrestcmd  = fn.winrestcmd()
+  vim.t.CtrlSpaceActivebuf   = fn.bufnr("")
 end
 
 function drawer.show()
@@ -822,17 +826,17 @@ local function drawer_display(items)
   if #items > 0 then
     local line = 0
     local text = render_candidates(items)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, true, text)
+    api.nvim_buf_set_lines(buf, 0, -1, true, text)
     for _, i in ipairs(items) do
       if i.positions then
         for _, hl in ipairs(i.positions) do
-          vim.api.nvim_buf_add_highlight(0, -1, "CtrlSpaceSearch", line, hl + 1, hl + 2)
+          api.nvim_buf_add_highlight(0, -1, "CtrlSpaceSearch", line, hl + 1, hl + 2)
         end
       end
       line = line + 1
     end
   else
-    vim.api.nvim_buf_set_lines(buf, 0, -1, true, {"  List empty"})
+    api.nvim_buf_set_lines(buf, 0, -1, true, {"  List empty"})
     vim.cmd("normal! GkJ")
     vim.cmd("normal! 0")
     vim.cmd([[
@@ -844,12 +848,12 @@ local function drawer_display(items)
 end
 
 drawer.insert_content = function ()
-  local config = vim.fn["ctrlspace#context#Configuration"]()
-  local modes = vim.fn["ctrlspace#modes#Modes"]()
+  local config = fn["ctrlspace#context#Configuration"]()
+  local modes = fn["ctrlspace#modes#Modes"]()
   exe({'resize ' .. config.Height})
   if modes.Help.Enabled == 1 then
-    vim.fn["ctrlspace#help#DisplayHelp"](help_filler())
-    vim.fn["ctrlspace#util#SetStatusline"]()
+    fn["ctrlspace#help#DisplayHelp"](help_filler())
+    fn["ctrlspace#util#SetStatusline"]()
     return
   end
 
@@ -871,15 +875,15 @@ drawer.insert_content = function ()
   end
 
   drawer_display(items)
-  vim.fn["ctrlspace#util#SetStatusline"]()
-  vim.fn["ctrlspace#window#setActiveLine"]()
+  fn["ctrlspace#util#SetStatusline"]()
+  fn["ctrlspace#window#setActiveLine"]()
   vim.cmd("normal! zb")
 end
 
 function drawer.refresh ()
-  local last_line = vim.fn.line("$")
+  local last_line = fn.line("$")
   vim.cmd('setlocal modifiable')
-  vim.api.nvim_buf_set_lines(0, 0, last_line, 0, {})
+  api.nvim_buf_set_lines(0, 0, last_line, 0, {})
   vim.cmd('setlocal nomodifiable')
   drawer.insert_content()
 end
@@ -912,10 +916,10 @@ function drawer.setup_buffer ()
         au BufLeave <buffer> call ctrlspace#window#Kill(1)
     augroup END
   ]])
-  local root = vim.fn["ctrlspace#roots#CurrentProjectRoot"]()
+  local root = fn["ctrlspace#roots#CurrentProjectRoot"]()
 
   if root then
-    exe({"lcd " .. vim.fn.fnameescape(root)})
+    exe({"lcd " .. fn.fnameescape(root)})
   end
 
   if vim.o.timeout then
@@ -923,12 +927,12 @@ function drawer.setup_buffer ()
     vim.o.timeoutlen = 10
   end
 
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config = fn["ctrlspace#context#Configuration"]()
 
   vim.b.updatetime_save = vim.o.updatetime
   vim.o.updatetime = config.SearchTiming
 
-  if not config.UseMouseAndArrowsInTerm and not vim.fn.has("gui_running") then
+  if not config.UseMouseAndArrowsInTerm and not fn.has("gui_running") then
     vim.cmd([[
         " Block unnecessary escape sequences!
         noremap <silent><buffer><esc>[ :call ctrlspace#keys#MarkKeyEscSequence()<CR>
@@ -937,7 +941,7 @@ function drawer.setup_buffer ()
     ]])
   end
 
-  for _, k in ipairs(vim.fn["ctrlspace#keys#KeyNames"]()) do
+  for _, k in ipairs(fn["ctrlspace#keys#KeyNames"]()) do
     local key = k
     if string.len(k) > 1 then
       key = "<" .. k .. ">"
@@ -953,7 +957,7 @@ function drawer.setup_buffer ()
 end
 
 function drawer.max_height()
-  local config = vim.fn["ctrlspace#context#Configuration"]()
+  local config = fn["ctrlspace#context#Configuration"]()
   local config_max = config.MaxHeight
   if config_max <= 0 then
     config_max = nil
@@ -963,12 +967,12 @@ end
 
 function drawer.go_to_window()
   local nr = drawer.last_selected_index()
-  local win = vim.fn.bufwinnr(nr)
+  local win = fn.bufwinnr(nr)
   if win == -1 then
     return false
   end
 
-  vim.fn["ctrlspace#window#kill"]()
+  fn["ctrlspace#window#kill"]()
   vim.cmd("silent! " .. win .. "wincmd w")
   return true
 end
@@ -1022,7 +1026,7 @@ function drawer.toggle(internal)
   
   local pbuf = drawer.buffer()
   if pbuf ~= -1 then
-    if vim.fn.winnr(pbuf) == -1 then
+    if fn.winnr(pbuf) == -1 then
       drawer.kill(false)
       if not internal then
         save_tab_config()
@@ -1044,33 +1048,33 @@ function drawer.last_selected_index()
     error("ctrlspace plugin buffer does not exist")
   end
 
-  local items = vim.api.nvim_buf_get_var(pbuf, "items")
+  local items = api.nvim_buf_get_var(pbuf, "items")
   if not items then
     error("no items loaded")
   end
   local idx
-  if vim.fn.bufnr() == pbuf then
-    idx = vim.fn.line(".")
+  if fn.bufnr() == pbuf then
+    idx = fn.line(".")
   else
-    idx = vim.fn.getbufinfo(pbuf)[0].lnum
+    idx = fn.getbufinfo(pbuf)[0].lnum
   end
   return items[idx].index
 end
 
 function drawer.go_start_window()
   exe({vim.t.CtrlSpaceStartWindow .. "wincmd w"})
-  if vim.fn.winrestcmd() == vim.t.CtrlSpaceWinrestcmd then
+  if fn.winrestcmd() == vim.t.CtrlSpaceWinrestcmd then
     return
   end
   exe({vim.t.CtrlSpaceWinrestcmd})
-  if vim.fn.winrestcmd() ~= vim.t.CtrlSpaceWinrestcmd then
+  if fn.winrestcmd() ~= vim.t.CtrlSpaceWinrestcmd then
     exe("wincmd =")
   end
 end
 
 function tabs.set_label(tabnr, label, auto)
-  vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceLabel", label)
-  vim.api.nvim_tabpage_set_var(tabnr, "CtrlSpaceAutotab", auto)
+  api.nvim_tabpage_set_var(tabnr, "CtrlSpaceLabel", label)
+  api.nvim_tabpage_set_var(tabnr, "CtrlSpaceAutotab", auto)
 end
 
 function tabs.remove_label(tabnr)
@@ -1079,11 +1083,11 @@ function tabs.remove_label(tabnr)
 end
 
 function tabs.new_label(tabnr)
-  local old_name = vim.fn.gettabvar(tabnr, "CtrlSpaceLabel", nil)
+  local old_name = fn.gettabvar(tabnr, "CtrlSpaceLabel", nil)
   if not old_name or old_name == vim.NIL then
     old_name = ""
   end
-  local new_label = vim.fn["ctrlspace#ui#GetInput"](
+  local new_label = fn["ctrlspace#ui#GetInput"](
     "Label for tab " .. tabnr .. ": " .. old_name)
 
   if not new_label or new_label == "" then
@@ -1096,7 +1100,7 @@ end
 
 function tabs.close()
   -- we don't close the last tab
-  if vim.fn.tabpagenr("$") == 1 then
+  if fn.tabpagenr("$") == 1 then
     vim.cmd('echoerr "unable to delete last buffer"')
     return
   end
@@ -1109,25 +1113,25 @@ function tabs.close()
 
   local label = vim.t.CtrlSpaceLabel
   if label and string.len(label) > 0 then
-    local bufs = buffers_in_tab(vim.fn.tabpagenr())
+    local bufs = buffers_in_tab(fn.tabpagenr())
     local count = 0
     for _, _ in pairs(bufs) do
       count = count + 1
     end
     local prompt =
       "Close tab named '" .. label .. "' with " .. count .. " buffers?"
-    if not vim.fn["ctrlspace#ui#Confirmed"](prompt) then
+    if not fn["ctrlspace#ui#Confirmed"](prompt) then
       return
     end
   end
 
-  vim.fn["ctrlspace#window#kill"]()
+  fn["ctrlspace#window#kill"]()
 
   vim.cmd("silent! tabclose")
 
-  vim.fn["ctrlspace#buffers#DeleteHiddenNonameBuffers"](1)
-  vim.fn["ctrlspace#buffers#DeleteForeignBuffers"](1)
-  vim.fn["ctrlspace#window#revive"]()
+  fn["ctrlspace#buffers#DeleteHiddenNonameBuffers"](1)
+  fn["ctrlspace#buffers#DeleteForeignBuffers"](1)
+  fn["ctrlspace#window#revive"]()
 end
 
 function tabs.collect_unsaved()
@@ -1139,7 +1143,7 @@ function tabs.collect_unsaved()
 
   drawer.toggle(0)
   vim.cmd('silent! tabnew')
-  local tab = vim.fn.tabpagenr()
+  local tab = fn.tabpagenr()
   tabs.set_label(tab, "Unsaved Buffers", 1)
   for _, b in ipairs(unsaved) do
     vim.cmd("silent! :b " .. b)
@@ -1155,23 +1159,26 @@ function tabs.collect_foreign()
 
   drawer.toggle(0)
   vim.cmd('silent! tabnew')
-  local tab = vim.fn.tabepagenr()
+  local tab = fn.tabepagenr()
   tabs.set_label(tab, "Foreign Buffers", 1)
 
+  exe(foreign)
+  -- TODO what attaches these buffers to the new tab? Is there a BufEnter
+  -- autocmd firing?
   for fb, _ in ipairs(foreign) do
-    vim.cmd("silent! :b " .. fb)
+    exe({":b " .. fb})
   end
   drawer.restore()
 end
 
 function drawer.selected_file_path()
-  local modes = vim.fn["ctrlspace#modes#Modes"]()
+  local modes = fn["ctrlspace#modes#Modes"]()
   if modes.File.Enabled == 1 then
     local idx = drawer.last_selected_index()
     return M.files.collect()[idx].text
   elseif modes.Buffer.Enabled == 1 then
     local idx = drawer.last_selected_index()
-    return vim.fn.resolve(vim.fn.bufname(idx))
+    return fn.resolve(fn.bufname(idx))
   else
     error("selected_file_path doesn't work in this mode")
   end
@@ -1190,16 +1197,16 @@ function drawer.kill(final)
     vim.o.mouse = vim.b.mouse_save
   end
 
-  vim.cmd("silent! bwipeout")
+  exe({"silent! bwipeout"})
 
   if final then
-    vim.fn["ctrlspace#util#HandleVimSettings"]("stop")
-    local modes = vim.fn["ctrlspace#modes#Modes"]()
+    fn["ctrlspace#util#HandleVimSettings"]("stop")
+    local modes = fn["ctrlspace#modes#Modes"]()
     if modes.Search.Data.Restored == 1 then
-      vim.fn["ctrlspace#search#AppendToSearchHistory"]()
+      fn["ctrlspace#search#AppendToSearchHistory"]()
     end
     drawer.go_start_window()
-    vim.cmd("set guicursor-=n:block-CtrlSpaceSelected-blinkon0")
+    exe({"set guicursor-=n:block-CtrlSpaceSelected-blinkon0"})
   end
 end
 
