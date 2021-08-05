@@ -109,11 +109,18 @@ local function exe(cmds)
   end
 end
 
-function ui.input(msg, compl, prompt)
+function ui.input(prompt, default, compl)
   local config = fn["ctrlspace#context#Configuration"]()
-  msg = config.Symbols.CS .. "  " .. msg
+  prompt = config.Symbols.CS .. "  " .. prompt
   fn["inputsave"]()
-  local answer = fn.input(msg, compl, prompt)
+  local answer
+  if compl then
+    answer = fn.input(prompt, default, compl)
+  elseif default then
+    answer = fn.input(prompt, default)
+  else
+    answer = fn.input(prompt)
+  end
   fn["inputrestore"]()
   exe({"redraw!"})
   return answer
