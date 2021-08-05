@@ -39,11 +39,13 @@ local files = {}
 local buffers = { api = {} }
 local tabs = {}
 local drawer = {}
+local ui = {}
 
 M.files = files
 M.buffers = buffers
 M.tabs = tabs
 M.drawer = drawer
+M.ui = ui
 
 local files_cache = nil
 
