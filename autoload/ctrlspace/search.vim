@@ -162,9 +162,9 @@ endfunction
 
 function! s:getSelectedDirectory() abort
     if s:modes.File.Enabled
-        let name = ctrlspace#files#SelectedFileName()
+        let name = luaeval('require("ctrlspace").drawer.selected_file_path()')
     elseif s:modes.Buffer.Enabled
-        let name = ctrlspace#buffers#SelectedBufferName()
+        let name = s:modes.Buffer.Enabled ? bufname(ctrlspace#window#SelectedIndex()) : ""
     else
         return ""
     endif

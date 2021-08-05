@@ -1,9 +1,5 @@
 let s:modes      = ctrlspace#modes#Modes()
 
-function! ctrlspace#buffers#SelectedBufferName() abort
-    return s:modes.Buffer.Enabled ? bufname(ctrlspace#window#SelectedIndex()) : ""
-endfunction
-
 function! ctrlspace#buffers#Init() abort
 endfunction
 
@@ -62,7 +58,8 @@ function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
     endif
 
     if s:modes.File.Enabled
-        let file = fnamemodify(ctrlspace#files#SelectedFileName(), ":p")
+        let file = ctrlspace#files#SelectedFileName()
+        file = fnamemodify(file, ":p")
     endif
 
     for t in tabsToCheck

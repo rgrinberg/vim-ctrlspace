@@ -1,9 +1,5 @@
 let s:modes  = ctrlspace#modes#Modes()
 
-function! ctrlspace#files#SelectedFileName() abort
-    return luaeval('require("ctrlspace").drawer.selected_file_path()')
-endfunction
-
 function! ctrlspace#files#LoadFile(commands) abort
     let F = luaeval('require("ctrlspace").files.load_file')
     call F(a:commands)
