@@ -7,10 +7,6 @@ endfunction
 function! ctrlspace#buffers#Init() abort
 endfunction
 
-function! ctrlspace#buffers#AddBuffer() abort
-    call luaeval('require("ctrlspace").buffers.add_current()')
-endfunction
-
 function! ctrlspace#buffers#Buffers() abort
     return luaeval('require("ctrlspace").buffers.all()')
 endfunction

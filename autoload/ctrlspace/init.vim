@@ -82,7 +82,7 @@ function! ctrlspace#init#Init() abort
         let curaltBuff=bufnr('#')
         let currBuff=bufnr('%')
 
-        silent argdo call ctrlspace#buffers#AddBuffer()
+        silent argdo call luaeval('require("ctrlspace").buffers.add_current()')
         
         if curaltBuff >= 0 
             execute 'buffer ' . curaltBuff
@@ -90,7 +90,7 @@ function! ctrlspace#init#Init() abort
         execute 'buffer ' . currBuff
     endif
 
-    autocmd CtrlSpaceInit BufEnter * call ctrlspace#buffers#AddBuffer()
+    autocmd CtrlSpaceInit BufEnter * call luaeval('require("ctrlspace").buffers.add_current()')
     autocmd CtrlSpaceInit VimEnter * call ctrlspace#buffers#Init()
     autocmd CtrlSpaceInit TabEnter * let t:CtrlSpaceTabJumpCounter = ctrlspace#jumps#IncrementJumpCounter()
 
