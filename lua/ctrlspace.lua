@@ -104,6 +104,20 @@ local function exe(cmds)
   end
 end
 
+function ui.input(msg, compl, prompt)
+  local config = vim.fn["ctrlspace#context#Configuration"]()
+  msg = config.Symbols.CS .. "  " .. msg
+  vim.fn["inputsave"]()
+  local answer = vim.fn.input(msg, compl, prompt)
+  vim.fn["inputrestore"]()
+  exe({"redraw!"})
+  return answer
+end
+
+function ui.confirmed(msg)
+  return ui.input(msg .. " (yN): ") == "y"
+end
+
 local function plugin_buffer(buf)
   return getbufvar(buf, "&ft") == "ctrlspace"
 end
@@ -1184,6 +1198,15 @@ function drawer.kill(final)
     end
     drawer.go_start_window()
     vim.cmd("set guicursor-=n:block-CtrlSpaceSelected-blinkon0")
+  end
+end
+
+function ui.confirm_if_modified()
+  local unsaved = #buffers.unsaved()
+  if #unsaved == 0 then
+    return true
+  else
+    return ui.confirmed(#unsaved .. " buffers are unsaved. Proceed anyway?")
   end
 end
 

@@ -16,34 +16,15 @@ function! ctrlspace#ui#DelayedMsg(...) abort
 endfunction
 
 function! ctrlspace#ui#GetInput(msg, ...) abort
-    let msg = s:config.Symbols.CS . "  " . a:msg
-
-    call inputsave()
-
-    if a:0 >= 2
-        let answer = input(msg, a:1, a:2)
-    elseif a:0 == 1
-        let answer = input(msg, a:1)
-    else
-        let answer = input(msg)
-    endif
-
-    call inputrestore()
-    redraw!
-
-    return answer
+    let F = luaeval('require("ctrlspace").ui.input')
+    return F(a:msg, a:1, a:2)
 endfunction
 
 function! ctrlspace#ui#Confirmed(msg) abort
-    return ctrlspace#ui#GetInput(a:msg . " (yN): ") =~? "y"
+    let F = luaeval('require("ctrlspace").ui.confirmed')
+    return F(a:msg)
 endfunction
 
 function! ctrlspace#ui#ProceedIfModified() abort
-    for i in range(1, bufnr("$"))
-        if getbufvar(i, "&modified")
-            return ctrlspace#ui#Confirmed("Some buffers not saved. Proceed anyway?")
-        endif
-    endfor
-
-    return 1
+    return luaeval('require("ctrlspace").ui.confirm_if_modified()')
 endfunction
