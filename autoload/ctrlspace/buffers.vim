@@ -90,10 +90,3 @@ function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
         endif
     endfor
 endfunction
-
-function! s:loadBufferIntoWindow(winnr) abort
-    let old = t:CtrlSpaceStartWindow
-    let t:CtrlSpaceStartWindow = a:winnr
-    call ctrlspace#buffers#LoadBuffer([])
-    let t:CtrlSpaceStartWindow = old
-endfunction
