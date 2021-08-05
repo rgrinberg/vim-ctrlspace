@@ -57,7 +57,7 @@ function! ctrlspace#keys#tab#CopyTab(k) abort
 
     let t:CtrlSpaceList = sourceList
 
-    call ctrlspace#buffers#CloseBuffer()
+    call luaeval('require("ctrlspace").tabs.close_buffer()')
     call ctrlspace#jumps#Jump("previous")
     call ctrlspace#buffers#LoadBuffer([])
     call ctrlspace#window#Kill(0)

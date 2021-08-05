@@ -31,12 +31,6 @@ function! ctrlspace#buffers#MoveBufferToTab(tab) abort
     return s:copyOrMoveSelectedBufferIntoTab(a:tab, 1)
 endfunction
 
-" Detach a buffer if it belongs to other tabs or delete it otherwise.
-" It means, this function doesn't leave buffers without tabs.
-function! ctrlspace#buffers#CloseBuffer() abort
-  call luaeval('require("ctrlspace").tabs.close_buffer()')
-endfunction
-
 function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
     let nr      = ctrlspace#window#SelectedIndex()
     let curTab  = tabpagenr()

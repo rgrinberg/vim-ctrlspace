@@ -198,7 +198,7 @@ function! ctrlspace#keys#buffer#DeleteForeignBuffers(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#CloseBuffer(k) abort
-    call ctrlspace#buffers#CloseBuffer()
+    call luaeval('require("ctrlspace").tabs.close_buffer()')
 endfunction
 
 function! ctrlspace#keys#buffer#CloseTab(k) abort
