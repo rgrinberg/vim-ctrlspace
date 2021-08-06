@@ -83,14 +83,7 @@ function! ctrlspace#keys#tab#NewTabLabel(k) abort
 endfunction
 
 function! ctrlspace#keys#tab#RemoveTabLabel(k) abort
-    let l = line(".")
-
-    if ctrlspace#tabs#RemoveTabLabel(ctrlspace#window#SelectedIndex())
-        call ctrlspace#window#refresh()
-        redraw!
-
-        call ctrlspace#window#MoveSelectionBar(l)
-    endif
+    call luaeval('require("ctrlspace").remove_label_selected()')
 endfunction
 
 " this function is also used to move tabs in Buffer mode

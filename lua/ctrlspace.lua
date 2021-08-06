@@ -1153,6 +1153,15 @@ function tabs.new_label(tabnr)
   return true
 end
 
+function tabs.remove_label_selected()
+  assert_drawer_on()
+  local l = fn.line(".")
+  local tabnr = drawer.last_selected_index()
+  tabs.remove_label(tabnr)
+  drawer.refresh()
+  drawer.move_selection_and_remember(l)
+end
+
 function tabs.close()
   -- we don't close the last tab
   if fn.tabpagenr("$") == 1 then
