@@ -1137,7 +1137,8 @@ function tabs.remove_label(tabnr)
   return true
 end
 
-function tabs.new_label(tabnr)
+function tabs.rename(tabnr)
+  assert_drawer_on()
   local old_name = fn.gettabvar(tabnr, "CtrlSpaceLabel", nil)
   if not old_name or old_name == vim.NIL then
     old_name = ""
