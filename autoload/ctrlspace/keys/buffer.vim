@@ -104,7 +104,7 @@ function! ctrlspace#keys#buffer#CloseWindow(k) abort
     let curln = line(".")
     if (winnr("$") > 2) && ctrlspace#window#GoToWindow()
         silent! exe "wincmd c"
-        call ctrlspace#window#Toggle(0)
+        call ctrlspace#window#restore()
         call ctrlspace#window#MoveSelectionBar(curln)
     endif
 endfunction
@@ -113,7 +113,7 @@ function! ctrlspace#keys#buffer#CloseManyWindows(k) abort
     let curln = line(".")
     if (winnr("$") > 2) && ctrlspace#window#GoToWindow()
         only
-        call ctrlspace#window#Toggle(0)
+        call ctrlspace#window#restore()
         call ctrlspace#window#MoveSelectionBar(curln)
     endif
 endfunction

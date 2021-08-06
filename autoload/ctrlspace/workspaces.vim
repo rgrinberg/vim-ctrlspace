@@ -108,8 +108,7 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     endif
 
     call ctrlspace#workspaces#SetWorkspaceNames()
-    call ctrlspace#window#Kill(0)
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#refresh()
 
     call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been renamed to '" . newName . "'.")
 endfunction

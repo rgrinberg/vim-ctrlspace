@@ -26,7 +26,7 @@ function! ctrlspace#keys#workspace#Load(k) abort
     endif
 
     call s:modes.Workspace.Enable()
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#restore()
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
@@ -36,7 +36,7 @@ function! ctrlspace#keys#workspace#Save(k) abort
     endif
 
     call s:modes.Workspace.Enable()
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#restore()
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
