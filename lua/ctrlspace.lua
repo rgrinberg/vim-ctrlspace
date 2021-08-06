@@ -1409,4 +1409,37 @@ function tabs.copy_or_move_selected_buffer(tabnr, copy_or_move)
   end
 end
 
+function bookmarks.add_new(dir)
+  dir = ui.input("Add directroy to bookmarks: ", dir, "dir")
+  if not dir or string.len(dir) == 0 then
+    return
+  end
+
+  dir = fn["ctrlspace#util#NormalizeDirectory"](dir)
+
+  if fn.isdirectory(dir) == 0 then
+    print(string.format("Directory '%s' is invalid", dir))
+    return
+  end
+
+  local bms = fn['ctrlspace#bookmarks#Bookmarks']()
+  for _, bm in ipairs(bms) do
+    if bm.Directory == dir then
+      print(string.format(
+        "Directory '%s' is already bookmarked under the name '%s'", dir, bm.Name))
+      return
+    end
+  end
+
+  local name = ui.input("New bookmark name: ", fn.fnamemodify(dir, ":t"))
+
+  if not name or string.len(name) == 0 then
+    return
+  end
+
+  fn['ctrlspace#bookmarks#AddToBookmarks'](dir, name)
+  print(string.format("Directory '%s' has been bookmarked under the name '%s'", dir, name))
+  drawer.refresh()
+end
+
 return M

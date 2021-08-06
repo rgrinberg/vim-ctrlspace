@@ -80,35 +80,8 @@ function! ctrlspace#bookmarks#AddNewBookmark(...) abort
         let current = empty(root) ? fnamemodify(".", ":p:h") : root
     endif
 
-    let directory = ctrlspace#ui#GetInput("Add directory to bookmarks: ", current, "dir")
-
-    if empty(directory)
-        return 0
-    endif
-
-    let directory = ctrlspace#util#NormalizeDirectory(directory)
-
-    if !isdirectory(directory)
-        call ctrlspace#ui#Msg("Directory '" . directory . "' is invalid.")
-        return 0
-    endif
-
-    for bm in bookmarks
-        if bm.Directory == directory
-            call ctrlspace#ui#Msg("This directory has been already bookmarked under name '" . bm.Name . "'.")
-            return 0
-        endif
-    endfor
-
-    let name = ctrlspace#ui#GetInput("New bookmark name: ", fnamemodify(directory, ":t"))
-
-    if empty(name)
-        return 0
-    endif
-
-    call ctrlspace#bookmarks#AddToBookmarks(directory, name)
-    call ctrlspace#ui#DelayedMsg("Directory '" . directory . "' has been bookmarked under name '" . name . "'.")
-    return 1
+    let F = luaeval('require("ctrlspace").bookmarks.add_new')
+    call F(current)
 endfunction
 
 function! ctrlspace#bookmarks#AddToBookmarks(directory, name) abort
