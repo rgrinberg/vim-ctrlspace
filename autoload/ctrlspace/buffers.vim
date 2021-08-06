@@ -56,33 +56,3 @@ function! ctrlspace#buffers#DeleteForeignBuffers(internal) abort
         call ctrlspace#ui#DelayedMsg("Foreign buffers removed.")
     endif
 endfunction
-
-function! s:copyOrMoveSelectedBufferIntoTab(tab, move) abort
-    let nr = ctrlspace#window#SelectedIndex()
-    let bname = bufname(nr)
-
-    if !getbufvar(nr, "&buflisted") || empty(bname)
-        return
-    endif
-
-    if a:move
-        call luaeval('require("ctrlspace").buffers.detach()')
-    endif
-
-    let AddBuffer = luaeval('require("ctrlspace").tabs.add_buffer')
-    call AddBuffer(a:tab, nr)
-
-    call ctrlspace#window#kill()
-
-    silent! exe "normal! " . a:tab . "gt"
-
-    call ctrlspace#window#restore()
-
-    for i in range(b:size)
-        if bufname(b:items[i].index) ==# bname
-            call ctrlspace#window#MoveSelectionBar(i + 1)
-            call ctrlspace#buffers#LoadManyBuffers()
-            break
-        endif
-    endfor
-endfunction
