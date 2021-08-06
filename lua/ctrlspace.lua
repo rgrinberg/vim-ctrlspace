@@ -1409,6 +1409,25 @@ function tabs.copy_or_move_selected_buffer(tabnr, copy_or_move)
   end
 end
 
+function util.chdir(dir)
+  dir = fn.fnameescape(dir)
+  local tab = fn.tabpagenr()
+  local win = fn.winnr()
+
+  exe({"cd " .. dir})
+  for tabnr=1, fn.tabpagenr("$") do
+    exe({"noautocmd tabnext " .. tabnr})
+    if fn.haslocaldir() then
+      exe({"lcd " .. dir})
+    end
+  end
+
+  exe({
+    "noautocmd tabnext " .. tab,
+    "noautocmd " .. win .. "wincmd w"
+  })
+end
+
 function util.normalize_dir(dir)
   dir = fn.resolve(fn.expand(dir))
   local is_slash = function (d)

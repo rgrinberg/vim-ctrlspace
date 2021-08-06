@@ -61,26 +61,8 @@ function! s:handleAutochdir(switch) abort
 endfunction
 
 function! ctrlspace#util#ChDir(dir) abort
-    let dir    = fnameescape(a:dir)
-    let curtab = tabpagenr()
-    let curwin = winnr()
-
-    silent! exe "cd " . dir
-
-    for t in range(1, tabpagenr("$"))
-        silent! exe "noautocmd tabnext " . t
-
-        for w in range(1, winnr("$"))
-            silent! exe "noautocmd " . w . "wincmd w"
-
-            if haslocaldir()
-                silent! exe "lcd " . dir
-            endif
-        endfor
-    endfor
-
-    silent! exe "noautocmd tabnext " . curtab
-    silent! exe "noautocmd " . curwin . "wincmd w"
+    let F = luaeval('require("ctrlspace").util.chdir')
+    call F(a:dir)
 endfunction
 
 function ctrlspace#util#projectLocalFile(name) abort
