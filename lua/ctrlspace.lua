@@ -1153,6 +1153,17 @@ function tabs.new_label(tabnr)
   return true
 end
 
+function tabs.ask_rename_selected()
+  assert_drawer_on()
+  local l = fn.line(".")
+  local tabnr = drawer.last_selected_index()
+  if not tabs.rename(tabnr) then
+    return
+  end
+  drawer.refresh()
+  drawer.move_selection_and_remember(l)
+end
+
 function tabs.remove_label_selected()
   assert_drawer_on()
   local l = fn.line(".")

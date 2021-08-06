@@ -72,14 +72,7 @@ function! ctrlspace#keys#tab#SwitchTab(k) abort
 endfunction
 
 function! ctrlspace#keys#tab#NewTabLabel(k) abort
-    let l = line(".")
-
-    if ctrlspace#tabs#NewTabLabel(ctrlspace#window#SelectedIndex())
-        " why are we killing?
-        call ctrlspace#window#Kill(0)
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#window#MoveSelectionBar(l)
-    endif
+    call luaeval('require("ctrlspace").tabs.ask_rename_selected()')
 endfunction
 
 function! ctrlspace#keys#tab#RemoveTabLabel(k) abort
