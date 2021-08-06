@@ -1380,4 +1380,27 @@ function ui.confirm_if_modified()
   end
 end
 
+function tabs.copy_or_move_selected_buffer(tabnr, copy_or_move)
+  local bufnr = drawer.last_selected_index()
+  if copy_or_move == "move" then
+    detach_buffer(bufnr)
+  end
+
+  tabs.add_buffer(tabnr, bufnr)
+  drawer.kill(false)
+  exe({"normal! " .. tabnr .. "gt"})
+  drawer.restore()
+
+  local bname = fn.bufname(bufnr)
+  for i in ipairs(vim.b.items) do
+    if fn.bufname(i.index) == bname then
+      -- TODO this is all suspicious and wrong. We just need to move the cursor to where
+      -- the buffer we inserted exists
+      -- drawer.move_selection_and_remember(i + 1)
+      exe({"b " .. i.index})
+      break
+    end
+  end
+end
+
 return M

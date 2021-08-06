@@ -20,11 +20,13 @@ function! ctrlspace#buffers#LoadManyBuffers(pre, post) abort
 endfunction
 
 function! ctrlspace#buffers#CopyBufferToTab(tab) abort
-    return s:copyOrMoveSelectedBufferIntoTab(a:tab, 0)
+    let F = luaeval('require("ctrlspace").copy_or_move_selected_buffer')
+    call F(tab, "copy")
 endfunction
 
 function! ctrlspace#buffers#MoveBufferToTab(tab) abort
-    return s:copyOrMoveSelectedBufferIntoTab(a:tab, 1)
+    let F = luaeval('require("ctrlspace").copy_or_move_selected_buffer')
+    call F(tab, "move")
 endfunction
 
 function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
