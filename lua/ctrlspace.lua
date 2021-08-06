@@ -1025,13 +1025,13 @@ function drawer.go_to_window()
     return false
   end
 
-  vim.cmd("silent! " .. win .. "wincmd w")
+  exe({win .. "wincmd w"})
   drawer.kill(true)
   return true
 end
 
 function drawer.restore()
-  vim.cmd("silent! pclose")
+  exe({"pclose"})
   assert_drawer_off()
   drawer.show()
   drawer.setup_buffer()
@@ -1221,7 +1221,7 @@ function tabs.close()
 
   drawer.kill(true)
 
-  vim.cmd("silent! tabclose")
+  exe({"tabclose"})
 
   fn["ctrlspace#buffers#DeleteHiddenNonameBuffers"](1)
   fn["ctrlspace#buffers#DeleteForeignBuffers"](1)
@@ -1236,7 +1236,7 @@ function tabs.collect_unsaved()
   end
 
   drawer.toggle(0)
-  vim.cmd('silent! tabnew')
+  exe({'tabnew'})
   local tab = fn.tabpagenr()
   tabs.set_label(tab, "Unsaved Buffers", 1)
   for _, b in ipairs(unsaved) do
@@ -1252,7 +1252,7 @@ function tabs.collect_foreign()
   end
 
   drawer.toggle(0)
-  vim.cmd('silent! tabnew')
+  exe({'tabnew'})
   local tab = fn.tabepagenr()
   tabs.set_label(tab, "Foreign Buffers", 1)
 
@@ -1303,7 +1303,7 @@ function drawer.kill(final)
     vim.o.mouse = vim.b.mouse_save
   end
 
-  exe({"silent! bwipeout"})
+  exe({"bwipeout"})
 
   if final then
     fn["ctrlspace#util#HandleVimSettings"]("stop")
