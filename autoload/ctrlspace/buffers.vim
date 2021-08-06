@@ -29,12 +29,6 @@ function! ctrlspace#buffers#MoveBufferToTab(tab) abort
     call F(tab, "move")
 endfunction
 
-function! ctrlspace#buffers#GoToBufferOrFile(direction) abort
-    let direction = a:direction == "next" ? 1 : -1
-    let F = luaeval('require("ctrlspace").drawer.go_to_buffer_or_file')
-    call F(direction)
-endfunction
-
 function! ctrlspace#buffers#DeleteHiddenNonameBuffers(internal) abort
     if !a:internal
         call ctrlspace#window#Kill(0)

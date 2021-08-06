@@ -220,7 +220,9 @@ function! ctrlspace#keys#buffer#ToggleAllModeAndSearch(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#GoToBufferOrFile(k) abort
-    call ctrlspace#buffers#GoToBufferOrFile(a:k ==# "g" ? "next" : "previous")
+    let direction = a:k ==# "next" ? 1 : -1
+    let F = luaeval('require("ctrlspace").drawer.go_to_buffer_or_file')
+    call F(direction)
 endfunction
 
 function! ctrlspace#keys#buffer#NewWorkspace(k) abort
