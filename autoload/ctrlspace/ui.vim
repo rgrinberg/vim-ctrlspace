@@ -1,5 +1,4 @@
 let s:config = ctrlspace#context#Configuration()
-let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#ui#Msg(message) abort
     echo s:config.Symbols.CS . "  " . a:message
