@@ -1403,4 +1403,23 @@ function tabs.copy_or_move_selected_buffer(tabnr, copy_or_move)
   end
 end
 
+function drawer.quit_vim()
+  local config = fn["ctrlspace#context#Configuration"]()
+
+  if not (config.SaveWorkspaceOnExit == 1) then
+    local aw = fn['ctrlspace#workspaces#ActiveWorkspace']()
+
+    if aw.Status == 2 and not ui.confirmed("Current workspace ('" .. aw.Name .. "') not saved. Proceed anyway?") then
+      return
+    end
+  end
+
+  if not ui.confirm_if_modified() then
+    return
+  end
+
+  drawer.kill(true)
+  exe({"qa!"})
+end
+
 return M
