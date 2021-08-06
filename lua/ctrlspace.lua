@@ -150,7 +150,7 @@ end
 function files.load_file(commands)
   local file = drawer.selected_file_path()
   file = fn.fnamemodify(file, ":p")
-  fn["ctrlspace#window#Kill"](1)
+  drawer.kill(true)
   exe(commands)
   M.files.load_file_or_buffer(file)
 end
@@ -172,14 +172,14 @@ function files.load_many_files(pre, post)
   assert_drawer_on()
   local file = fn.fnamemodify(drawer.selected_file_path(), ":p")
   local curln = fn.line(".")
-  fn["ctrlspace#window#Kill"](0)
+  drawer.kill(false)
   drawer.go_start_window()
   exe(pre)
   M.files.load_file_or_buffer(file)
   exe({"normal! zb"})
   exe(post)
   drawer.restore()
-  fn["ctrlspace#window#MoveSelectionBar"](curln)
+  drawer.move_selection_and_remember(curln)
 end
 
 function files.edit()
@@ -193,7 +193,7 @@ function files.edit()
   file = fn.expand(file)
   file = fn.fnamemodify(file, ":p")
 
-  fn["ctrlspace#window#kill"]()
+  drawer.kill(true)
   exe({"e " .. fn.fnameescape(file)})
 end
 
@@ -201,7 +201,7 @@ function files.edit_dir()
   assert_drawer_on()
   local path = fn.fnamemodify(drawer.selected_file_path(), ":p:h")
 
-  fn["ctrlspace#window#kill"]()
+  drawer.kill(true)
   exe({"e " .. fn.fnameescape(path)})
 end
 
@@ -333,16 +333,16 @@ end
 local function with_restore_drawer(f)
   assert_drawer_on()
   local curln = fn.line(".")
-  fn["ctrlspace#window#Kill"](0)
+  drawer.kill(false)
   f()
   assert_drawer_off()
   drawer.toggle(true)
-  fn["ctrlspace#window#MoveSelectionBar"](curln)
+  drawer.move_selection_and_remember(curln)
 end
 
 local function delete_buffer(bufnr)
   local modified = buffer_modified(bufnr)
-  if modified and not fn['ctrlspace#ui#Confirmed'](
+  if modified and not ui.confirmed(
     "The buffer contains unsaved changes. Proceed anyway?") then
     return
   end
@@ -369,7 +369,7 @@ end
 
 local function detach_buffer(bufnr)
   local modified = buffer_modified(bufnr)
-  if modified and not fn['ctrlspace#ui#Confirmed'](
+  if modified and not ui.confirmed(
     "The buffer contains unsaved changes. Proceed anyway?") then
     return
   end
@@ -605,7 +605,7 @@ end
 
 function buffers.load(pre)
   local nr = drawer.last_selected_index()
-  fn["ctrlspace#window#kill"]()
+  drawer.kill(true)
   exe(pre)
   exe({"b " .. nr})
 end
@@ -613,15 +613,14 @@ end
 function buffers.load_keep(pre, post)
   local nr = drawer.last_selected_index()
   local curln = fn.line(".")
-
-  fn["ctrlspace#window#Kill"](0)
+  drawer.kill(false)
   fn["ctrlspace#window#GoToStartWindow"]()
   exe(pre)
   exe({"b " .. nr})
   vim.cmd("normal! zb")
   exe(post)
   drawer.restore()
-  fn["ctrlspace#window#MoveSelectionBar"](curln)
+  drawer.move_selection_and_remember(curln)
 end
 
 function drawer.go_to_buffer_or_file(direction)
@@ -1026,8 +1025,8 @@ function drawer.go_to_window()
     return false
   end
 
-  fn["ctrlspace#window#kill"]()
   vim.cmd("silent! " .. win .. "wincmd w")
+  drawer.kill(true)
   return true
 end
 
@@ -1215,18 +1214,18 @@ function tabs.close()
     end
     local prompt =
       "Close tab named '" .. label .. "' with " .. count .. " buffers?"
-    if not fn["ctrlspace#ui#Confirmed"](prompt) then
+    if not ui.confirmed(prompt) then
       return
     end
   end
 
-  fn["ctrlspace#window#kill"]()
+  drawer.kill(true)
 
   vim.cmd("silent! tabclose")
 
   fn["ctrlspace#buffers#DeleteHiddenNonameBuffers"](1)
   fn["ctrlspace#buffers#DeleteForeignBuffers"](1)
-  fn["ctrlspace#window#revive"]()
+  drawer.restore()
 end
 
 function tabs.collect_unsaved()
