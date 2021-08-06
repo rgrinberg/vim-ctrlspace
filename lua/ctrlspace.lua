@@ -1143,7 +1143,7 @@ function tabs.new_label(tabnr)
     old_name = ""
   end
 
-  local new_label = ui.input("Label for tab " .. tabnr .. ": " .. old_name, nil, nil)
+  local new_label = ui.input("Label for tab " .. tabnr .. ": ", old_name, nil)
 
   if not new_label or new_label == "" then
     return false
