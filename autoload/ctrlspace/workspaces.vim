@@ -129,14 +129,7 @@ function! ctrlspace#workspaces#DeleteWorkspace(name) abort
     endif
 
     call ctrlspace#workspaces#SetWorkspaceNames()
-
-    if empty(s:db.workspaces)
-        call ctrlspace#window#Kill(1)
-    else
-        call ctrlspace#window#Kill(0)
-        call ctrlspace#window#Toggle(1)
-    endif
-
+    call ctrlspace#window#refresh()
     call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been deleted.")
 endfunction
 
