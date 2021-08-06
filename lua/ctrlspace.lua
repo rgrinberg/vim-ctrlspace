@@ -1335,7 +1335,7 @@ function drawer.move_selection(where)
 
   local delta
   if where == "up" then
-    delta = - 1
+    delta = -1
   elseif where == "down" then
     delta = 1
   elseif where == "pgup" then
