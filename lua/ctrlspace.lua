@@ -36,19 +36,25 @@ end
 local fn = vim.fn
 local api = vim.api
 
-local M = {}
-
 local files = {}
 local buffers = { api = {} }
+local bookmarks = {}
 local tabs = {}
 local drawer = {}
+local search = {}
 local ui = {}
+local modes = { all = {} ; slots = {} }
 
-M.files = files
-M.buffers = buffers
-M.tabs = tabs
-M.drawer = drawer
-M.ui = ui
+local M = {
+  modes = modes,
+  files = files,
+  buffers = buffers,
+  tabs = tabs,
+  drawer = drawer,
+  search = search,
+  bookmarks = bookmarks,
+  ui = ui,
+}
 
 local files_cache = nil
 
