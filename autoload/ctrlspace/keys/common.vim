@@ -195,10 +195,6 @@ function! ctrlspace#keys#common#Close(k) abort
     call ctrlspace#window#Kill(1)
 endfunction
 
-function! ctrlspace#keys#common#Quit(k) abort
-    call ctrlspace#window#QuitVim()
-endfunction
-
 function! s:toggleListViewAndSearch(k, mode) abort
     if !s:modes[a:mode].Enabled
         if !function("ctrlspace#keys#common#Toggle" . a:mode . "Mode")(a:k)

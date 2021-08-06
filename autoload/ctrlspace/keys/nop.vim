@@ -15,7 +15,6 @@ function! ctrlspace#keys#nop#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#ToggleBookmarkMode",           "Nop", ["b"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#ToggleBookmarkModeAndSearch",  "Nop", ["B"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#Close",                        "Nop", ["q", "Esc", 'C-c'])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#common#Quit",                         "Nop", ["Q"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#RestorePreviousSearch",        "Nop", ['C-p'])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#common#RestoreNextSearch",            "Nop", ['C-n'])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#NewWorkspace",                 "Nop", ["N"])

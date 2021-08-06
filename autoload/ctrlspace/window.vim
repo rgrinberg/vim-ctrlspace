@@ -72,23 +72,6 @@ function! ctrlspace#window#Kill(final) abort
   return F(arg)
 endfunction
 
-function! ctrlspace#window#QuitVim() abort
-    if !s:config.SaveWorkspaceOnExit
-        let aw = ctrlspace#workspaces#ActiveWorkspace()
-
-        if aw.Status == 2 && !ctrlspace#ui#Confirmed("Current workspace ('" . aw.Name . "') not saved. Proceed anyway?")
-            return
-        endif
-    endif
-
-    if !ctrlspace#ui#ProceedIfModified()
-        return
-    endif
-
-    call ctrlspace#window#Kill(1)
-    qa!
-endfunction
-
 function! ctrlspace#window#MoveSelectionBar(where) abort
   let F = luaeval('require("ctrlspace").drawer.move_selection_and_remember')
   call F(a:where)

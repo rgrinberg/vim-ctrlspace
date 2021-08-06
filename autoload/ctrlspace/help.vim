@@ -28,7 +28,6 @@ let s:descriptions = {
     \ "ctrlspace#keys#common#HalfScrollDown":               "Move the selection bar a half screen down",
     \ "ctrlspace#keys#common#HalfScrollUp":                 "Move the selection bar a half screen up",
     \ "ctrlspace#keys#common#Close":                        "Close the list",
-    \ "ctrlspace#keys#common#Quit":                         "Quit Vim with a prompt if unsaved changes found",
     \ "ctrlspace#keys#common#EnterSearchMode":              "Enter Search Mode",
     \ "ctrlspace#keys#common#RestorePreviousSearch":        "Bring back the previous searched text",
     \ "ctrlspace#keys#common#RestoreNextSearch":            "Bring the next searched text",
