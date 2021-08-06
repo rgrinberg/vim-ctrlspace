@@ -1173,6 +1173,26 @@ function tabs.remove_label_selected()
   drawer.move_selection_and_remember(l)
 end
 
+function tabs.new_label()
+  assert_drawer_on()
+  local l = fn.line(".")
+  local tabnr = drawer.last_selected_index()
+  local old_name = fn.gettabvar(tabnr, "CtrlSpaceLabel", nil)
+  if not old_name or old_name == vim.NIL then
+    old_name = ""
+  end
+
+  local new_label = ui.input("Label for tab " .. tabnr .. ": ", old_name, nil)
+
+  if not new_label or new_label == "" then
+    return
+  end
+
+  tabs.set_label(tabnr, new_label, 0)
+  drawer.refresh()
+  drawer.move_selection_and_remember(l)
+end
+
 function tabs.close()
   -- we don't close the last tab
   if fn.tabpagenr("$") == 1 then
