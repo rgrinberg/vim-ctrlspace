@@ -1265,6 +1265,61 @@ function drawer.kill(final)
   end
 end
 
+local function goto_line(l)
+  if vim.b.size < 1 then
+    return
+  end
+
+  if l < 1 then
+    goto_line(vim.b.size - l)
+  elseif l > vim.b.size then
+    goto_line(l - vim.b.size)
+  else
+    fn.cursor(l, 1)
+  end
+end
+
+function drawer.move_selection(where)
+  local line = fn.line(".")
+
+  local delta
+  if where == "up" then
+    delta = - 1
+  elseif where == "down" then
+    delta = 1
+  elseif where == "pgup" then
+    delta = -fn.winheight("0")
+  elseif where == "pgdown" then
+    delta = fn.winheight("0")
+  elseif where == "half_pgup" then
+    delta = -math.floor(fn.winheight("0") / 2)
+  elseif where == "half_pgdown" then
+    delta = math.floor(fn.winheight("0") / 2)
+  else
+    delta = -line + where
+  end
+
+  local newpos = line + delta
+  newpos = math.min(newpos, fn.line("$"))
+  newpos = math.max(newpos, 1)
+  goto_line(newpos)
+end
+
+function drawer.move_selection_and_remember(where)
+  assert_drawer_on()
+  if vim.b.size < 1 then
+    return
+  end
+
+  if not vim.b.lastline then
+    vim.b.lastline = 0
+  end
+
+  drawer.move_selection(where)
+
+  vim.b.lastline = fn.line(".")
+end
+
 function ui.confirm_if_modified()
   local unsaved = #buffers.unsaved()
   if #unsaved == 0 then

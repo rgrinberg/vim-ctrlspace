@@ -90,99 +90,13 @@ function! ctrlspace#window#QuitVim() abort
 endfunction
 
 function! ctrlspace#window#MoveSelectionBar(where) abort
-    if b:size < 1
-        return
-    endif
-
-    let newpos = 0
-
-    if !exists("b:lastline")
-        let b:lastline = 0
-    endif
-
-    " the mouse was pressed: remember which line
-    " and go back to the original location for now
-    if a:where == "mouse"
-        let newpos = line(".")
-        call s:goto(b:lastline)
-    endif
-
-
-    " go where the user want's us to go
-    if a:where == "up"
-        call s:goto(line(".") - 1)
-    elseif a:where == "down"
-        call s:goto(line(".") + 1)
-    elseif a:where == "mouse"
-        call s:goto(newpos)
-    elseif a:where == "pgup"
-        let newpos = line(".") - winheight(0)
-        if newpos < 1
-            let newpos = 1
-        endif
-        call s:goto(newpos)
-    elseif a:where == "pgdown"
-        let newpos = line(".") + winheight(0)
-        if newpos > line("$")
-            let newpos = line("$")
-        endif
-        call s:goto(newpos)
-    elseif a:where == "half_pgup"
-        let newpos = line(".") - winheight(0) / 2
-        if newpos < 1
-            let newpos = 1
-        endif
-        call s:goto(newpos)
-    elseif a:where == "half_pgdown"
-        let newpos = line(".") + winheight(0) / 2
-        if newpos > line("$")
-            let newpos = line("$")
-        endif
-        call s:goto(newpos)
-    else
-        call s:goto(a:where)
-    endif
-
-
-    " remember this line, in case the mouse is clicked
-    " (which automatically moves the cursor there)
-    let b:lastline = line(".")
+  let F = luaeval('require("ctrlspace").drawer.move_selection_and_remember')
+  call F(a:where)
 endfunction
 
 function! ctrlspace#window#MoveCursor(where) abort
-    if a:where == "up"
-        call s:goto(line(".") - 1)
-    elseif a:where == "down"
-        call s:goto(line(".") + 1)
-    elseif a:where == "mouse"
-        call s:goto(line("."))
-    elseif a:where == "pgup"
-        let newpos = line(".") - winheight(0)
-        if newpos < 1
-            let newpos = 1
-        endif
-        call s:goto(newpos)
-    elseif a:where == "pgdown"
-        let newpos = line(".") + winheight(0)
-        if newpos > line("$")
-            let newpos = line("$")
-        endif
-        call s:goto(newpos)
-    elseif a:where == "half_pgup"
-        let newpos = line(".") - winheight(0) / 2
-        if newpos < 1
-            let newpos = 1
-        endif
-        call s:goto(newpos)
-    elseif a:where == "half_pgdown"
-        let newpos = line(".") + winheight(0) / 2
-        if newpos > line("$")
-            let newpos = line("$")
-        endif
-        call s:goto(newpos)
-    else
-        call s:goto(a:where)
-    endif
+  let F = luaeval('require("ctrlspace").drawer.move_selection')
+  call F(a:where)
 endfunction
 
 function! ctrlspace#window#SelectedIndex() abort
@@ -191,21 +105,6 @@ endfunction
 
 function! ctrlspace#window#GoToWindow() abort
     return luaeval('require("ctrlspace").drawer.go_to_window()')
-endfunction
-
-" tries to set the cursor to a line of the buffer list
-function! s:goto(line) abort
-    if b:size < 1
-        return
-    endif
-
-    if a:line < 1
-        call s:goto(b:size - a:line)
-    elseif a:line > b:size
-        call s:goto(a:line - b:size)
-    else
-        call cursor(a:line, 1)
-    endif
 endfunction
 
 function! ctrlspace#window#setActiveLine() abort
