@@ -30,7 +30,7 @@ endfunction
 function! ctrlspace#keys#tab#CloseTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
     silent! exe "normal! " . nr . "gt"
-    call ctrlspace#tabs#CloseTab()
+    call luaeval('require("ctrlspace").tabs.close()')
 endfunction
 
 function! ctrlspace#keys#tab#AddTab(k) abort

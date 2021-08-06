@@ -137,7 +137,8 @@ function! ctrlspace#keys#buffer#LoadManyBuffersCT(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#NewTabLabel(k) abort
-    call ctrlspace#tabs#NewTabLabel(tabpagenr())
+    let F = luaeval('require("ctrlspace").tabs.new_label')
+    call F(tabpagenr())
     call ctrlspace#util#SetStatusline()
     redraws
 endfunction
@@ -149,7 +150,8 @@ function! ctrlspace#keys#buffer#MoveTab(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#RemoveTabLabel(k) abort
-    call ctrlspace#tabs#RemoveTabLabel(tabpagenr())
+    let F = luaeval('require("ctrlspace").tabs.remove_label')
+    call F(tabepagenr())
     call ctrlspace#util#SetStatusline()
     redraw!
 endfunction
@@ -202,7 +204,7 @@ function! ctrlspace#keys#buffer#CloseBuffer(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#CloseTab(k) abort
-    call ctrlspace#tabs#CloseTab()
+    call luaeval('require("ctrlspace").tabs.close()')
     call ctrlspace#ui#Msg("Current tab closed.")
 endfunction
 
