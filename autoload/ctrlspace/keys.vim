@@ -81,11 +81,11 @@ function! s:initKeyNames() abort
     let keyNames = split(join([lowercase, uppercase, controls, numbers, punctuation, specials], " "), " ")
 
     " won't work with leader mappings
-    if ctrlspace#keys#IsDefaultKey()
+    if exists("s:defaultKey")
         for i in range(len(keyNames))
             let fullKeyName = (strlen(keyNames[i]) > 1) ? ("<" . keyNames[i] . ">") : keyNames[i]
 
-            if fullKeyName ==# ctrlspace#keys#DefaultKey()
+            if fullKeyName ==# s:defaultKey
                 call remove(keyNames, i)
                 break
             endif
@@ -166,12 +166,4 @@ function! ctrlspace#keys#SetDefaultMapping(key, action) abort
     endif
 
     silent! exe 'nnoremap <unique><silent>' . s:defaultKey . ' ' . a:action
-endfunction
-
-function! ctrlspace#keys#IsDefaultKey() abort
-    return exists("s:defaultKey")
-endfunction
-
-function! ctrlspace#keys#DefaultKey() abort
-    return s:defaultKey
 endfunction
