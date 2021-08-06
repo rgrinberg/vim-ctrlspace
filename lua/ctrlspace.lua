@@ -168,7 +168,6 @@ local function assert_drawer_on()
   end
 end
 
-
 function files.load_many_files(pre, post)
   assert_drawer_on()
   local file = fn.fnamemodify(drawer.selected_file_path(), ":p")
