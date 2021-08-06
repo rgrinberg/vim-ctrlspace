@@ -1226,6 +1226,18 @@ function tabs.collect_foreign()
   drawer.restore()
 end
 
+function tabs.move(key)
+  local nr = drawer.last_selected_index()
+  with_restore_drawer(function()
+    exe({"normal! " .. nr .. "gt"})
+    fn["ctrlspace#keys#tab#MoveHelper"](key)
+    vim.cmd[[
+      let modes = ctrlspace#modes#Modes()
+      call modes.Tab.Enable()
+    ]]
+  end)
+end
+
 function drawer.selected_file_path()
   local modes = fn["ctrlspace#modes#Modes"]()
   if modes.File.Enabled == 1 then

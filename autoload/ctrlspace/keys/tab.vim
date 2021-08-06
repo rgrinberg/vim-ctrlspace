@@ -100,12 +100,8 @@ function! ctrlspace#keys#tab#MoveHelper(k) abort
 endfunction
 
 function! ctrlspace#keys#tab#MoveTab(k) abort
-    let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(1)
-    silent! exe "normal! " . nr . "gt"
-    call ctrlspace#keys#tab#MoveHelper(a:k)
-    call s:modes.Tab.Enable()
-    call ctrlspace#window#Toggle(1)
+    let F = luaeval('require("ctrlspace").tabs.move')
+    call F(a:k)
 endfunction
 
 function! ctrlspace#keys#tab#CollectUnsavedBuffers(k) abort
