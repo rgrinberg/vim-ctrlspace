@@ -158,13 +158,13 @@ end
 local function assert_drawer_off()
   local pbuf = drawer.buffer()
   if pbuf ~= -1 then
-    error("plugin buffer exists")
+    error("plugin buffer exists\n" .. debug.traceback())
   end
 end
 
 local function assert_drawer_on()
   if vim.bo.filetype ~= "ctrlspace" then
-    error("the current buffer isn't ctrlspace")
+    error("the current buffer isn't ctrlspace\n" .. debug.traceback())
   end
 end
 
