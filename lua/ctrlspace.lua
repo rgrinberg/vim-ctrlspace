@@ -1409,6 +1409,18 @@ function tabs.copy_or_move_selected_buffer(tabnr, copy_or_move)
   end
 end
 
+function util.normalize_dir(dir)
+  dir = fn.resolve(fn.expand(dir))
+  local is_slash = function (d)
+    local last = string.sub(d, -1)
+    return last == '\\' or last == '/'
+  end
+  while is_slash(dir) do
+    dir = string.sub(dir, 1, -2)
+  end
+  return dir
+end
+
 function bookmarks.add_new(dir)
   dir = ui.input("Add directroy to bookmarks: ", dir, "dir")
   if not dir or string.len(dir) == 0 then

@@ -31,13 +31,8 @@ function! ctrlspace#util#system(cmd, ...) abort
 endfunction
 
 function! ctrlspace#util#NormalizeDirectory(directory) abort
-    let directory = resolve(expand(a:directory))
-
-    while directory[strlen(directory) - 1] ==# "/" || directory[strlen(directory) - 1] ==# "\\"
-        let directory = directory[0:-2]
-    endwhile
-
-    return directory
+  let F = luaeval('require("ctrlspace").util.normalize_dir')
+  return F(a:directory)
 endfunction
 
 function! ctrlspace#util#HandleVimSettings(switch) abort
