@@ -1440,6 +1440,21 @@ function util.normalize_dir(dir)
   return dir
 end
 
+function util.project_local_file(name)
+  local config = fn["ctrlspace#context#Configuration"]()
+  local root = fn["ctrlspace#roots#CurrentProjectRoot"]()
+  if root ~= "" then
+    root = root .. "/"
+  end
+  for _, marker in ipairs(config.ProjectRootMarkers) do
+    local candidate = root .. marker
+    if fn.isdirectory(candidate) then
+      return candidate .. "/" .. name
+    end
+  end
+  return root .. "." .. name
+end
+
 function bookmarks.add_new(dir)
   dir = ui.input("Add directroy to bookmarks: ", dir, "dir")
   if not dir or string.len(dir) == 0 then

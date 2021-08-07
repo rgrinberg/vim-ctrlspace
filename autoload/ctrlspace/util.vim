@@ -66,21 +66,8 @@ function! ctrlspace#util#ChDir(dir) abort
 endfunction
 
 function ctrlspace#util#projectLocalFile(name) abort
-    let config = ctrlspace#context#Configuration()
-    let root = ctrlspace#roots#CurrentProjectRoot()
-    let fullPart = empty(root) ? "" : (root . "/")
-
-    if !empty(config.ProjectRootMarkers)
-        for candidate in config.ProjectRootMarkers
-            let candidatePath = fullPart . candidate
-
-            if isdirectory(candidatePath)
-                return candidatePath . "/" . a:name
-            endif
-        endfor
-    endif
-
-    return fullPart . "." . a:name
+    let F = luaeval('require("ctrlspace").util.project_local_file')
+    return F(a:name)
 endfunction
 
 " Workaround for a Vim bug after :only and e.g. help window:
