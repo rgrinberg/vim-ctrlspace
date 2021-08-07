@@ -70,26 +70,6 @@ function ctrlspace#util#projectLocalFile(name) abort
     return F(a:name)
 endfunction
 
-" Workaround for a Vim bug after :only and e.g. help window:
-" for the first time after :only gettabvar cannot properly ready any tab variable
-" More info: https://github.com/vim/vim/issues/394
-" TODO Remove when decided to drop support for Vim 7.3
-function! ctrlspace#util#Gettabvar(nr, name) abort
-    let value = gettabvar(a:nr, a:name)
-
-    if type(value) == 1 && empty(value)
-        unlet value
-        let value = gettabvar(a:nr, a:name)
-    endif
-
-    return value
-endfunction
-
-function! ctrlspace#util#GettabvarWithDefault(nr, name, default) abort
-    let value = ctrlspace#util#Gettabvar(a:nr, a:name)
-    return type(value) == 1 && empty(value) ? a:default : value
-endfunction
-
 function! ctrlspace#util#GetbufvarWithDefault(nr, name, default) abort
     let value = getbufvar(a:nr, a:name)
     return type(value) == 1 && empty(value) ? a:default : value

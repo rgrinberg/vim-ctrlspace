@@ -21,7 +21,7 @@ function! s:createTabJumps() abort
     let b:jumplinesLen = tabpagenr("$")
 
     for t in range(1, b:jumplinesLen)
-        let counter = ctrlspace#util#GettabvarWithDefault(t, "CtrlSpaceTabJumpCounter", 0)
+        let counter = gettabvar(t, "CtrlSpaceTabJumpCounter", 0)
         call add(b:jumplines, { "line": t, "counter": counter })
     endfor
 endfunction

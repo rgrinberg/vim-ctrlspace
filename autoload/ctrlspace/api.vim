@@ -122,7 +122,7 @@ function! ctrlspace#api#TabTitle(tabnr) abort
     let buflist = tabpagebuflist(a:tabnr)
     let bufnr   = buflist[winnr - 1]
     let bufname = bufname(bufnr)
-    let title   = ctrlspace#util#Gettabvar(a:tabnr, "CtrlSpaceLabel")
+    let title   = gettabvar(a:tabnr, "CtrlSpaceLabel")
 
     if !empty(title)
         return title

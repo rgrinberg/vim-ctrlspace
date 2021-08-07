@@ -297,7 +297,7 @@ function! s:saveFirstWorkspace() abort
     let labels = []
 
     for t in range(1, tabpagenr("$"))
-        let label = ctrlspace#util#Gettabvar(t, "CtrlSpaceLabel")
+        let label = gettabvar(t, "CtrlSpaceLabel")
         if !empty(label)
             call add(labels, label)
         endif

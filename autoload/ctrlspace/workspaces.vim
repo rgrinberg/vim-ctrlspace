@@ -233,8 +233,8 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
 
     for t in range(1, lastTab)
         let data = {
-                    \ "label": ctrlspace#util#Gettabvar(t, "CtrlSpaceLabel"),
-                    \ "autotab": ctrlspace#util#GettabvarWithDefault(t, "CtrlSpaceAutotab", 0)
+                    \ "label": gettabvar(t, "CtrlSpaceLabel"),
+                    \ "autotab": gettabvar(t, "CtrlSpaceAutotab", 0)
                     \ }
 
         let ctrlspaceList = ctrlspace#api#Buffers(t)
@@ -343,7 +343,7 @@ function! ctrlspace#workspaces#CreateDigest() abort
     let lines = []
 
     for t in range(1, tabpagenr("$"))
-        let line     = [t, ctrlspace#util#Gettabvar(t, "CtrlSpaceLabel")]
+        let line     = [t, gettabvar(t, "CtrlSpaceLabel")]
         let bufs     = []
         let visibles = []
 
