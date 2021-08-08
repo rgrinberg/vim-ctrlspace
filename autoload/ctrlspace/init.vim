@@ -31,24 +31,6 @@ function! s:run(options) abort
 endfunction
 
 function! ctrlspace#init#Init() abort
-    augroup CtrlSpaceInit
-        autocmd!
-    augroup END
-
-    if s:config.UseTabline
-        set tabline=%!ctrlspace#api#Tabline()
-
-        if has('gui_running') && (&guioptions =~# 'e')
-            set guitablabel=%{ctrlspace#api#Guitablabel()}
-
-            " Fix MacVim issues:
-            " http://stackoverflow.com/questions/11595301/controlling-tab-names-in-vim
-            if has('gui_macvim')
-                autocmd CtrlSpaceInit BufWinEnter * set guitablabel=%{ctrlspace#api#Guitablabel()}
-            endif
-        endif
-    endif
-
     let s:V = vital#ctrlspace#new()
     let s:O = s:V.import('OptionParser')
     let s:parser = s:O.new()
@@ -90,15 +72,32 @@ function! ctrlspace#init#Init() abort
         execute 'buffer ' . currBuff
     endif
 
-    autocmd CtrlSpaceInit BufEnter * call luaeval('require("ctrlspace").buffers.add_current()')
-    autocmd CtrlSpaceInit VimEnter * call ctrlspace#buffers#Init()
-    autocmd CtrlSpaceInit TabEnter * let t:CtrlSpaceTabJumpCounter = ctrlspace#jumps#IncrementJumpCounter()
+    augroup CtrlSpaceInit
+        autocmd!
+        autocmd BufEnter * call luaeval('require("ctrlspace").buffers.add_current()')
+        autocmd VimEnter * call ctrlspace#buffers#Init()
+        autocmd TabEnter * let t:CtrlSpaceTabJumpCounter = ctrlspace#jumps#IncrementJumpCounter()
 
-    if s:config.SaveWorkspaceOnExit
-        autocmd CtrlSpaceInit VimLeavePre * if ctrlspace#workspaces#ActiveWorkspace().Status | call ctrlspace#workspaces#SaveWorkspace("") | endif
-    endif
+        if s:config.SaveWorkspaceOnExit
+            autocmd VimLeavePre * if ctrlspace#workspaces#ActiveWorkspace().Status | call ctrlspace#workspaces#SaveWorkspace("") | endif
+        endif
 
-    if s:config.LoadLastWorkspaceOnStart
-        autocmd CtrlSpaceInit VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#SetWorkspaceNames() | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
-    endif
+        if s:config.LoadLastWorkspaceOnStart
+            autocmd VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#SetWorkspaceNames() | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
+        endif
+
+        if s:config.UseTabline
+            set tabline=%!ctrlspace#api#Tabline()
+
+            if has('gui_running') && (&guioptions =~# 'e')
+                set guitablabel=%{ctrlspace#api#Guitablabel()}
+
+                " Fix MacVim issues:
+                " http://stackoverflow.com/questions/11595301/controlling-tab-names-in-vim
+                if has('gui_macvim')
+                    autocmd BufWinEnter * set guitablabel=%{ctrlspace#api#Guitablabel()}
+                endif
+            endif
+        endif
+    augroup END
 endfunction
