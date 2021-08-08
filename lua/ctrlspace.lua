@@ -344,6 +344,15 @@ local function forget_buffer_in_tab(tabnr, bufnr)
   tabs.remove_buffers(tabnr, {bufnr})
 end
 
+local function forget_buffer_in_all_tabs(bufnr)
+  local curtab = fn.tabpagenr()
+  local in_tabs = find_buffer_in_tabs(bufnr)
+  for t, _ in pairs(in_tabs) do
+    forget_buffer_in_tab(t, bufnr)
+  end
+  exe({"tabn " .. curtab})
+end
+
 local function with_restore_drawer(f)
   assert_drawer_on()
   local curln = fn.line(".")
@@ -362,17 +371,9 @@ local function delete_buffer(bufnr)
   end
 
   with_restore_drawer(function ()
-    local in_tabs = find_buffer_in_tabs(bufnr)
-    local curtab = fn.tabpagenr()
-    for t, _ in pairs(in_tabs) do
-      forget_buffer_in_tab(t, bufnr)
-    end
-
+    forget_buffer_in_all_tabs(bufnr)
     -- why aren't we using wipeout like elsewhere?
-    exe({
-      "bdelete! " .. bufnr,
-      "tabn " .. curtab,
-    })
+    exe({"bdelete! " .. bufnr})
   end)
 end
 
