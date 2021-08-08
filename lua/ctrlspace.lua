@@ -1297,6 +1297,7 @@ function drawer.selected_file_path()
 end
 
 function drawer.kill(final)
+  assert_drawer_on()
   if vim.b.updatetime_save then
     vim.o.updatetime = vim.b.updatetime_save
   end
