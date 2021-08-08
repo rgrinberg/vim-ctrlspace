@@ -75,6 +75,7 @@ function! ctrlspace#init#Init() abort
     augroup CtrlSpaceInit
         autocmd!
         autocmd BufEnter * call luaeval('require("ctrlspace").buffers.add_current()')
+        autocmd BufUnload * let F = luaeval('require("ctrlspace").buffers.remove') | call F(expand('<abuf>'))
         autocmd VimEnter * call ctrlspace#buffers#Init()
         autocmd TabEnter * let t:CtrlSpaceTabJumpCounter = ctrlspace#jumps#IncrementJumpCounter()
 

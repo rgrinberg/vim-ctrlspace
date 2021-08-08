@@ -310,6 +310,14 @@ local function find_buffer_in_tabs(bufnr)
   return res
 end
 
+function buffers.remove(bufnr)
+  bufnr = tonumber(bufnr)
+  local in_tabs = find_buffer_in_tabs(bufnr)
+  for tabnr, _ in ipairs(in_tabs) do
+    tabs.remove_buffers(tabnr, {bufnr})
+  end
+end
+
 -- you must restore the view after calling this function
 local function forget_buffer_in_tab(tabnr, bufnr)
   assert_drawer_off()
