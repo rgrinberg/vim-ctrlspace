@@ -174,20 +174,6 @@ local function assert_drawer_on()
   end
 end
 
-function files.load_many_files(pre, post)
-  assert_drawer_on()
-  local file = fn.fnamemodify(drawer.selected_file_path(), ":p")
-  local curln = fn.line(".")
-  drawer.kill(false)
-  drawer.go_start_window()
-  exe(pre)
-  M.files.load_file_or_buffer(file)
-  exe({"normal! zb"})
-  exe(post)
-  drawer.restore()
-  drawer.move_selection_and_remember(curln)
-end
-
 function files.edit()
   assert_drawer_on()
   local path = fn.fnamemodify(drawer.selected_file_path(), ":p:h")
@@ -359,8 +345,20 @@ local function with_restore_drawer(f)
   drawer.kill(false)
   f()
   assert_drawer_off()
-  drawer.toggle(true)
+  drawer.restore()
   drawer.move_selection_and_remember(curln)
+end
+
+function files.load_many_files(pre, post)
+  assert_drawer_on()
+  local file = fn.fnamemodify(drawer.selected_file_path(), ":p")
+  with_restore_drawer(function ()
+    drawer.go_start_window()
+    exe(pre)
+    M.files.load_file_or_buffer(file)
+    exe({"normal! zb"})
+    exe(post)
+  end)
 end
 
 local function delete_buffer(bufnr)
@@ -627,15 +625,14 @@ end
 
 function buffers.load_keep(pre, post)
   local nr = drawer.last_selected_index()
-  local curln = fn.line(".")
-  drawer.kill(false)
-  fn["ctrlspace#window#GoToStartWindow"]()
-  exe(pre)
-  exe({"b " .. nr})
-  vim.cmd("normal! zb")
-  exe(post)
-  drawer.restore()
-  drawer.move_selection_and_remember(curln)
+
+  with_restore_drawer(function ()
+    -- fn["ctrlspace#window#GoToStartWindow"]()
+    exe(pre)
+    exe({"b " .. nr})
+    vim.cmd("normal! zb")
+    exe(post)
+  end)
 end
 
 function drawer.go_to_buffer_or_file(direction)
