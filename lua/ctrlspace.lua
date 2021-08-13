@@ -118,7 +118,7 @@ end
 function ui.input(prompt, default, compl)
   local config = fn["ctrlspace#context#Configuration"]()
   prompt = config.Symbols.CS .. "  " .. prompt
-  fn["inputsave"]()
+  fn.inputsave()
   local answer
   if compl then
     answer = fn.input(prompt, default, compl)
@@ -127,7 +127,7 @@ function ui.input(prompt, default, compl)
   else
     answer = fn.input(prompt)
   end
-  fn["inputrestore"]()
+  fn.inputrestore()
   exe({"redraw!"})
   return answer
 end
