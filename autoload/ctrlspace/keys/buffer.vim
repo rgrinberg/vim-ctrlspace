@@ -184,7 +184,7 @@ function! ctrlspace#keys#buffer#DeleteBuffer(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#DeleteHiddenNonameBuffers(k) abort
-    call ctrlspace#buffers#DeleteHiddenNonameBuffers(0)
+    call ctrlspace#buffers#DeleteHiddenNonameBuffers()
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
@@ -195,7 +195,7 @@ function! ctrlspace#keys#buffer#DetachBuffer(k) abort
 endfunction
 
 function! ctrlspace#keys#buffer#DeleteForeignBuffers(k) abort
-    call ctrlspace#buffers#DeleteForeignBuffers(0)
+    call ctrlspace#buffers#DeleteForeignBuffers()
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
@@ -205,7 +205,6 @@ endfunction
 
 function! ctrlspace#keys#buffer#CloseTab(k) abort
     call luaeval('require("ctrlspace").tabs.close()')
-    call ctrlspace#ui#Msg("Current tab closed.")
 endfunction
 
 function! ctrlspace#keys#buffer#ToggleAllMode(k) abort

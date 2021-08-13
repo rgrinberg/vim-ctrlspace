@@ -29,30 +29,12 @@ function! ctrlspace#buffers#MoveBufferToTab(tab) abort
     call F(tab, "move")
 endfunction
 
-function! ctrlspace#buffers#DeleteHiddenNonameBuffers(internal) abort
-    if !a:internal
-        call ctrlspace#window#Kill(0)
-    endif
-
+function! ctrlspace#buffers#DeleteHiddenNonameBuffers() abort
     call luaeval('require("ctrlspace").buffers.delete_hidden_noname()')
-
-    if !a:internal
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#ui#DelayedMsg("Hidden unnamed buffers removed.")
-    endif
 endfunction
 
 " deletes all foreign buffers
 " TODO remove this 'internal' parameter
-function! ctrlspace#buffers#DeleteForeignBuffers(internal) abort
-    if !a:internal
-        call ctrlspace#window#Kill(0)
-    endif
-
+function! ctrlspace#buffers#DeleteForeignBuffers() abort
     call luaeval('require("ctrlspace").buffers.delete_foreign()')
-
-    if !a:internal
-        call ctrlspace#window#Toggle(1)
-        call ctrlspace#ui#DelayedMsg("Foreign buffers removed.")
-    endif
 endfunction

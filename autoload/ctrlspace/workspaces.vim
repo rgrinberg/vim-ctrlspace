@@ -76,8 +76,8 @@ endfunction
 function! ctrlspace#workspaces#NewWorkspace() abort
     tabe
     tabo!
-    call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)
-    call ctrlspace#buffers#DeleteForeignBuffers(1)
+    call ctrlspace#buffers#DeleteHiddenNonameBuffers()
+    call ctrlspace#buffers#DeleteForeignBuffers()
     call s:modes.Workspace.SetData("Active", { "Name": "", "Digest": "", "Root": "" })
 endfunction
 
@@ -179,8 +179,8 @@ function! s:execWorkspaceCommands(bang, workspace) abort
     else
         call ctrlspace#ui#Msg("Loading workspace '" . a:workspace.Name . "'...")
         call add(commands, "tabo!")
-        call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers(1)")
-        call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers(1)")
+        call add(commands, "call ctrlspace#buffers#DeleteHiddenNonameBuffers()")
+        call add(commands, "call ctrlspace#buffers#DeleteForeignBuffers()")
         call s:setActiveWorkspaceName(a:workspace.Name, s:modes.Workspace.Data.Active.Digest)
     endif
 
