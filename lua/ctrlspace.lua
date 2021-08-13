@@ -865,18 +865,24 @@ local function render_candidates(items)
   return res
 end
 
+local search_state = {
+  query = nil,
+  activated = false,
+}
+
 function drawer.content ()
   local absolute_max = 500
   local candidates = content_source()
   local modes = fn["ctrlspace#modes#Modes"]()
-  local query = table.concat(modes.Search.Data.Letters, "")
+  local query = search_state.query or ""
+
   if query == "" then
     if #candidates > absolute_max then
       candidates = { unpack(candidates, 1, absolute_max) }
     end
   else
     local max
-    if modes.Search.Enabled == 1 then
+    if search_state.activated then
       max = drawer.max_height()
     else
       max = absolute_max
@@ -920,10 +926,10 @@ local function drawer_display(items)
     api.nvim_buf_set_lines(buf, 0, -1, true, {"  List empty"})
     vim.cmd("normal! GkJ")
     vim.cmd("normal! 0")
-    vim.cmd([[
-      let modes = ctrlspace#modes#Modes()
-      call modes.Nop.Enable()
-    ]])
+    -- vim.cmd([[
+    --   let modes = ctrlspace#modes#Modes()
+    --   call modes.Nop.Enable()
+    -- ]])
   end
   vim.cmd('setlocal nomodifiable')
 end
@@ -987,11 +993,6 @@ function drawer.setup_buffer ()
     setlocal filetype=ctrlspace
     setlocal foldmethod=manual
 
-    augroup CtrlSpaceUpdateSearch
-        au!
-        au CursorHold <buffer> call ctrlspace#search#UpdateSearchResults()
-    augroup END
-
     augroup CtrlSpaceLeave
         au!
         au BufLeave <buffer> call ctrlspace#window#Kill(1)
@@ -1003,15 +1004,7 @@ function drawer.setup_buffer ()
     exe({"lcd " .. fn.fnameescape(root)})
   end
 
-  if vim.o.timeout then
-    vim.b.timeout_save = vim.o.timeoutlen
-    vim.o.timeoutlen = 10
-  end
-
   local config = fn["ctrlspace#context#Configuration"]()
-
-  vim.b.updatetime_save = vim.o.updatetime
-  vim.o.updatetime = config.SearchTiming
 
   if not config.UseMouseAndArrowsInTerm and not fn.has("gui_running") then
     vim.cmd([[
@@ -1507,6 +1500,25 @@ function bookmarks.add_new(dir)
   fn['ctrlspace#bookmarks#AddToBookmarks'](dir, name)
   print(string.format("Directory '%s' has been bookmarked under the name '%s'", dir, name))
   drawer.refresh()
+end
+
+function search.ask()
+  search_state.activated = true
+  search_state.query = fn.input("CtrlSpace> ", search_state.query or "")
+  search_state.activated = false
+  drawer.refresh()
+end
+
+function search.on_cmd_enter()
+end
+
+function search.on_cmdline_change()
+  if not search_state.activated then
+    return
+  end
+  search_state.query = fn.getcmdline()
+  drawer.refresh()
+  exe({"redraw!"})
 end
 
 return M
