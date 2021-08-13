@@ -1,5 +1,4 @@
 let s:config = ctrlspace#context#Configuration()
-let s:modes  = ctrlspace#modes#Modes()
 
 let s:lastProjectRoot    = ""
 let s:currentProjectRoot = ""
