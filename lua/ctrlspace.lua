@@ -168,8 +168,12 @@ local function assert_drawer_off()
   end
 end
 
+local function is_ctrlspace_buffer()
+  return vim.bo.filetype == "ctrlspace"
+end
+
 local function assert_drawer_on()
-  if vim.bo.filetype ~= "ctrlspace" then
+  if not is_ctrlspace_buffer() then
     error("the current buffer isn't ctrlspace\n" .. debug.traceback())
   end
 end
@@ -349,6 +353,14 @@ local function with_restore_drawer(f)
   drawer.move_selection_and_remember(curln)
 end
 
+local function with_maybe_restore_drawer(f)
+  if is_ctrlspace_buffer() then
+    with_restore_drawer(f)
+  else
+    f()
+  end
+end
+
 function files.load_many_files(pre, post)
   assert_drawer_on()
   local file = fn.fnamemodify(drawer.selected_file_path(), ":p")
@@ -489,18 +501,22 @@ function buffers.unnamed ()
 end
 
 buffers.delete_hidden_noname = function ()
-  local bufs = all_buffers()
-  for u, _ in pairs(buffers.unnamed()) do
-    bufs[u] = nil
-  end
-  for u, _ in pairs(buffers.visible()) do
-    bufs[u] = nil
-  end
-  delete_buffers(bufs)
+  with_maybe_restore_drawer(function ()
+    local bufs = all_buffers()
+    for u, _ in pairs(buffers.unnamed()) do
+      bufs[u] = nil
+    end
+    for u, _ in pairs(buffers.visible()) do
+      bufs[u] = nil
+    end
+    delete_buffers(bufs)
+  end)
 end
 
 buffers.delete_foreign = function ()
-  delete_buffers(foreign_buffers())
+  with_maybe_restore_drawer(function ()
+    delete_buffers(foreign_buffers())
+  end)
 end
 
 tabs.buffer_present_count = function (buf)
@@ -1231,13 +1247,11 @@ function tabs.close()
     end
   end
 
-  drawer.kill(true)
-
-  exe({"tabclose"})
-
-  fn["ctrlspace#buffers#DeleteHiddenNonameBuffers"](1)
-  fn["ctrlspace#buffers#DeleteForeignBuffers"](1)
-  drawer.restore()
+  with_restore_drawer(function ()
+    exe({"tabclose"})
+    buffers.delete_hidden_noname()
+    buffers.delete_foreign()
+  end)
 end
 
 function tabs.collect_unsaved()
