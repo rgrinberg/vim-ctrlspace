@@ -1,7 +1,7 @@
 let s:modes = ctrlspace#modes#Modes()
 
 function! ctrlspace#bookmarks#Bookmarks() abort
-    let db = ctrlspace#db#latest()
+    let db = luaeval('require("ctrlspace").db.latest()')
     return db.bookmarks
 endfunction
 
@@ -53,25 +53,6 @@ function! ctrlspace#bookmarks#ChangeBookmarkDirectory(nr) abort
     return 1
 endfunction
 
-function! ctrlspace#bookmarks#RemoveBookmark(nr) abort
-    let bookmark = ctrlspace#bookmarks#Bookmarks()[a:nr]
-    let name = bookmark.Name
-
-    if !ctrlspace#ui#Confirmed("Delete bookmark '" . name . "'?")
-        return
-    endif
-
-    call ctrlspace#db#remove_bookmark(ctrlspace#db#latest(), a:nr)
-    call ctrlspace#ui#DelayedMsg("Bookmark '" . name . "' has been deleted.")
-endfunction
-
-" TODO do we really need this wrapper function?
-function! ctrlspace#bookmarks#AddFirstBookmark() abort
-    if ctrlspace#bookmarks#AddNewBookmark()
-        call ctrlspace#window#refresh()
-    endif
-endfunction
-
 function! ctrlspace#bookmarks#AddNewBookmark(...) abort
     let bookmarks = ctrlspace#bookmarks#Bookmarks()
     if a:0
@@ -100,7 +81,8 @@ function! ctrlspace#bookmarks#AddToBookmarks(directory, name) abort
 
     let bookmark = { "Name": a:name, "Directory": directory, "JumpCounter": jumpCounter }
 
-    call ctrlspace#db#add_bookmark(ctrlspace#db#latest(), bookmark)
+    let F = luaeval('require("ctrlspace").db.add_bookmark')
+    call F(bookmark)
     return bookmark
 endfunction
 

@@ -5,7 +5,7 @@ let s:lastProjectRoot    = ""
 let s:currentProjectRoot = ""
 
 function! ctrlspace#roots#ProjectRoots() abort
-    let db = ctrlspace#db#latest()
+    let db = luaeval('require("ctrlspace").db.latest()')
     return db.roots
 endfunction
 
@@ -63,12 +63,14 @@ endfunction
 
 function! s:removeProjectRoot(directory) abort
     let directory = ctrlspace#util#NormalizeDirectory(a:directory)
-    call ctrlspace#db#remove_root(ctrlspace#db#latest(), directory)
+    let F = luaeval('require("ctrlspace").db.remove_root')
+    call F(directory)
 endfunction
 
 function! s:addProjectRoot(directory) abort
     let directory = ctrlspace#util#NormalizeDirectory(a:directory)
-    call ctrlspace#db#add_root(ctrlspace#db#latest(), directory)
+    let F = luaeval('require("ctrlspace").db.add_root')
+    call F(directory)
 endfunction
 
 function! ctrlspace#roots#FindProjectRoot() abort

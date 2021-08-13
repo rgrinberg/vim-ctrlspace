@@ -57,7 +57,7 @@ function! ctrlspace#init#Init() abort
         call ctrlspace#keys#SetDefaultMapping(s:config.DefaultMappingKey, ":CtrlSpace<CR>")
     endif
 
-    call ctrlspace#db#latest()
+    call luaeval('require("ctrlspace").db.latest()')
     call ctrlspace#keys#Init()
 
     if argc() > 1

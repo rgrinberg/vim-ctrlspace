@@ -43,6 +43,7 @@ local tabs = {}
 local drawer = {}
 local search = {}
 local ui = {}
+local db = {}
 local modes = { all = {} ; slots = {} }
 
 local M = {
@@ -54,6 +55,7 @@ local M = {
   search = search,
   bookmarks = bookmarks,
   ui = ui,
+  db = db,
 }
 
 local files_cache = nil
@@ -1519,6 +1521,74 @@ function search.on_cmdline_change()
   search_state.query = fn.getcmdline()
   drawer.refresh()
   exe({"redraw!"})
+end
+
+local db_dir = fn.stdpath("cache") .. "/ctrlspace"
+local db_dir_init = false
+local db_latest = nil
+
+local function db_file()
+  if not db_dir_init then
+    fn.mkdir(db_dir, "p")
+    db_dir_init = true
+  end
+  return db_dir .. "/bookmarks_and_roots.json"
+end
+
+local function db_empty()
+  return {
+    bookmarks = {},
+    roots = {},
+  }
+end
+
+local function db_load()
+  local file = db_file()
+  if fn.filereadable(file) then
+    return fn.json_decode(fn.readfile(file))
+  else
+    return db_empty()
+  end
+end
+
+local function db_save(new_db)
+  if not new_db then
+    error("database must not be nil")
+  end
+  local file = db_file()
+  fn.writefile({fn.json_encode(new_db)}, file)
+  db_latest = new_db
+end
+
+function db.add_bookmark(bm)
+  local data = db.latest()
+  table.insert(data.bookmarks, bm)
+  db_save(data)
+end
+
+function db.remove_boomark(idx)
+  local data = db.latest()
+  table.remove(data, idx)
+  db_save(data)
+end
+
+function db.add_root(root)
+  local data = db.latest()
+  data.roots[root] = true
+  db_save(data)
+end
+
+function db.remove_root(root)
+  local data = db.latest()
+  data.roots[root] = nil
+  db_save(data)
+end
+
+function db.latest()
+  if not db_latest then
+    db_latest = db_load()
+  end
+  return db_latest
 end
 
 return M

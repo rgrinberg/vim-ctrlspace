@@ -56,7 +56,18 @@ endfunction
 
 function! ctrlspace#keys#bookmark#Delete(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#bookmarks#RemoveBookmark(nr)
+
+    let bookmark = ctrlspace#bookmarks#Bookmarks()[a:nr]
+    let name = bookmark.Name
+
+    if !ctrlspace#ui#Confirmed("Delete bookmark '" . name . "'?")
+        return
+    endif
+
+    let F = luaeval('require("ctrlspace").db.remove_bookmark')
+    call F(a:nr)
+    call ctrlspace#ui#DelayedMsg("Bookmark '" . name . "' has been deleted.")
+
     call s:modes.Bookmark.Enable()
     call ctrlspace#window#Toggle(1)
     call ctrlspace#ui#DelayedMsg()
