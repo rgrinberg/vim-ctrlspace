@@ -16,7 +16,7 @@ endfunction
 
 function! ctrlspace#keys#tab#GoToTab(k) abort
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
     silent! exe "normal! " . nr . "gt"
 
     if a:k ==# "CR"

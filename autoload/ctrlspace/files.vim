@@ -32,7 +32,7 @@ function! ctrlspace#files#GoToDirectory(back) abort
         return
     endif
 
-    call ctrlspace#window#Kill(1)
+    call ctrlspace#window#kill()
 
     let cwd = ctrlspace#util#NormalizeDirectory(fnamemodify(getcwd(), ":p:h"))
 
@@ -45,14 +45,9 @@ function! ctrlspace#files#GoToDirectory(back) abort
     endif
 
     call ctrlspace#util#ChDir(directory)
-
     call ctrlspace#ui#DelayedMsg("CWD is now: " . directory)
-
-    call ctrlspace#window#Toggle(0)
-    call ctrlspace#window#Kill(0)
-
     call s:modes.Buffer.SetData("SubMode", oldBufferSubMode)
 
-    call ctrlspace#window#Toggle(1)
+    call ctrlspace#window#restore()
     call ctrlspace#ui#DelayedMsg()
 endfunction

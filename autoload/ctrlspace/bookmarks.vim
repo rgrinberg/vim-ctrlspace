@@ -65,6 +65,7 @@ function! ctrlspace#bookmarks#RemoveBookmark(nr) abort
     call ctrlspace#ui#DelayedMsg("Bookmark '" . name . "' has been deleted.")
 endfunction
 
+" TODO do we really need this wrapper function?
 function! ctrlspace#bookmarks#AddFirstBookmark() abort
     if ctrlspace#bookmarks#AddNewBookmark()
         call ctrlspace#window#refresh()
