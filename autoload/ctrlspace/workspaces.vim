@@ -85,34 +85,6 @@ function! ctrlspace#workspaces#SelectedWorkspaceName() abort
     return s:modes.Workspace.Enabled ? ctrlspace#workspaces#Workspaces()[ctrlspace#window#SelectedIndex()] : ""
 endfunction
 
-function! ctrlspace#workspaces#RenameWorkspace(name) abort
-    let newName = ctrlspace#ui#GetInput("Rename workspace '" . a:name . "' to: ", a:name)
-
-    if empty(newName)
-        return
-    endif
-
-    if has_key(s:db.workspaces, newName)
-        call ctrlspace#ui#Msg("Workspace '" . newName . "' already exists.")
-        return
-    endif
-
-    let s:db.LastActive = a:name
-
-    let s:db.workspaces[newName] = s:db.workspaces[a:name]
-    unlet s:db.workspaces[a:name]
-    call s:saveWorkspaces()
-
-    if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
-        call s:setActiveWorkspaceName(newName, s:modes.Workspace.Data.Active.Digest)
-    endif
-
-    call ctrlspace#workspaces#SetWorkspaceNames()
-    call ctrlspace#window#refresh()
-
-    call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been renamed to '" . newName . "'.")
-endfunction
-
 " bang == 0) load
 " bang == 1) append
 function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort

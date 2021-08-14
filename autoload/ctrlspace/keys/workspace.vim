@@ -31,7 +31,32 @@ function! ctrlspace#keys#workspace#Delete(k) abort
 endfunction
 
 function! ctrlspace#keys#workspace#Rename(k) abort
-    call ctrlspace#workspaces#RenameWorkspace(ctrlspace#workspaces#SelectedWorkspaceName())
+    let name = ctrlspace#workspaces#SelectedWorkspaceName()
+    let newName = ctrlspace#ui#GetInput("Rename workspace '" . name . "' to: ", name)
+
+    if empty(newName)
+        return
+    endif
+
+    if has_key(s:db.workspaces, newName)
+        call ctrlspace#ui#Msg("Workspace '" . newName . "' already exists.")
+        return
+    endif
+
+    let s:db.LastActive = name
+
+    let s:db.workspaces[newName] = s:db.workspaces[name]
+    unlet s:db.workspaces[name]
+    call s:saveWorkspaces()
+
+    if s:modes.Workspace.Data.Active.Name ==# name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
+        call s:setActiveWorkspaceName(newName, s:modes.Workspace.Data.Active.Digest)
+    endif
+
+    call ctrlspace#workspaces#SetWorkspaceNames()
+    call ctrlspace#window#refresh()
+
+    call ctrlspace#ui#DelayedMsg("Workspace '" . name . "' has been renamed to '" . newName . "'.")
     call ctrlspace#ui#DelayedMsg()
 endfunction
 
