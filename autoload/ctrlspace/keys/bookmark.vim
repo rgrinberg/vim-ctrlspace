@@ -16,7 +16,6 @@ function! ctrlspace#keys#bookmark#GoToBookmark(k) abort
     call luaeval('require("ctrlspace").files.clear()')
     call ctrlspace#window#refresh()
     call ctrlspace#window#MoveSelectionBar(curline)
-    call ctrlspace#ui#DelayedMsg()
 endfunction
 
 function! ctrlspace#keys#bookmark#Rename(k) abort
