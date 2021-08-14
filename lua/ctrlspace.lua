@@ -1,4 +1,4 @@
-local fzy = require("fzy_lua")
+local fzy = require("ctrlspace.fzy_lua")
 
 local function ctrlspace_filter(candidates, query, max)
   local results = {}
