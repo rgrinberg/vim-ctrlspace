@@ -64,7 +64,7 @@ function! s:map(func, ...) abort
 endfunction
 
 function! ctrlspace#keys#common#EnterSearchMode(k) abort
-    call ctrlspace#search#SwitchSearchMode(1)
+    call luaeval('require("ctrlspace").search.ask()')
 endfunction
 
 function! ctrlspace#keys#common#RestorePreviousSearch(k) abort
