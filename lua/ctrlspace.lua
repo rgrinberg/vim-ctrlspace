@@ -70,6 +70,61 @@ function files.clear ()
   files = nil
 end
 
+function modes.slot(name)
+  modes.slots.name = nil
+  return name
+end
+
+function modes.new(name, slot, data)
+  local instance = {
+    name = name,
+    data = data,
+    slot = slot.name,
+  }
+  if modes.all[name] then
+    error("mode " .. name .. " already exists")
+  end
+  modes.all[name] = instance
+end
+
+function modes.init()
+  local submode = function(name, data)
+    local slot = modes.slot(name)
+    return modes.new(name, slot, data)
+  end
+
+  submode("NextTab", {})
+
+  submode("Search", {
+    Letters = {},
+    NewSearchPerformed = 0,
+    Restored = 0,
+    HistoryIndex = -1
+  })
+
+  submode("Help", {})
+  submode("Nop", {})
+
+  local slot = modes.slot("list")
+  modes.new("Buffer", slot, { SubMode = "single" })
+  modes.new("File", slot, {})
+  modes.new("Tab", slot, {})
+  modes.new("Workspace", slot, {
+    Active = { Name = "", Digest = "", Root = "" },
+    LastActive = "",
+    LastBrowsed = 0
+  })
+  modes.new("Bookmark", slot, { Active = {} })
+end
+
+function modes.enable(mode)
+  modes.slots[mode.slot] = mode
+end
+
+function modes.disable(slot)
+  modes.slots[slot] = nil
+end
+
 local item = {}
 
 function item.create(index, text, indicators)
@@ -1229,6 +1284,7 @@ function tabs.close()
   end
 
   local label = vim.t.CtrlSpaceLabel
+  -- why are we only confirming with named tabs?
   if label and string.len(label) > 0 then
     local bufs = buffers_in_tab(fn.tabpagenr())
     local count = 0
