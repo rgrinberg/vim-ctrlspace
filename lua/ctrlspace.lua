@@ -44,6 +44,7 @@ local drawer = {}
 local search = {}
 local ui = {}
 local db = {}
+local roots = {}
 local modes = { all = {} ; slots = {} }
 
 local M = {
@@ -56,6 +57,7 @@ local M = {
   bookmarks = bookmarks,
   ui = ui,
   db = db,
+  roots = roots,
 }
 
 local files_cache = nil
@@ -1062,6 +1064,7 @@ function drawer.restore()
 end
 
 local function reset_window()
+  roots.try_find()
   vim.cmd([[
     call s:modes.Help.Disable()
     call s:modes.Nop.Disable()
@@ -1078,16 +1081,9 @@ local function reset_window()
 
     call s:modes.Workspace.SetData("LastBrowsed", 0)
 
-    call ctrlspace#roots#SetCurrentProjectRoot(ctrlspace#roots#FindProjectRoot())
     call s:modes.Bookmark.SetData("Active", ctrlspace#bookmarks#FindActiveBookmark())
 
     call s:modes.Search.RemoveData("LastSearchedDirectory")
-
-    if ctrlspace#roots#LastProjectRoot() != ctrlspace#roots#CurrentProjectRoot()
-        call luaeval('require("ctrlspace").files.clear()')
-        call ctrlspace#roots#SetLastProjectRoot(ctrlspace#roots#CurrentProjectRoot())
-        call ctrlspace#workspaces#SetWorkspaceNames()
-    endif
 
     set guicursor+=n:block-CtrlSpaceSelected-blinkon0
 
@@ -1589,6 +1585,108 @@ function db.latest()
     db_latest = db_load()
   end
   return db_latest
+end
+
+function roots.add(dir)
+  if not dir or dir == "" then
+    dir = fn.getcwd()
+  end
+  dir = fn['ctrlspace#util#NormalizeDirectory'](fn.fnamemodify(dir, ":p"))
+
+  if fn.isdirectory(dir) == 0 then
+    print(string.format("Invalid directory '%s'", dir))
+    return
+  end
+
+  local all_roots = db.latest().roots
+  if all_roots[dir] then
+    print(string.format("Directory '%s' is already a root", dir))
+    return
+  end
+
+  db.add_root(dir)
+  print(string.format("Directory '%s' is added as a project root", dir))
+end
+
+function roots.remove(dir)
+  if not dir or dir == "" then
+    dir = fn.getcwd()
+  end
+  dir = fn['ctrlspace#util#NormalizeDirectory'](fn.fnamemodify(dir, ":p"))
+
+  local all_roots = db.latest().roots
+  if not all_roots[dir] then
+    print(string.format("Directory '%s' is not a root", dir))
+    return
+  end
+
+  db.remove_root(dir)
+end
+
+local function find_roots(dir, markers, all_roots)
+  if all_roots[dir] then
+    return dir
+  end
+  for _, marker in ipairs(markers) do
+    local candidate = dir .. "/" .. marker
+    if fn.filereadable(candidate) == 1 or fn.isdirectory(candidate) then
+      return dir
+    end
+  end
+  local parent = fn.fnamemodify(dir, ":p:h:h")
+  if parent == dir then
+    return nil
+  else
+    return find_roots(parent, markers, all_roots)
+  end
+end
+
+local root = nil
+
+function roots.find_current()
+  local dir = fn.fnamemodify(".", ":p")
+  local config = fn["ctrlspace#context#Configuration"]()
+  local all_roots = db.latest().roots
+  return find_roots(dir, config.ProjectRootMarkers, all_roots)
+end
+
+function roots.set(dir)
+  root = dir
+end
+
+function roots.current()
+  return root
+end
+
+function roots.ask_if_unset()
+  if root then
+    return true
+  end
+
+  root = roots.find_current()
+  if root then
+    return true
+  end
+
+  local prompt_root = fn.input("No project root found. Set the project root:",
+    fn.fnamemodify(".", ":p:h"), "dir")
+
+  if prompt_root and prompt_root ~= "" then
+    root = fn["ctrlspace#util#NormalizeDirectory"](prompt_root)
+    files.clear()
+    db.add_root(prompt_root)
+    return true
+  else
+    print("Cannot continue with the project root unset")
+    return false
+  end
+end
+
+function roots.try_find()
+  local r = roots.find_current()
+  if r then
+    root = r
+  end
 end
 
 return M
