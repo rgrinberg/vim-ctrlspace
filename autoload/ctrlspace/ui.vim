@@ -5,13 +5,6 @@ function! ctrlspace#ui#Msg(message) abort
 endfunction
 
 function! ctrlspace#ui#DelayedMsg(...) abort
-    if !empty(a:000)
-        let s:delayedMessage = a:1
-    elseif exists("s:delayedMessage") && !empty(s:delayedMessage)
-        redraw
-        call ctrlspace#ui#Msg(s:delayedMessage)
-        unlet s:delayedMessage
-    endif
 endfunction
 
 function! ctrlspace#ui#GetInput(msg, ...) abort
