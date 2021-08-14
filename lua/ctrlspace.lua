@@ -47,6 +47,7 @@ local util = {}
 local db = {}
 local roots = {}
 local modes = { all = {} ; slots = {} }
+local workspaces = {}
 
 local M = {
   util = util,
@@ -1689,6 +1690,177 @@ function roots.try_find()
   if r then
     root = r
   end
+end
+
+local function empty_workspaces()
+  return { workspaces = {} }
+end
+
+local unnamed_ws = "<unnamed>"
+local workspace_db = empty_workspaces()
+
+function workspaces.delete(name)
+  if not ui.confirmed("Delete workspace '" .. name .. "'?") then
+    return
+  end
+end
+
+local function workspace_file()
+  return util.project_local_file("cs_workspaces.json")
+end
+
+local function workspaces_set_names()
+end
+
+local function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+local function workspaces_save()
+  local data = deepcopy(workspace_db)
+  if data.workspaces[""] then
+    data.workspaces[unnamed_ws] = data.workspaces[""]
+  end
+  local file = workspace_file()
+  fn.writefile({fn.json_encode(data)}, file)
+end
+
+local function workspaces_set_active_name(name)
+  local modes = fn["ctrlspace#modes#Modes"]()
+  modes.Workspace.Active = 
+end
+
+function workspaces.save(name)
+  if not roots.ask_if_unset() then
+    return false
+  end
+
+  local current_root = roots.current()
+
+  if name == "" then
+    local modes = fn["ctrlspace#modes#Modes"]()
+    local active = modes.Workspace.Data.Active
+    if active.Name ~= "" and active.Root == current_root then
+      name = active.Name
+    else
+      print("No workspace to save")
+      return false
+    end
+  end
+
+  fn['ctrlspace#util#HandleVimSettings']("start")
+
+  local cwd_save = fn.fnamemodify(".", ":p:h")
+  local ssop_save = vim.o.ssop
+  local restore = function()
+    exe({
+      "cd " .. fn.fnameescape(cwd_save),
+      "set ssop=" .. ssop_save,
+    })
+    fn['ctrlspace#util#HandleVimSettings']("stop")
+  end
+
+  exe({
+    "set ssop=winsize,tabpages,buffers,sesdir",
+    "cd " .. fn.fnameescape(current_root)
+  })
+
+  local filename = workspace_file()
+
+  local tab_data = {}
+  for tabnr=1,fn.tabpagenr("$") do
+    local data = {
+      label = fn.gettabvar(tabnr, "CtrlSpaceLabel"),
+      autotab = fn.gettabvar(tabnr, "CtrlSpaceAutotab", 0),
+    }
+
+    local readable_buffers = {}
+    for bufnr, _ in pairs(buffers_in_tab(tabnr)) do
+      local bufname = fn.bufname(bufnr)
+      if fn.filereadable(bufname) == 1 then
+        table.insert(readable_buffers, bufname)
+      end
+    end
+    data.bufs = readable_buffers
+    table.insert(tab_data, data)
+  end
+
+  local temp_session_file = "CS_SESSION"
+  exe({"mksession! " .. temp_session_file})
+  if fn.filereadable(temp_session_file) == 0 then
+    restore()
+    print(string.format("Workspace '%s' cannot be saved", name))
+    return false
+  end
+
+  local tab_index = 0
+  local commands = {}
+  for _, cmd in ipairs(fn.readfile(temp_session_file)) do
+    if string.match(cmd, "^lcd ") then
+      goto continue
+    end
+
+    local file = string.match(cmd, "^badd%s%d+(%w+)$")
+    if file and fn.filereadable(file) == 1 then
+      table.insert(commands, cmd)
+      goto continue
+    end
+
+    if cmd == "tabnext" then
+      table.insert(commands, cmd)
+    end
+
+    local data = tab_data[tab_index]
+    for _, b in ipairs(data.bufs) do
+      table.insert(commands, 'edit ' .. fn.fnameescape(b))
+    end
+
+    if data.label and data.label ~= "" then
+      local label = fn.substitute(data.label, "'", "''", "g")
+      local c = string.format("let t:CtrlSpaceLabel = '%s'", label)
+      table.insert(commands, c)
+    end
+
+    if data.autotab and data.autotab ~= "" then
+      local c = string.format("let t:CtrlSpaceAutotab = %s", data.autotab)
+      table.insert(commands, c)
+    end
+
+    tab_index = tab_index + 1
+
+    ::continue::
+  end
+  fn.delete(temp_session_file)
+
+  -- TODO restore right after saving session file?
+  restore()
+
+  local workspace = {
+    commands = commands,
+    name = name,
+  }
+
+  local current_db = db.latest()
+  current_db.workspaces[name] = workspace
+  workspaces_save()
+
+  workspaces_set_active_name(name)
+  -- TODO why do we need this reload?
+  workspaces_set_names()
+
+  print(string.format("Workspace '%s' has been saved.", name))
+  return true
 end
 
 return M
