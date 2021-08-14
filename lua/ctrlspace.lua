@@ -43,11 +43,13 @@ local tabs = {}
 local drawer = {}
 local search = {}
 local ui = {}
+local util = {}
 local db = {}
 local roots = {}
 local modes = { all = {} ; slots = {} }
 
 local M = {
+  util = util,
   modes = modes,
   files = files,
   buffers = buffers,
