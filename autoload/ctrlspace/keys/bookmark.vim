@@ -12,7 +12,12 @@ endfunction
 function! ctrlspace#keys#bookmark#GoToBookmark(k) abort
     let curline = line(".")
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#bookmarks#GoToBookmark(nr)
+
+    let newbookmark = ctrlspace#bookmarks#bookmarks()[:nr]
+    call ctrlspace#util#chdir(newbookmark.directory)
+    call ctrlspace#roots#setcurrentprojectroot(newbookmark.directory)
+    call ctrlspace#ui#delayedmsg("cwd is now: " . newbookmark.directory)
+
     call luaeval('require("ctrlspace").files.clear()')
     call ctrlspace#window#refresh()
     call ctrlspace#window#MoveSelectionBar(curline)
@@ -21,7 +26,15 @@ endfunction
 function! ctrlspace#keys#bookmark#Rename(k) abort
     let curline = line(".")
     let nr = ctrlspace#window#SelectedIndex()
-    call ctrlspace#bookmarks#ChangeBookmarkName(nr)
+
+    let bookmark = ctrlspace#bookmarks#Bookmarks()[nr]
+    let newName = ctrlspace#ui#GetInput("New bookmark name: ", bookmark.Name)
+
+    if !empty(newName)
+        call ctrlspace#bookmarks#AddToBookmarks(bookmark.Directory, newName)
+        call ctrlspace#ui#DelayedMsg("Bookmark '" . bookmark.Name . "' has been renamed to '" . newName . "'.")
+    endif
+
     call ctrlspace#window#refresh()
     call ctrlspace#window#MoveSelectionBar(curline)
     call ctrlspace#ui#DelayedMsg()

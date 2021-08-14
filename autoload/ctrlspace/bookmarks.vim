@@ -5,23 +5,6 @@ function! ctrlspace#bookmarks#Bookmarks() abort
     return db.bookmarks
 endfunction
 
-function! ctrlspace#bookmarks#GoToBookmark(nr) abort
-    let newBookmark = ctrlspace#bookmarks#Bookmarks()[a:nr]
-    call ctrlspace#util#ChDir(newBookmark.Directory)
-    call ctrlspace#roots#SetCurrentProjectRoot(newBookmark.Directory)
-    call ctrlspace#ui#DelayedMsg("CWD is now: " . newBookmark.Directory)
-endfunction
-
-function! ctrlspace#bookmarks#ChangeBookmarkName(nr) abort
-    let bookmark = ctrlspace#bookmarks#Bookmarks()[a:nr]
-    let newName = ctrlspace#ui#GetInput("New bookmark name: ", bookmark.Name)
-
-    if !empty(newName)
-        call ctrlspace#bookmarks#AddToBookmarks(bookmark.Directory, newName)
-        call ctrlspace#ui#DelayedMsg("Bookmark '" . bookmark.Name . "' has been renamed to '" . newName . "'.")
-    endif
-endfunction
-
 function! ctrlspace#bookmarks#ChangeBookmarkDirectory(nr) abort
     let bookmarks = ctrlspace#bookmarks#Bookmarks()
     let bookmark = bookmarks[a:nr]
