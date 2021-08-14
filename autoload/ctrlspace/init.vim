@@ -45,8 +45,8 @@ function! ctrlspace#init#Init() abort
     command! -nargs=* -range CtrlSpaceSaveWorkspace :call ctrlspace#workspaces#SaveWorkspace(<q-args>)
     command! -nargs=0 -range CtrlSpaceNewWorkspace :call ctrlspace#workspaces#NewWorkspace()
     command! -nargs=* -range -bang CtrlSpaceLoadWorkspace :call ctrlspace#workspaces#LoadWorkspace(<bang>0, <q-args>)
-    command! -nargs=* -range -complete=dir CtrlSpaceAddProjectRoot :call ctrlspace#roots#AddProjectRoot(<q-args>)
-    command! -nargs=* -range -complete=dir CtrlSpaceRemoveProjectRoot :call ctrlspace#roots#RemoveProjectRoot(<q-args>)
+    command! -nargs=* -range -complete=dir CtrlSpaceAddProjectRoot :lua require('ctrlspace').roots.add(<q-args>)
+    command! -nargs=* -range -complete=dir CtrlSpaceRemoveProjectRoot :lua require('ctrlspace').roots.remove(<q-args>)
 
     hi def link CtrlSpaceNormal   PMenu
     hi def link CtrlSpaceSelected PMenuSel
