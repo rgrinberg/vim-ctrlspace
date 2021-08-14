@@ -113,25 +113,6 @@ function! ctrlspace#workspaces#RenameWorkspace(name) abort
     call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been renamed to '" . newName . "'.")
 endfunction
 
-function! ctrlspace#workspaces#DeleteWorkspace(name) abort
-    if !ctrlspace#ui#Confirmed("Delete workspace '" . a:name . "'?")
-        return
-    endif
-
-    let inWorkspace = 0
-
-    unlet s:db.workspaces[a:name]
-    call s:saveWorkspaces()
-
-    if s:modes.Workspace.Data.Active.Name ==# a:name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
-        call s:setActiveWorkspaceName(a:name, "")
-    endif
-
-    call ctrlspace#workspaces#SetWorkspaceNames()
-    call ctrlspace#window#refresh()
-    call ctrlspace#ui#DelayedMsg("Workspace '" . a:name . "' has been deleted.")
-endfunction
-
 " bang == 0) load
 " bang == 1) append
 function! ctrlspace#workspaces#LoadWorkspace(bang, name) abort

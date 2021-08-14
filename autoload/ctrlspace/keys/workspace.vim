@@ -11,8 +11,23 @@ function! ctrlspace#keys#workspace#Init() abort
 endfunction
 
 function! ctrlspace#keys#workspace#Delete(k) abort
-    call ctrlspace#workspaces#DeleteWorkspace(ctrlspace#workspaces#SelectedWorkspaceName())
-    call ctrlspace#ui#DelayedMsg()
+    let name = ctrlspace#workspaces#SelectedWorkspaceName()
+    if !ctrlspace#ui#Confirmed("Delete workspace '" . name . "'?")
+        return
+    endif
+
+    let inWorkspace = 0
+
+    unlet s:db.workspaces[name]
+    call s:saveWorkspaces()
+
+    if s:modes.Workspace.Data.Active.Name ==# name && s:modes.Workspace.Data.Active.Root ==# ctrlspace#roots#CurrentProjectRoot()
+        call s:setActiveWorkspaceName(name, "")
+    endif
+
+    call ctrlspace#workspaces#SetWorkspaceNames()
+    call ctrlspace#window#refresh()
+    call ctrlspace#ui#DelayedMsg("Workspace '" . name . "' has been deleted.")
 endfunction
 
 function! ctrlspace#keys#workspace#Rename(k) abort
