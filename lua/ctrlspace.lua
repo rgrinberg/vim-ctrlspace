@@ -61,6 +61,7 @@ local M = {
   ui = ui,
   db = db,
   roots = roots,
+  workspaces = workspaces,
 }
 
 local files_cache = nil
