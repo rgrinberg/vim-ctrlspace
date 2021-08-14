@@ -1794,8 +1794,6 @@ local function workspaces_save()
 end
 
 local function workspaces_set_active_name(name)
-  local modes = fn["ctrlspace#modes#Modes"]()
-  modes.Workspace.Active = 
 end
 
 function workspaces.save(name)
