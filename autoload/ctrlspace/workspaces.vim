@@ -158,6 +158,9 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
         return 0
     endif
 
+    let cwdSave = fnamemodify(".", ":p:h")
+    let root    = ctrlspace#roots#CurrentProjectRoot()
+
     if empty(a:name)
         if !empty(s:modes.Workspace.Data.Active.Name) && s:modes.Workspace.Data.Active.Root ==# root
             let name = s:modes.Workspace.Data.Active.Name
@@ -171,12 +174,8 @@ function! ctrlspace#workspaces#SaveWorkspace(name) abort
 
     call ctrlspace#util#HandleVimSettings("start")
 
-    let cwdSave = fnamemodify(".", ":p:h")
-    let root    = ctrlspace#roots#CurrentProjectRoot()
-
     silent! exe "cd " . fnameescape(root)
 
-    let filename = s:workspaceFile()
     let lastTab  = tabpagenr("$")
 
     let ssopSave = &ssop
