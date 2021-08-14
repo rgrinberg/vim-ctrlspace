@@ -86,9 +86,9 @@ function! ctrlspace#init#Init() abort
             autocmd VimLeavePre * if ctrlspace#workspaces#ActiveWorkspace().Status | call ctrlspace#workspaces#SaveWorkspace("") | endif
         endif
 
-        if s:config.LoadLastWorkspaceOnStart
-            autocmd VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#SetWorkspaceNames() | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
-        endif
+        " if s:config.LoadLastWorkspaceOnStart
+        "     autocmd VimEnter * nested if (argc() == 0) && !empty(ctrlspace#roots#FindProjectRoot()) | call ctrlspace#workspaces#SetWorkspaceNames() | call ctrlspace#workspaces#LoadWorkspace(0, "") | endif
+        " endif
 
         if s:config.UseTabline
             set tabline=%!ctrlspace#api#Tabline()
