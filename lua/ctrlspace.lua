@@ -1473,7 +1473,7 @@ function bookmarks.add_new(dir)
     return
   end
 
-  dir = fn["ctrlspace#util#NormalizeDirectory"](dir)
+  dir = util.normalize_dir(dir)
 
   if fn.isdirectory(dir) == 0 then
     print(string.format("Directory '%s' is invalid", dir))
@@ -1591,7 +1591,7 @@ function roots.add(dir)
   if not dir or dir == "" then
     dir = fn.getcwd()
   end
-  dir = fn['ctrlspace#util#NormalizeDirectory'](fn.fnamemodify(dir, ":p"))
+  dir = util.normalize_dir(fn.fnamemodify(dir, ":p"))
 
   if fn.isdirectory(dir) == 0 then
     print(string.format("Invalid directory '%s'", dir))
@@ -1612,7 +1612,7 @@ function roots.remove(dir)
   if not dir or dir == "" then
     dir = fn.getcwd()
   end
-  dir = fn['ctrlspace#util#NormalizeDirectory'](fn.fnamemodify(dir, ":p"))
+  dir = util.normalize_dir(fn.fnamemodify(dir, ":p"))
 
   local all_roots = db.latest().roots
   if not all_roots[dir] then
@@ -1672,7 +1672,7 @@ function roots.ask_if_unset()
     fn.fnamemodify(".", ":p:h"), "dir")
 
   if prompt_root and prompt_root ~= "" then
-    root = fn["ctrlspace#util#NormalizeDirectory"](prompt_root)
+    root = util.normalize_dir(prompt_root)
     files.clear()
     db.add_root(prompt_root)
     return true
