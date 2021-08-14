@@ -3,7 +3,7 @@ let s:modes  = ctrlspace#modes#Modes()
 
 function! ctrlspace#keys#buffer#Init() abort
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#SearchParentDirectory",       "Buffer", ["BSlash"])
-    call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#SearchParentDirectoryInFile", "Buffer", ["Bar"])
+    call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#SearchParentDirectoryInFile", "Buffer", ["Bar", ","])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#LoadBuffer",                  "Buffer", ["CR"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#LoadManyBuffers",             "Buffer", ["Space"])
     call ctrlspace#keys#AddMapping("ctrlspace#keys#buffer#GoToWindow",                  "Buffer", ["Tab"])
