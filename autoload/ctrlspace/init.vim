@@ -79,6 +79,9 @@ function! ctrlspace#init#Init() abort
         autocmd VimEnter * call ctrlspace#buffers#Init()
         autocmd TabEnter * let t:CtrlSpaceTabJumpCounter = ctrlspace#jumps#IncrementJumpCounter()
 
+        autocmd CmdlineChanged @ call luaeval('require("ctrlspace").search.on_cmdline_change()')
+        autocmd CmdlineEnter @ call luaeval('require("ctrlspace").search.on_cmd_enter()')
+
         if s:config.SaveWorkspaceOnExit
             autocmd VimLeavePre * if ctrlspace#workspaces#ActiveWorkspace().Status | call ctrlspace#workspaces#SaveWorkspace("") | endif
         endif
