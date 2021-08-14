@@ -18,12 +18,12 @@ function! ctrlspace#ui#GetInput(msg, ...) abort
     let a1 = v:null
     let a2 = v:null
 
-    let len = length(a:100)
+    let len = length(a:000)
 
-    if len >= 1 then
+    if len >= 2 then
         a1 = a:1
     end
-    if len >= 2 then
+    if len >= 3 then
         a2 = a:2
     end
 
