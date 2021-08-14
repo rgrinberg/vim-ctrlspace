@@ -37,5 +37,5 @@ function! ctrlspace#ui#Confirmed(msg) abort
 endfunction
 
 function! ctrlspace#ui#ProceedIfModified() abort
-    return luaeval('require("ctrlspace").ui.confirm_if_modified()')
+    return luaeval('require("ctrlspace").ui.confirm_if_modified()') ? 1 : 0
 endfunction
